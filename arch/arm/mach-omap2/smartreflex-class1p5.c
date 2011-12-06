@@ -284,9 +284,18 @@ done_calib:
 			u_volt_margin -= u_volt_current;
 		} else {
 			u_volt_margin = volt_data->volt_margin;
-		}
 
-		u_volt_safe += u_volt_margin;
+		}
+		/* Add margin IF we are lower than nominal */
+		if ((u_volt_safe + u_volt_margin) < volt_data->volt_nominal) {
+			u_volt_safe += u_volt_margin;
+		} else {
+			pr_err("%s: %s could not add %ld[%d] margin"
+				"to vnom %d curr_v=%ld\n",
+				__func__, voltdm->name, u_volt_margin,
+				volt_data->volt_margin, volt_data->volt_nominal,
+				u_volt_current);
+		}
 	}
 
 	if (u_volt_safe > volt_data->volt_nominal) {

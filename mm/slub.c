@@ -1807,8 +1807,50 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	c = this_cpu_ptr(s->cpu_slab);
 #endif
 
+<<<<<<< HEAD
 	/* We handle __GFP_ZERO in the caller */
 	gfpflags &= ~__GFP_ZERO;
+=======
+	if (!c->page)
+		goto new_slab;
+redo:
+	if (unlikely(!node_match(c, node))) {
+		stat(s, ALLOC_NODE_MISMATCH);
+		deactivate_slab(s, c);
+		goto new_slab;
+	}
+
+	/* must check again c->freelist in case of cpu migration or IRQ */
+	object = c->freelist;
+	if (object)
+		goto load_freelist;
+
+	stat(s, ALLOC_SLOWPATH);
+
+	do {
+		object = c->page->freelist;
+		counters = c->page->counters;
+		new.counters = counters;
+		VM_BUG_ON(!new.frozen);
+
+		/*
+		 * If there is no object left then we use this loop to
+		 * deactivate the slab which is simple since no objects
+		 * are left in the slab and therefore we do not need to
+		 * put the page back onto the partial list.
+		 *
+		 * If there are objects left then we retrieve them
+		 * and use them to refill the per cpu queue.
+		 */
+
+		new.inuse = c->page->objects;
+		new.frozen = object != NULL;
+
+	} while (!__cmpxchg_double_slab(s, c->page,
+			object, counters,
+			NULL, new.counters,
+			"__slab_alloc"));
+>>>>>>> 73736e0... slub: fix a possible memleak in __slab_alloc()
 
 	page = c->page;
 	if (!page)

@@ -47,3 +47,10 @@ config DHD_USE_STATIC_BUF
 	---help---
 	  Use memory preallocated in platform
 
+config DHD_USE_SCHED_SCAN
+	bool "Use CFG80211 sched scan"
+	depends on BCMDHD && CFG80211
+	default n
+	---help---
+	  Use CFG80211 sched scan
+

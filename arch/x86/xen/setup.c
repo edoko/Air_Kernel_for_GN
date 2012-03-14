@@ -9,6 +9,8 @@
 #include <linux/mm.h>
 #include <linux/pm.h>
 #include <linux/memblock.h>
+#include <linux/cpuidle.h>
+#include <linux/cpufreq.h>
 
 #include <asm/elf.h>
 #include <asm/vdso.h>
@@ -450,5 +452,8 @@ void __init xen_arch_setup(void)
 	pm_idle = default_idle;
 	boot_option_idle_override = IDLE_HALT;
 
+	disable_cpuidle();
+	disable_cpufreq();
+	WARN_ON(set_pm_idle_to_default());
 	fiddle_vdso();
 }

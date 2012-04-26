@@ -1733,7 +1733,7 @@ static int twl6040_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 	priv->sysclk = twl6040_get_sysclk(twl6040);
 
 	switch (clk_id) {
-	case TWL6040_SYSCLK_SEL_LPPLL:
+	case TWL6040_LPPLL_ID:
 		ret = twl6040_set_pll(twl6040, TWL6040_LPPLL_ID,
 				      freq, priv->sysclk);
 		if (ret)
@@ -1741,7 +1741,7 @@ static int twl6040_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 
 		priv->sysclk_constraints = &lp_constraints;
 		break;
-	case TWL6040_SYSCLK_SEL_HPPLL:
+	case TWL6040_HPPLL_ID:
 		ret = twl6040_set_pll(twl6040, TWL6040_HPPLL_ID, freq,
 				      priv->sysclk);
 		if (ret)
@@ -2040,3 +2040,4 @@ module_exit(twl6040_codec_exit);
 MODULE_DESCRIPTION("ASoC TWL6040 codec driver");
 MODULE_AUTHOR("Misael Lopez Cruz");
 MODULE_LICENSE("GPL");
+

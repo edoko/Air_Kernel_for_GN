@@ -1,0 +1,1 @@
+cmd_drivers/misc/inv_mpu/compass/inv_mpu_yas530.o := /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/misc/inv_mpu/compass/inv_mpu_yas530.o drivers/misc/inv_mpu/compass/yas530.o 

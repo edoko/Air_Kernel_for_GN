@@ -1,0 +1,3 @@
+kernel/drivers/media/video/tiler/tiler_dmm.ko
+kernel/drivers/media/video/tiler/tiler.ko
+kernel/drivers/media/video/tiler/tcm/tcm-sita.ko

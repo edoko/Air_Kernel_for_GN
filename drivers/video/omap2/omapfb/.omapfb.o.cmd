@@ -1,0 +1,1 @@
+cmd_drivers/video/omap2/omapfb/omapfb.o := /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/video/omap2/omapfb/omapfb.o drivers/video/omap2/omapfb/omapfb-main.o drivers/video/omap2/omapfb/omapfb-sysfs.o drivers/video/omap2/omapfb/omapfb-ioctl.o 

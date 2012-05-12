@@ -1,0 +1,1 @@
+cmd_drivers/rpmsg/rpmsg_client_sample.ko := /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL -r  -T /home/edoko/edoko-gn/scripts/module-common.lds --build-id  -o drivers/rpmsg/rpmsg_client_sample.ko drivers/rpmsg/rpmsg_client_sample.o drivers/rpmsg/rpmsg_client_sample.mod.o

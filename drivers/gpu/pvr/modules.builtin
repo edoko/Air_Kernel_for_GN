@@ -1,0 +1,2 @@
+kernel/drivers/gpu/pvr/pvrsrvkm.ko
+kernel/drivers/gpu/pvr/omaplfb.ko

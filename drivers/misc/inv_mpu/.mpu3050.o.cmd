@@ -1,0 +1,1 @@
+cmd_drivers/misc/inv_mpu/mpu3050.o := /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/misc/inv_mpu/mpu3050.o drivers/misc/inv_mpu/mpuirq.o drivers/misc/inv_mpu/slaveirq.o drivers/misc/inv_mpu/mpu-dev.o drivers/misc/inv_mpu/mlsl-kernel.o drivers/misc/inv_mpu/mldl_cfg.o 

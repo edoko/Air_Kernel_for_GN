@@ -1,0 +1,5 @@
+kernel/drivers/rpmsg/virtio_rpmsg_bus.ko
+kernel/drivers/rpmsg/rpmsg_omx.ko
+kernel/drivers/rpmsg/rpmsg_client_sample.ko
+kernel/drivers/rpmsg/rpmsg_server_sample.ko
+kernel/drivers/rpmsg/rpmsg_resmgr.ko

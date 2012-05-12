@@ -1,0 +1,4 @@
+kernel/drivers/video/omap2/displays/panel-s6e8aa0.ko
+kernel/drivers/video/omap2/dss/omapdss.ko
+kernel/drivers/video/omap2/dsscomp/dsscomp.ko
+kernel/drivers/video/omap2/omapfb/omapfb.ko

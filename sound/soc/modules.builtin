@@ -1,0 +1,15 @@
+kernel/sound/soc/snd-soc-core.ko
+kernel/sound/soc/codecs/snd-soc-dmic.ko
+kernel/sound/soc/codecs/snd-soc-spdif.ko
+kernel/sound/soc/codecs/snd-soc-twl6040.ko
+kernel/sound/soc/codecs/snd-soc-omap-hdmi-codec.ko
+kernel/sound/soc/omap/snd-soc-omap.ko
+kernel/sound/soc/omap/snd-soc-omap-mcasp.ko
+kernel/sound/soc/omap/snd-soc-omap-mcbsp.ko
+kernel/sound/soc/omap/snd-soc-omap-mcpdm.ko
+kernel/sound/soc/omap/snd-soc-omap-abe.ko
+kernel/sound/soc/omap/snd-soc-omap-abe-dsp.ko
+kernel/sound/soc/omap/snd-soc-omap-hdmi.ko
+kernel/sound/soc/omap/snd-soc-sdp4430.ko
+kernel/sound/soc/omap/snd-soc-omap4-hdmi.ko
+kernel/sound/soc/omap/abe/snd-soc-abe-hal.ko

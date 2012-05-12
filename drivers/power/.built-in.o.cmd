@@ -1,0 +1,1 @@
+cmd_drivers/power/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/power/built-in.o drivers/power/power_supply.o drivers/power/pda_power.o drivers/power/max17040_battery.o 

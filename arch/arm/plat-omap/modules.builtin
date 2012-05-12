@@ -1,0 +1,2 @@
+kernel/arch/arm/plat-omap/rproc_user.ko
+kernel/arch/arm/plat-omap/omap_rpmsg.ko

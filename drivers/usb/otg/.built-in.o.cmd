@@ -1,1 +1,0 @@
-cmd_drivers/usb/otg/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/usb/otg/built-in.o drivers/usb/otg/otg.o drivers/usb/otg/otg-wakelock.o drivers/usb/otg/otg_id.o drivers/usb/otg/twl6030-usb.o 

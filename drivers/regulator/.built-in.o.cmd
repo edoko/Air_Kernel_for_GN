@@ -1,1 +1,0 @@
-cmd_drivers/regulator/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/regulator/built-in.o drivers/regulator/core.o drivers/regulator/dummy.o drivers/regulator/fixed.o drivers/regulator/twl-regulator.o 

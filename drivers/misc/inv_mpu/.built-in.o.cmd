@@ -1,1 +1,0 @@
-cmd_drivers/misc/inv_mpu/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/misc/inv_mpu/built-in.o drivers/misc/inv_mpu/mpu3050.o drivers/misc/inv_mpu/timerirq.o drivers/misc/inv_mpu/accel/built-in.o drivers/misc/inv_mpu/compass/built-in.o drivers/misc/inv_mpu/pressure/built-in.o 

@@ -1,1 +1,0 @@
-cmd_drivers/media/video/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/media/video/built-in.o drivers/media/video/davinci/built-in.o drivers/media/video/omap/built-in.o drivers/media/video/tiler/built-in.o 

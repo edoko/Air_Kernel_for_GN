@@ -1,1 +1,0 @@
-cmd_drivers/video/omap2/dsscomp/dsscomp.o := /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/video/omap2/dsscomp/dsscomp.o drivers/video/omap2/dsscomp/device.o drivers/video/omap2/dsscomp/base.o drivers/video/omap2/dsscomp/queue.o drivers/video/omap2/dsscomp/gralloc.o 

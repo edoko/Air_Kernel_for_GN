@@ -1,1 +1,0 @@
-cmd_sound/soc/codecs/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o sound/soc/codecs/built-in.o sound/soc/codecs/snd-soc-dmic.o sound/soc/codecs/snd-soc-spdif.o sound/soc/codecs/snd-soc-twl6040.o sound/soc/codecs/snd-soc-omap-hdmi-codec.o 

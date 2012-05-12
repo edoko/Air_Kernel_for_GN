@@ -1,1 +1,0 @@
-cmd_drivers/remoteproc/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/remoteproc/built-in.o drivers/remoteproc/remoteproc.o drivers/remoteproc/omap_remoteproc.o drivers/remoteproc/rpres.o drivers/remoteproc/rpres_dev.o 

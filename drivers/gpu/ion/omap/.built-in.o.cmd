@@ -1,1 +1,0 @@
-cmd_drivers/gpu/ion/omap/built-in.o :=  /home/edoko/android-toolchain-eabi/bin/arm-eabi-ld -EL    -r -o drivers/gpu/ion/omap/built-in.o drivers/gpu/ion/omap/omap_tiler_heap.o drivers/gpu/ion/omap/omap_ion.o 

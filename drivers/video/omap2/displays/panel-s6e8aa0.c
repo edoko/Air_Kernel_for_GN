@@ -771,7 +771,7 @@ static void s6e8aa0_setup_gamma_regs(struct s6e8aa0_data *s6, u8 gamma_regs[],
 			adj = clamp_t(int, adj, adj_min, adj_max);
 		}
 #ifdef CONFIG_COLOR_CONTROL
-		gamma_regs[gamma_reg_index(c, V1)] = ((adj + v1_offset[c]) > 0 && (adj <=255)) ? (adj + v1_offset[c]) : adj;
+		gamma_regs[gamma_reg_index(c, V1)] = min(max(adj +  v1_offset[c], 0), 255);
 #else
 		gamma_regs[gamma_reg_index(c, V1)] = adj;
 #endif
@@ -1138,8 +1138,11 @@ void colorcontrol_update(bool multiplier_updated)
     if (multiplier_updated)
 	s6e8aa0_adjust_brightness_from_mtp(s6_data);
 
-    if (lcd_dev->state == OMAP_DSS_DISPLAY_ACTIVE)
+    if (lcd_dev->state == OMAP_DSS_DISPLAY_ACTIVE) {
+	dsi_bus_lock(lcd_dev);
 	s6e8aa0_update_brightness(lcd_dev);
+	dsi_bus_unlock(lcd_dev);
+    }
 
     return;
 }

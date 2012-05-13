@@ -1,6 +1,6 @@
 config XVMALLOC
 	bool
-	default n
+	default y
 
 config ZRAM
 	tristate "Compressed RAM block device support"

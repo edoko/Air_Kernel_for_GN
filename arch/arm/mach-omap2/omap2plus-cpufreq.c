@@ -558,31 +558,6 @@ static ssize_t store_uv_mv_table(struct cpufreq_policy *policy,
 			/* Non-standard sysfs interface: advance buf */
 			ret = sscanf(buf, "%s", size_cur);
 			buf += (strlen(size_cur)+1);
-
-			// imoseyon - force smartreflex to recalibrate based on new voltages
-			if (freq_table[i].frequency <= 1200000 && 
-				freq_table[i].frequency >= policymin) {
-				vdata = omap_voltage_get_curr_vdata(mpu_voltdm);
-				if (!vdata) {
-				  pr_err("%s: [imoseyon] unable to find current volt for vdd_%s\n", 
-					__func__, mpu_voltdm->name);
-				} else {
-			         //for (j=0; j<2; j++)
-				  // if nominal volt is too large bail
-				  if (volt_old > mpu_voltdm->curr_volt->volt_nominal) {
-				    omap_sr_disable(mpu_voltdm);
-        			    ret = omap_device_scale(mpu_dev, mpu_dev, freq_table[i].frequency);
-				    omap_voltage_calib_reset(mpu_voltdm);
-				    voltdm_reset(mpu_voltdm);
-				    omap_sr_enable(mpu_voltdm, vdata);
-				    pr_info("[imoseyon] calibration reset for %s at %d.\n",  
-					mpu_voltdm->name, policy->cur);
-				    //msleep(1000);
-				    //pr_info("[imoseyon] calibration should have finished.\n\n");
-				  } else
-				    pr_info("[imoseyon] nominal volt too high - bailing!\n");
-				}
-			}
 		}
 		else {
 			pr_err("%s: frequency entry invalid for %u\n",

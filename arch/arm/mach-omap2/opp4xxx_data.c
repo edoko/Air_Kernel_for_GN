@@ -153,15 +153,15 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("aess", "abe_clk", "iva", true, 196608000, OMAP4430_VDD_IVA_OPP100_UV),
 };
 
-#define OMAP4460_VDD_MPU_OPP50_UV		975000
-#define OMAP4460_VDD_MPU_OPP100_UV		1150000
-#define OMAP4460_VDD_MPU_OPPTURBO_UV		1250000
-#define OMAP4460_VDD_MPU_OPPNITRO_UV		1330000
+#define OMAP4460_VDD_MPU_OPP50_UV		1000000
+#define OMAP4460_VDD_MPU_OPP100_UV		1200000
+#define OMAP4460_VDD_MPU_OPPTURBO_UV		1310000
+#define OMAP4460_VDD_MPU_OPPNITRO_UV		1370000
 /* MPU 오버클럭 1.35Ghz, 1.5Ghz, 1.65Ghz, 1.8Ghz */
-#define OMAP4460_VDD_MPU_OPPOC_UV		1355000 // 1.35GHz
-#define OMAP4460_VDD_MPU_OPPOC2_UV		1375000 // 1.5Ghz
-#define OMAP4460_VDD_MPU_OPPOC3_UV		1385000 // 1.65Ghz
-#define OMAP4460_VDD_MPU_OPPOC4_UV		1395000 // 1.8Ghz
+#define OMAP4460_VDD_MPU_OPPOC_UV		1388000 // 1.35GHz
+#define OMAP4460_VDD_MPU_OPPOC2_UV		1392000 // 1.5Ghz
+#define OMAP4460_VDD_MPU_OPPOC3_UV		1395000 // 1.65Ghz
+#define OMAP4460_VDD_MPU_OPPOC4_UV		1400000 // 1.8Ghz
 
 struct omap_volt_data omap446x_vdd_mpu_volt_data[] = {
 	VOLT_DATA_DEFINE(OMAP4460_VDD_MPU_OPP50_UV, 10000, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
@@ -209,6 +209,8 @@ static struct omap_vdd_dep_volt omap446x_vdd_mpu_core_dep_data[] = {
 	/* MPU 오버클럭 */
 	{.main_vdd_volt = OMAP4460_VDD_MPU_OPPOC_UV, .dep_vdd_volt = OMAP4460_VDD_CORE_OPP100_UV},
 	{.main_vdd_volt = OMAP4460_VDD_MPU_OPPOC2_UV, .dep_vdd_volt = OMAP4460_VDD_CORE_OPP100_UV},
+	{.main_vdd_volt = OMAP4460_VDD_MPU_OPPOC3_UV, .dep_vdd_volt = OMAP4460_VDD_CORE_OPP100_UV},
+	{.main_vdd_volt = OMAP4460_VDD_MPU_OPPOC4_UV, .dep_vdd_volt = OMAP4460_VDD_CORE_OPP100_UV},
 };
 
 struct omap_vdd_dep_info omap446x_vddmpu_dep_info[] = {

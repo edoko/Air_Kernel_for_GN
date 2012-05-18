@@ -342,7 +342,7 @@ int __init omap4_opp_init(void)
 		if (omap4_has_mpu_1_2ghz())
 			omap4_mpu_opp_enable(1200000000);
 		/* 1.8Ghz까지 오버클럭 */
-		if (omap4_has_mpu_1_8ghz())
+		if (omap4_has_mpu_1_5ghz())
 			omap4_mpu_opp_enable(1350000000);
 			omap4_mpu_opp_enable(1500000000);
 			omap4_mpu_opp_enable(1650000000);

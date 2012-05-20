@@ -1226,7 +1226,7 @@ CONFIG_WIFI_CONTROL_FUNC=y
 CONFIG_BCMDHD=y
 CONFIG_BCMDHD_FW_PATH="/system/vendor/firmware/fw_bcmdhd.bin"
 CONFIG_BCMDHD_NVRAM_PATH="/system/etc/wifi/bcmdhd.cal"
-# CONFIG_BCMDHD_WIFI_PM is not set
+CONFIG_BCMDHD_WIFI_PM=y
 # CONFIG_HOSTAP is not set
 # CONFIG_IWM is not set
 # CONFIG_LIBERTAS is not set

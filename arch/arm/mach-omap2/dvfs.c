@@ -756,23 +756,18 @@ static int _dvfs_scale(struct device *req_dev, struct device *target_dev,
 			__func__, voltdm->name);
 		return PTR_ERR(curr_vdata);
 	}
+
+	/* Disable smartreflex module across voltage and frequency scaling */
+	omap_sr_disable(voltdm);
+
+	/* Pick up the current voltage ONLY after ensuring no changes occur */
 	curr_volt = omap_vp_get_curr_volt(voltdm);
 	if (!curr_volt)
 		curr_volt = omap_get_operation_voltage(curr_vdata);
 
-<<<<<<< HEAD
 	/* Make a decision to scale dependent domain based on nominal voltage */
 	if (omap_get_nominal_voltage(new_vdata) >
 			omap_get_nominal_voltage(curr_vdata)) {
-=======
-	/* Disable smartreflex module across voltage and frequency scaling */
-	omap_sr_disable(voltdm);
-
-	if (curr_volt == new_volt) {
-		volt_scale_dir = DVFS_VOLT_SCALE_NONE;
-	} else if (curr_volt < new_volt) {
-
->>>>>>> parent of 5933b12... OMAP3+: PM: DVFS: fix making wrong scale direction decision
 		ret = _dep_scale_domains(target_dev, vdd);
 		if (ret) {
 			dev_err(target_dev,

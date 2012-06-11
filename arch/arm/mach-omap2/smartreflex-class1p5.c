@@ -427,7 +427,7 @@ static int sr_class1p5_enable(struct voltagedomain *voltdm,
 		return 0;
 
 	/* Calibrate High frequency. Thanks to Imoseyon */
-	if (volt_data->volt_nominal > 1350000) {
+	if (volt_data->volt_nominal >= 1350000) {
 		volt_data->volt_calibrated = volt_data->volt_nominal;
 		volt_data->volt_dynamic_nominal = volt_data->volt_nominal;
 		pr_info("[edoko] nominal %d", volt_data->volt_nominal);

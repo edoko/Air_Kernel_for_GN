@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_sdio.c 315747 2012-02-18 00:16:06Z $
+ * $Id: dhd_sdio.c 314732 2012-02-14 03:22:42Z $
  */
 
 #include <typedefs.h>
@@ -801,8 +801,7 @@ dhdsdio_clkctl(dhd_bus_t *bus, uint target, bool pendok)
 #ifdef DHD_DEBUG
 		if (dhd_console_ms == 0)
 #endif /* DHD_DEBUG */
-		if (bus->poll == 0)
-			dhd_os_wd_timer(bus->dhd, 0);
+		dhd_os_wd_timer(bus->dhd, 0);
 		break;
 	}
 #ifdef DHD_DEBUG

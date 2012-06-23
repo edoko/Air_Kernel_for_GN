@@ -153,14 +153,14 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 	OPP_INITIALIZER("aess", "abe_clk", "iva", true, 196608000, OMAP4430_VDD_IVA_OPP100_UV),
 };
 
-#define OMAP4460_VDD_MPU_OPP25_UV		900000 // 200Mhz
-#define OMAP4460_VDD_MPU_OPP50_UV		950000 // 350Mhz
-#define OMAP4460_VDD_MPU_OPP100_UV		1150000 // 700Mhz
-#define OMAP4460_VDD_MPU_OPPTURBO_UV		1225000 // 920Mhz
-#define OMAP4460_VDD_MPU_OPPNITRO_UV		1250000 // 1.2Ghz
+#define OMAP4460_VDD_MPU_OPP25_UV		900000 // 223.4Mhz
+#define OMAP4460_VDD_MPU_OPP50_UV		950000 // 346.7Mhz
+#define OMAP4460_VDD_MPU_OPP100_UV		1175000 // 728.8Mhz
+#define OMAP4460_VDD_MPU_OPPTURBO_UV		1225000 // 1024Mhz
+#define OMAP4460_VDD_MPU_OPPNITRO_UV		1250000 // 1.224Ghz
 /* MPU 오버클럭 1.34Ghz, 1.52Ghz, 1.67Ghz */
-#define OMAP4460_VDD_MPU_OPPOC_UV		1325000 // 1.35GHz
-#define OMAP4460_VDD_MPU_OPPOC2_UV		1385000 // 1.52Ghz
+#define OMAP4460_VDD_MPU_OPPOC_UV		1300000 // 1.358GHz
+#define OMAP4460_VDD_MPU_OPPOC2_UV		1400000 // 1.544Ghz
 #define OMAP4460_VDD_MPU_OPPOC3_UV		1400000 // 1.65Ghz
 
 struct omap_volt_data omap446x_vdd_mpu_volt_data[] = {
@@ -240,19 +240,19 @@ struct omap_vdd_dep_info omap446x_vddiva_dep_info[] = {
 
 static struct omap_opp_def __initdata omap446x_opp_def_list[] = {
 	/* MPU OPP0 - OPP25 */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 200000000, OMAP4460_VDD_MPU_OPP25_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 223400000, OMAP4460_VDD_MPU_OPP25_UV),
 	/* MPU OPP1 - OPP50 */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 350000000, OMAP4460_VDD_MPU_OPP50_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 346700000, OMAP4460_VDD_MPU_OPP50_UV),
 	/* MPU OPP2 - OPP100 */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 700000000, OMAP4460_VDD_MPU_OPP100_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 728800000, OMAP4460_VDD_MPU_OPP100_UV),
 	/* MPU OPP3 - OPP-Turbo */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 920000000, OMAP4460_VDD_MPU_OPPTURBO_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", true, 1024000000, OMAP4460_VDD_MPU_OPPTURBO_UV),
 	/* MPU OPP4 - OPP-Nitro */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1200000000, OMAP4460_VDD_MPU_OPPNITRO_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1224000000, OMAP4460_VDD_MPU_OPPNITRO_UV),
 	/* MPU OPP4 - OPP-Nitro SpeedBin */
 	/* MPU 오버클럭 */
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1350000000, OMAP4460_VDD_MPU_OPPOC_UV),
-	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1520000000, OMAP4460_VDD_MPU_OPPOC2_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1358000000, OMAP4460_VDD_MPU_OPPOC_UV),
+	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1544000000, OMAP4460_VDD_MPU_OPPOC2_UV),
 	OPP_INITIALIZER("mpu", "virt_dpll_mpu_ck", "mpu", false, 1650000000, OMAP4460_VDD_MPU_OPPOC3_UV),
 	/* L3 OPP1 - OPP50 */
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4460_VDD_CORE_OPP50_UV),
@@ -346,11 +346,11 @@ int __init omap4_opp_init(void)
 
 	if (!r) {
 		if (omap4_has_mpu_1_2ghz())
-			omap4_mpu_opp_enable(1200000000);
+			omap4_mpu_opp_enable(1224000000);
 		/* 1.65Ghz까지 오버클럭 */
 		if (omap4_has_mpu_1_5ghz())
-			omap4_mpu_opp_enable(1350000000);
-			omap4_mpu_opp_enable(1520000000);
+			omap4_mpu_opp_enable(1358000000);
+			omap4_mpu_opp_enable(1544000000);
 			omap4_mpu_opp_enable(1650000000);
 	}
 

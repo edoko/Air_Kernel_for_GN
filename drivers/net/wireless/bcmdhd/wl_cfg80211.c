@@ -7168,12 +7168,13 @@ s32 wl_update_wiphybands(struct wl_priv *wl)
 			WL_ERR(("error get mimo_bw_cap (%d)\n", err));
 		}
 	}
-
+/*
 	err = wl_construct_reginfo(wl, bw_cap);
 	if (err) {
 		WL_ERR(("wl_construct_reginfo() fails err=%d\n", err));
 		return err;
 	}
+*/
 	for (i = 1; i <= nband && i < sizeof(bandlist)/sizeof(u32); i++) {
 		index = -1;
 		if (bandlist[i] == WLC_BAND_5G && __wl_band_5ghz_a.n_channels > 0) {

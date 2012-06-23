@@ -150,7 +150,7 @@ static unsigned int get_nr_run_avg(void)
 #define MIN_FREQUENCY_UP_THRESHOLD		(11)
 #define MAX_FREQUENCY_UP_THRESHOLD		(100)
 #define DEF_SAMPLING_RATE			(50000)
-#define MIN_SAMPLING_RATE			(10000)
+#define MIN_SAMPLING_RATE			(20000)
 #define MAX_HOTPLUG_RATE			(40u)
 
 #define DEF_MAX_CPU_LOCK			(0)

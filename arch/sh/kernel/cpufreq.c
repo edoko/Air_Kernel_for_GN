@@ -3,7 +3,7 @@
  *
  * cpufreq driver for the SuperH processors.
  *
- * Copyright (C) 2002 - 2012 Paul Mundt
+ * Copyright (C) 2002 - 2007 Paul Mundt
  * Copyright (C) 2002 M. R. Brown
  *
  * Clock framework bits from arch/avr32/mach-at32ap/cpufreq.c
@@ -24,14 +24,12 @@
 #include <linux/smp.h>
 #include <linux/sched.h>	/* set_cpus_allowed() */
 #include <linux/clk.h>
-#include <linux/percpu.h>
-#include <linux/sh_clk.h>
 
-static DEFINE_PER_CPU(struct clk, sh_cpuclk);
+static struct clk *cpuclk;
 
 static unsigned int sh_cpufreq_get(unsigned int cpu)
 {
-	return (clk_get_rate(&per_cpu(sh_cpuclk, cpu)) + 500) / 1000;
+	return (clk_get_rate(cpuclk) + 500) / 1000;
 }
 
 /*
@@ -42,7 +40,6 @@ static int sh_cpufreq_target(struct cpufreq_policy *policy,
 			     unsigned int relation)
 {
 	unsigned int cpu = policy->cpu;
-	struct clk *cpuclk = &per_cpu(sh_cpuclk, cpu);
 	cpumask_t cpus_allowed;
 	struct cpufreq_freqs freqs;
 	long freq;
@@ -80,15 +77,13 @@ static int sh_cpufreq_target(struct cpufreq_policy *policy,
 
 static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
 {
-	unsigned int cpu = policy->cpu;
-	struct clk *cpuclk = &per_cpu(sh_cpuclk, cpu);
-
-	if (!cpu_online(cpu))
+	if (!cpu_online(policy->cpu))
 		return -ENODEV;
 
 	cpuclk = clk_get(NULL, "cpu_clk");
 	if (IS_ERR(cpuclk)) {
-		printk(KERN_ERR "cpufreq: couldn't get CPU#%d clk\n", cpu);
+		printk(KERN_ERR "cpufreq: couldn't get CPU#%d clk\n",
+		       policy->cpu);
 		return PTR_ERR(cpuclk);
 	}
 
@@ -97,7 +92,7 @@ static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
 	policy->cpuinfo.max_freq = (clk_round_rate(cpuclk, ~0UL) + 500) / 1000;
 	policy->cpuinfo.transition_latency = CPUFREQ_ETERNAL;
 
-	policy->cur		= sh_cpufreq_get(cpu);
+	policy->cur		= sh_cpufreq_get(policy->cpu);
 	policy->min		= policy->cpuinfo.min_freq;
 	policy->max		= policy->cpuinfo.max_freq;
 
@@ -107,7 +102,7 @@ static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
 	 */
 	if (unlikely(policy->min == policy->max)) {
 		printk(KERN_ERR "cpufreq: clock framework rate rounding "
-		       "not supported on CPU#%d.\n", cpu);
+		       "not supported on CPU#%d.\n", policy->cpu);
 
 		clk_put(cpuclk);
 		return -EINVAL;
@@ -115,7 +110,7 @@ static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
 
 	printk(KERN_INFO "cpufreq: CPU#%d Frequencies - Minimum %u.%03u MHz, "
 	       "Maximum %u.%03u MHz.\n",
-	       cpu, policy->min / 1000, policy->min % 1000,
+	       policy->cpu, policy->min / 1000, policy->min % 1000,
 	       policy->max / 1000, policy->max % 1000);
 
 	return 0;
@@ -130,7 +125,6 @@ static int sh_cpufreq_verify(struct cpufreq_policy *policy)
 
 static int sh_cpufreq_exit(struct cpufreq_policy *policy)
 {
-	struct clk *cpuclk = &per_cpu(sh_cpuclk, policy->cpu);
 	clk_put(cpuclk);
 	return 0;
 }

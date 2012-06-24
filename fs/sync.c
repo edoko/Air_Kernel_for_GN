@@ -203,7 +203,7 @@ int vfs_fsync(struct file *file, int datasync)
 	return vfs_fsync_range(file, 0, LLONG_MAX, datasync);
 }
 EXPORT_SYMBOL(vfs_fsync);
-
+/*
 static int do_fsync(unsigned int fd, int datasync)
 {
 	struct file *file;
@@ -216,7 +216,7 @@ static int do_fsync(unsigned int fd, int datasync)
 	}
 	return ret;
 }
-
+*/
 SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
 #ifdef CONFIG_FSYNC

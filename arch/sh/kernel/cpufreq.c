@@ -127,19 +127,13 @@ static int sh_cpufreq_cpu_init(struct cpufreq_policy *policy)
 
 	freq_table = cpuclk->nr_freqs ? cpuclk->freq_table : NULL;
 	if (freq_table) {
-		int result;
+		int result = cpufreq_frequency_table_cpuinfo(policy, freq_table);
 
-		result = cpufreq_frequency_table_cpuinfo(policy, freq_table);
 		if (!result)
 			cpufreq_frequency_table_get_attr(freq_table, cpu);
 	} else {
-		dev_notice(dev, "no frequency table found, falling back "
-			   "to rate rounding.\n");
-
-		policy->cpuinfo.min_freq =
-			(clk_round_rate(cpuclk, 1) + 500) / 1000;
-		policy->cpuinfo.max_freq =
-			(clk_round_rate(cpuclk, ~0UL) + 500) / 1000;
+		policy->cpuinfo.min_freq = (clk_round_rate(cpuclk, 1) + 500) / 1000;
+		policy->cpuinfo.max_freq = (clk_round_rate(cpuclk, ~0UL) + 500) / 1000;
 	}
 
 	policy->min = policy->cpuinfo.min_freq;

@@ -159,7 +159,7 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
 #define OMAP4460_VDD_MPU_OPPTURBO_UV		1225000 // 1.024Ghz
 #define OMAP4460_VDD_MPU_OPPNITRO_UV		1250000 // 1.224Ghz
 /* MPU 오버클럭 1.34Ghz, 1.52Ghz, 1.67Ghz */
-#define OMAP4460_VDD_MPU_OPPOC_UV		1300000 // 1.35GHz
+#define OMAP4460_VDD_MPU_OPPOC_UV		1325000 // 1.35GHz
 #define OMAP4460_VDD_MPU_OPPOC2_UV		1400000 // 1.544Ghz
 #define OMAP4460_VDD_MPU_OPPOC3_UV		1400000 // 1.65Ghz
 

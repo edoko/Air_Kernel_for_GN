@@ -35,6 +35,7 @@ modules.builtin
 *.xzkern
 *.c~
 piggy.xzkern
+ashldi3.S
 
 #
 # Top-level generic files

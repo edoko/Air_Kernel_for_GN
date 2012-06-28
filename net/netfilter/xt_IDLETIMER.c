@@ -5,6 +5,10 @@
  * After timer expires a kevent will be sent.
  *
  * Copyright (C) 2004, 2010 Nokia Corporation
+<<<<<<< HEAD
+=======
+ *
+>>>>>>> android-omap-tuna-jb
  * Written by Timo Teras <ext-timo.teras@nokia.com>
  *
  * Converted to x_tables and reworked for upstream inclusion
@@ -38,8 +42,15 @@
 #include <linux/netfilter/xt_IDLETIMER.h>
 #include <linux/kdev_t.h>
 #include <linux/kobject.h>
+<<<<<<< HEAD
 #include <linux/workqueue.h>
 #include <linux/sysfs.h>
+=======
+#include <linux/skbuff.h>
+#include <linux/workqueue.h>
+#include <linux/sysfs.h>
+#include <net/net_namespace.h>
+>>>>>>> android-omap-tuna-jb
 
 struct idletimer_tg_attr {
 	struct attribute attr;
@@ -56,6 +67,11 @@ struct idletimer_tg {
 	struct idletimer_tg_attr attr;
 
 	unsigned int refcnt;
+<<<<<<< HEAD
+=======
+	bool send_nl_msg;
+	bool active;
+>>>>>>> android-omap-tuna-jb
 };
 
 static LIST_HEAD(idletimer_tg_list);
@@ -63,6 +79,35 @@ static DEFINE_MUTEX(list_mutex);
 
 static struct kobject *idletimer_tg_kobj;
 
+<<<<<<< HEAD
+=======
+static void notify_netlink_uevent(const char *iface, struct idletimer_tg *timer)
+{
+	char iface_msg[NLMSG_MAX_SIZE];
+	char state_msg[NLMSG_MAX_SIZE];
+	char *envp[] = { iface_msg, state_msg, NULL };
+	int res;
+
+	res = snprintf(iface_msg, NLMSG_MAX_SIZE, "INTERFACE=%s",
+		       iface);
+	if (NLMSG_MAX_SIZE <= res) {
+		pr_err("message too long (%d)", res);
+		return;
+	}
+	res = snprintf(state_msg, NLMSG_MAX_SIZE, "STATE=%s",
+		       timer->active ? "active" : "inactive");
+	if (NLMSG_MAX_SIZE <= res) {
+		pr_err("message too long (%d)", res);
+		return;
+	}
+	pr_debug("putting nlmsg: <%s> <%s>\n", iface_msg, state_msg);
+	kobject_uevent_env(idletimer_tg_kobj, KOBJ_CHANGE, envp);
+	return;
+
+
+}
+
+>>>>>>> android-omap-tuna-jb
 static
 struct idletimer_tg *__idletimer_tg_find_by_label(const char *label)
 {
@@ -83,6 +128,10 @@ static ssize_t idletimer_tg_show(struct kobject *kobj, struct attribute *attr,
 {
 	struct idletimer_tg *timer;
 	unsigned long expires = 0;
+<<<<<<< HEAD
+=======
+	unsigned long now = jiffies;
+>>>>>>> android-omap-tuna-jb
 
 	mutex_lock(&list_mutex);
 
@@ -92,11 +141,23 @@ static ssize_t idletimer_tg_show(struct kobject *kobj, struct attribute *attr,
 
 	mutex_unlock(&list_mutex);
 
+<<<<<<< HEAD
 	if (time_after(expires, jiffies))
 		return sprintf(buf, "%u\n",
 			       jiffies_to_msecs(expires - jiffies) / 1000);
 
 	return sprintf(buf, "0\n");
+=======
+	if (time_after(expires, now))
+		return sprintf(buf, "%u\n",
+			       jiffies_to_msecs(expires - now) / 1000);
+
+	if (timer->send_nl_msg)
+		return sprintf(buf, "0 %d\n",
+			jiffies_to_msecs(now - expires) / 1000);
+	else
+		return sprintf(buf, "0\n");
+>>>>>>> android-omap-tuna-jb
 }
 
 static void idletimer_tg_work(struct work_struct *work)
@@ -105,6 +166,12 @@ static void idletimer_tg_work(struct work_struct *work)
 						  work);
 
 	sysfs_notify(idletimer_tg_kobj, NULL, timer->attr.attr.name);
+<<<<<<< HEAD
+=======
+
+	if (timer->send_nl_msg)
+		notify_netlink_uevent(timer->attr.attr.name, timer);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void idletimer_tg_expired(unsigned long data)
@@ -113,6 +180,10 @@ static void idletimer_tg_expired(unsigned long data)
 
 	pr_debug("timer %s expired\n", timer->attr.attr.name);
 
+<<<<<<< HEAD
+=======
+	timer->active = false;
+>>>>>>> android-omap-tuna-jb
 	schedule_work(&timer->work);
 }
 
@@ -147,6 +218,11 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
 	setup_timer(&info->timer->timer, idletimer_tg_expired,
 		    (unsigned long) info->timer);
 	info->timer->refcnt = 1;
+<<<<<<< HEAD
+=======
+	info->timer->send_nl_msg = (info->send_nl_msg == 0) ? false : true;
+	info->timer->active = true;
+>>>>>>> android-omap-tuna-jb
 
 	mod_timer(&info->timer->timer,
 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
@@ -170,14 +246,32 @@ static unsigned int idletimer_tg_target(struct sk_buff *skb,
 					 const struct xt_action_param *par)
 {
 	const struct idletimer_tg_info *info = par->targinfo;
+<<<<<<< HEAD
+=======
+	unsigned long now = jiffies;
+>>>>>>> android-omap-tuna-jb
 
 	pr_debug("resetting timer %s, timeout period %u\n",
 		 info->label, info->timeout);
 
 	BUG_ON(!info->timer);
 
+<<<<<<< HEAD
 	mod_timer(&info->timer->timer,
 		  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+=======
+	info->timer->active = true;
+
+	if (time_before(info->timer->timer.expires, now)) {
+		schedule_work(&info->timer->work);
+		pr_debug("Starting timer %s (Expired, Jiffies): %lu, %lu\n",
+			 info->label, info->timer->timer.expires, now);
+	}
+
+	/* TODO: Avoid modifying timers on each packet */
+	mod_timer(&info->timer->timer,
+		  msecs_to_jiffies(info->timeout * 1000) + now);
+>>>>>>> android-omap-tuna-jb
 
 	return XT_CONTINUE;
 }
@@ -186,8 +280,14 @@ static int idletimer_tg_checkentry(const struct xt_tgchk_param *par)
 {
 	struct idletimer_tg_info *info = par->targinfo;
 	int ret;
+<<<<<<< HEAD
 
 	pr_debug("checkentry targinfo%s\n", info->label);
+=======
+	unsigned long now = jiffies;
+
+	pr_debug("checkentry targinfo %s\n", info->label);
+>>>>>>> android-omap-tuna-jb
 
 	if (info->timeout == 0) {
 		pr_debug("timeout value is zero\n");
@@ -206,8 +306,22 @@ static int idletimer_tg_checkentry(const struct xt_tgchk_param *par)
 	info->timer = __idletimer_tg_find_by_label(info->label);
 	if (info->timer) {
 		info->timer->refcnt++;
+<<<<<<< HEAD
 		mod_timer(&info->timer->timer,
 			  msecs_to_jiffies(info->timeout * 1000) + jiffies);
+=======
+		info->timer->active = true;
+
+		if (time_before(info->timer->timer.expires, now)) {
+			schedule_work(&info->timer->work);
+			pr_debug("Starting Checkentry timer"
+				"(Expired, Jiffies): %lu, %lu\n",
+				info->timer->timer.expires, now);
+		}
+
+		mod_timer(&info->timer->timer,
+			  msecs_to_jiffies(info->timeout * 1000) + now);
+>>>>>>> android-omap-tuna-jb
 
 		pr_debug("increased refcnt of timer %s to %u\n",
 			 info->label, info->timer->refcnt);
@@ -221,6 +335,10 @@ static int idletimer_tg_checkentry(const struct xt_tgchk_param *par)
 	}
 
 	mutex_unlock(&list_mutex);
+<<<<<<< HEAD
+=======
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -242,7 +360,11 @@ static void idletimer_tg_destroy(const struct xt_tgdtor_param *par)
 		kfree(info->timer);
 	} else {
 		pr_debug("decreased refcnt of timer %s to %u\n",
+<<<<<<< HEAD
 			 info->label, info->timer->refcnt);
+=======
+		info->label, info->timer->refcnt);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	mutex_unlock(&list_mutex);
@@ -250,6 +372,10 @@ static void idletimer_tg_destroy(const struct xt_tgdtor_param *par)
 
 static struct xt_target idletimer_tg __read_mostly = {
 	.name		= "IDLETIMER",
+<<<<<<< HEAD
+=======
+	.revision	= 1,
+>>>>>>> android-omap-tuna-jb
 	.family		= NFPROTO_UNSPEC,
 	.target		= idletimer_tg_target,
 	.targetsize     = sizeof(struct idletimer_tg_info),
@@ -315,3 +441,7 @@ MODULE_DESCRIPTION("Xtables: idle time monitor");
 MODULE_LICENSE("GPL v2");
 MODULE_ALIAS("ipt_IDLETIMER");
 MODULE_ALIAS("ip6t_IDLETIMER");
+<<<<<<< HEAD
+=======
+MODULE_ALIAS("arpt_IDLETIMER");
+>>>>>>> android-omap-tuna-jb

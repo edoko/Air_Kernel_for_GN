@@ -977,7 +977,10 @@ static void rtl8150_disconnect(struct usb_interface *intf)
 	usb_set_intfdata(intf, NULL);
 	if (dev) {
 		set_bit(RTL8150_UNPLUG, &dev->flags);
+<<<<<<< HEAD
 		tasklet_disable(&dev->tl);
+=======
+>>>>>>> android-omap-tuna-jb
 		tasklet_kill(&dev->tl);
 		unregister_netdev(dev->netdev);
 		unlink_all_urbs(dev);

@@ -1077,6 +1077,10 @@ void __kprobes kprobe_flush_task(struct task_struct *tk)
 		/* Early boot.  kretprobe_table_locks not yet initialized. */
 		return;
 
+<<<<<<< HEAD
+=======
+	INIT_HLIST_HEAD(&empty_rp);
+>>>>>>> android-omap-tuna-jb
 	hash = hash_ptr(tk, KPROBE_HASH_BITS);
 	head = &kretprobe_inst_table[hash];
 	kretprobe_table_lock(hash, &flags);
@@ -1085,7 +1089,10 @@ void __kprobes kprobe_flush_task(struct task_struct *tk)
 			recycle_rp_inst(ri, &empty_rp);
 	}
 	kretprobe_table_unlock(hash, &flags);
+<<<<<<< HEAD
 	INIT_HLIST_HEAD(&empty_rp);
+=======
+>>>>>>> android-omap-tuna-jb
 	hlist_for_each_entry_safe(ri, node, tmp, &empty_rp, hlist) {
 		hlist_del(&ri->hlist);
 		kfree(ri);
@@ -1660,8 +1667,17 @@ static int __kprobes pre_handler_kretprobe(struct kprobe *p,
 		ri->rp = rp;
 		ri->task = current;
 
+<<<<<<< HEAD
 		if (rp->entry_handler && rp->entry_handler(ri, regs))
 			return 0;
+=======
+		if (rp->entry_handler && rp->entry_handler(ri, regs)) {
+			spin_lock_irqsave(&rp->lock, flags);
+			hlist_add_head(&ri->hlist, &rp->free_instances);
+			spin_unlock_irqrestore(&rp->lock, flags);
+			return 0;
+		}
+>>>>>>> android-omap-tuna-jb
 
 		arch_prepare_kretprobe(ri, regs);
 

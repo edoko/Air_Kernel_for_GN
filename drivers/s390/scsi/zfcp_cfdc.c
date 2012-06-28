@@ -11,6 +11,10 @@
 #define KMSG_COMPONENT "zfcp"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
 
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+>>>>>>> android-omap-tuna-jb
 #include <linux/slab.h>
 #include <linux/types.h>
 #include <linux/miscdevice.h>

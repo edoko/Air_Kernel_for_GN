@@ -247,6 +247,12 @@ static struct mmc_blk_ioc_data *mmc_blk_ioctl_copy_from_user(
 		goto idata_err;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!idata->buf_bytes)
+		return idata;
+
+>>>>>>> android-omap-tuna-jb
 	idata->buf = kzalloc(idata->buf_bytes, GFP_KERNEL);
 	if (!idata->buf) {
 		err = -ENOMEM;
@@ -293,6 +299,7 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 	if (IS_ERR(idata))
 		return PTR_ERR(idata);
 
+<<<<<<< HEAD
 	cmd.opcode = idata->ic.opcode;
 	cmd.arg = idata->ic.arg;
 	cmd.flags = idata->ic.flags;
@@ -312,6 +319,8 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 	mrq.cmd = &cmd;
 	mrq.data = &data;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	md = mmc_blk_get(bdev->bd_disk);
 	if (!md) {
 		err = -EINVAL;
@@ -324,6 +333,51 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 		goto cmd_done;
 	}
 
+<<<<<<< HEAD
+=======
+	cmd.opcode = idata->ic.opcode;
+	cmd.arg = idata->ic.arg;
+	cmd.flags = idata->ic.flags;
+
+	if (idata->buf_bytes) {
+		data.sg = &sg;
+		data.sg_len = 1;
+		data.blksz = idata->ic.blksz;
+		data.blocks = idata->ic.blocks;
+
+		sg_init_one(data.sg, idata->buf, idata->buf_bytes);
+
+		if (idata->ic.write_flag)
+			data.flags = MMC_DATA_WRITE;
+		else
+			data.flags = MMC_DATA_READ;
+
+		/* data.flags must already be set before doing this. */
+		mmc_set_data_timeout(&data, card);
+
+		/* Allow overriding the timeout_ns for empirical tuning. */
+		if (idata->ic.data_timeout_ns)
+			data.timeout_ns = idata->ic.data_timeout_ns;
+
+		if ((cmd.flags & MMC_RSP_R1B) == MMC_RSP_R1B) {
+			/*
+			 * Pretend this is a data transfer and rely on the
+			 * host driver to compute timeout.  When all host
+			 * drivers support cmd.cmd_timeout for R1B, this
+			 * can be changed to:
+			 *
+			 *     mrq.data = NULL;
+			 *     cmd.cmd_timeout = idata->ic.cmd_timeout_ms;
+			 */
+			data.timeout_ns = idata->ic.cmd_timeout_ms * 1000000;
+		}
+
+		mrq.data = &data;
+	}
+
+	mrq.cmd = &cmd;
+
+>>>>>>> android-omap-tuna-jb
 	mmc_claim_host(card->host);
 
 	if (idata->ic.is_acmd) {
@@ -332,6 +386,7 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 			goto cmd_rel_host;
 	}
 
+<<<<<<< HEAD
 	/* data.flags must already be set before doing this. */
 	mmc_set_data_timeout(&data, card);
 	/* Allow overriding the timeout_ns for empirical tuning. */
@@ -350,6 +405,8 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 		data.timeout_ns = idata->ic.cmd_timeout_ms * 1000000;
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	mmc_wait_for_req(card->host, &mrq);
 
 	if (cmd.error) {

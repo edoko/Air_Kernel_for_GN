@@ -174,9 +174,12 @@ struct isci_request {
 			};
 		} ssp;
 		struct {
+<<<<<<< HEAD
 			struct smp_resp rsp;
 		} smp;
 		struct {
+=======
+>>>>>>> android-omap-tuna-jb
 			struct isci_stp_request req;
 			struct host_to_dev_fis cmd;
 			struct dev_to_host_fis rsp;

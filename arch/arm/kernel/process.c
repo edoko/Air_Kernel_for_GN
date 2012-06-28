@@ -232,6 +232,12 @@ void cpu_idle(void)
 #endif
 
 			local_irq_disable();
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PL310_ERRATA_769419
+			wmb();
+#endif
+>>>>>>> android-omap-tuna-jb
 			if (hlt_counter) {
 				local_irq_enable();
 				cpu_relax();

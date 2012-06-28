@@ -35,7 +35,10 @@
 #define DISPC_GLOBAL_ALPHA		0x0074
 #define DISPC_CONTROL2			0x0238
 #define DISPC_CONFIG2			0x0620
+<<<<<<< HEAD
 #define DISPC_GAMMA_TABLE		0x0630
+=======
+>>>>>>> android-omap-tuna-jb
 #define DISPC_DIVISOR			0x0804
 
 /* DISPC overlay registers */

@@ -175,6 +175,7 @@ static int ohci_quirk_amd700(struct usb_hcd *hcd)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* nVidia controllers continue to drive Reset signalling on the bus
  * even after system shutdown, wasting power.  This flag tells the
  * shutdown routine to leave the controller OPERATIONAL instead of RESET.
@@ -197,6 +198,8 @@ static int ohci_quirk_nvidia_shutdown(struct usb_hcd *hcd)
 	return 0;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static void sb800_prefetch(struct ohci_hcd *ohci, int on)
 {
 	struct pci_dev *pdev;
@@ -260,10 +263,13 @@ static const struct pci_device_id ohci_pci_quirks[] = {
 		PCI_DEVICE(PCI_VENDOR_ID_ATI, 0x4399),
 		.driver_data = (unsigned long)ohci_quirk_amd700,
 	},
+<<<<<<< HEAD
 	{
 		PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID),
 		.driver_data = (unsigned long) ohci_quirk_nvidia_shutdown,
 	},
+=======
+>>>>>>> android-omap-tuna-jb
 
 	/* FIXME for some of the early AMD 760 southbridges, OHCI
 	 * won't work at all.  blacklist them.

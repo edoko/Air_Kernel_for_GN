@@ -459,7 +459,12 @@ static void kill_stream_urbs(struct ua101_stream *stream)
 	unsigned int i;
 
 	for (i = 0; i < stream->queue_length; ++i)
+<<<<<<< HEAD
 		usb_kill_urb(&stream->urbs[i]->urb);
+=======
+		if (stream->urbs[i])
+			usb_kill_urb(&stream->urbs[i]->urb);
+>>>>>>> android-omap-tuna-jb
 }
 
 static int enable_iso_interface(struct ua101 *ua, unsigned int intf_index)
@@ -484,6 +489,12 @@ static void disable_iso_interface(struct ua101 *ua, unsigned int intf_index)
 {
 	struct usb_host_interface *alts;
 
+<<<<<<< HEAD
+=======
+	if (!ua->intf[intf_index])
+		return;
+
+>>>>>>> android-omap-tuna-jb
 	alts = ua->intf[intf_index]->cur_altsetting;
 	if (alts->desc.bAlternateSetting != 0) {
 		int err = usb_set_interface(ua->dev,
@@ -1144,14 +1155,22 @@ static void free_stream_urbs(struct ua101_stream *stream)
 {
 	unsigned int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < stream->queue_length; ++i)
 		kfree(stream->urbs[i]);
+=======
+	for (i = 0; i < stream->queue_length; ++i) {
+		kfree(stream->urbs[i]);
+		stream->urbs[i] = NULL;
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 static void free_usb_related_resources(struct ua101 *ua,
 				       struct usb_interface *interface)
 {
 	unsigned int i;
+<<<<<<< HEAD
 
 	free_stream_urbs(&ua->capture);
 	free_stream_urbs(&ua->playback);
@@ -1165,6 +1184,29 @@ static void free_usb_related_resources(struct ua101 *ua,
 				usb_driver_release_interface(&ua101_driver,
 							     ua->intf[i]);
 		}
+=======
+	struct usb_interface *intf;
+
+	mutex_lock(&ua->mutex);
+	free_stream_urbs(&ua->capture);
+	free_stream_urbs(&ua->playback);
+	mutex_unlock(&ua->mutex);
+	free_stream_buffers(ua, &ua->capture);
+	free_stream_buffers(ua, &ua->playback);
+
+	for (i = 0; i < ARRAY_SIZE(ua->intf); ++i) {
+		mutex_lock(&ua->mutex);
+		intf = ua->intf[i];
+		ua->intf[i] = NULL;
+		mutex_unlock(&ua->mutex);
+		if (intf) {
+			usb_set_intfdata(intf, NULL);
+			if (intf != interface)
+				usb_driver_release_interface(&ua101_driver,
+							     intf);
+		}
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 static void ua101_card_free(struct snd_card *card)

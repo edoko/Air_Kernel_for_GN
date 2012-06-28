@@ -112,6 +112,12 @@ EXPORT_SYMBOL(__put_user_4);
 EXPORT_SYMBOL(__put_user_8);
 #endif
 
+<<<<<<< HEAD
+=======
+	/* crypto hash */
+EXPORT_SYMBOL(sha_transform);
+
+>>>>>>> android-omap-tuna-jb
 	/* gcc lib functions */
 EXPORT_SYMBOL(__ashldi3);
 EXPORT_SYMBOL(__ashrdi3);

@@ -13,6 +13,10 @@
 extern unsigned int __start___lwsync_fixup, __stop___lwsync_fixup;
 extern void do_lwsync_fixups(unsigned long value, void *fixup_start,
 			     void *fixup_end);
+<<<<<<< HEAD
+=======
+extern void do_final_fixups(void);
+>>>>>>> android-omap-tuna-jb
 
 static inline void eieio(void)
 {

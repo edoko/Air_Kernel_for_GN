@@ -24,7 +24,10 @@ static int debug;
 #define DRIVER_DESC "Quatech USB to Serial Driver"
 
 #define	USB_VENDOR_ID_QUATECH			0x061d	/* Quatech VID */
+<<<<<<< HEAD
 #define QUATECH_SSU100	0xC020	/* SSU100 */
+=======
+>>>>>>> android-omap-tuna-jb
 #define QUATECH_SSU200	0xC030	/* SSU200 */
 #define QUATECH_DSU100	0xC040	/* DSU100 */
 #define QUATECH_DSU200	0xC050	/* DSU200 */
@@ -127,7 +130,10 @@ static int debug;
 #define RS232_MODE          0x00
 
 static const struct usb_device_id serqt_id_table[] = {
+<<<<<<< HEAD
 	{USB_DEVICE(USB_VENDOR_ID_QUATECH, QUATECH_SSU100)},
+=======
+>>>>>>> android-omap-tuna-jb
 	{USB_DEVICE(USB_VENDOR_ID_QUATECH, QUATECH_SSU200)},
 	{USB_DEVICE(USB_VENDOR_ID_QUATECH, QUATECH_DSU100)},
 	{USB_DEVICE(USB_VENDOR_ID_QUATECH, QUATECH_DSU200)},
@@ -775,7 +781,10 @@ static int qt_startup(struct usb_serial *serial)
 	}
 
 	switch (serial->dev->descriptor.idProduct) {
+<<<<<<< HEAD
 	case QUATECH_SSU100:
+=======
+>>>>>>> android-omap-tuna-jb
 	case QUATECH_DSU100:
 	case QUATECH_QSU100:
 	case QUATECH_ESU100A:

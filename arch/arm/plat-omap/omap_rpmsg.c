@@ -353,6 +353,10 @@ static void omap_rpmsg_del_vqs(struct virtio_device *vdev)
 
 	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
 		struct omap_rpmsg_vq_info *rpvq = vq->priv;
+<<<<<<< HEAD
+=======
+		iounmap(rpvq->addr);
+>>>>>>> android-omap-tuna-jb
 		vring_del_virtqueue(vq);
 		kfree(rpvq);
 	}

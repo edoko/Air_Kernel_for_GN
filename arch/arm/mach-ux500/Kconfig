@@ -7,6 +7,10 @@ config UX500_SOC_COMMON
 	select HAS_MTU
 	select ARM_ERRATA_753970
 	select ARM_ERRATA_754322
+<<<<<<< HEAD
+=======
+	select ARM_ERRATA_764369
+>>>>>>> android-omap-tuna-jb
 
 menu "Ux500 SoC"
 

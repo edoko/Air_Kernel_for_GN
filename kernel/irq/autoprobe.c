@@ -53,7 +53,11 @@ unsigned long probe_irq_on(void)
 			if (desc->irq_data.chip->irq_set_type)
 				desc->irq_data.chip->irq_set_type(&desc->irq_data,
 							 IRQ_TYPE_PROBE);
+<<<<<<< HEAD
 			irq_startup(desc);
+=======
+			irq_startup(desc, false);
+>>>>>>> android-omap-tuna-jb
 		}
 		raw_spin_unlock_irq(&desc->lock);
 	}
@@ -70,7 +74,11 @@ unsigned long probe_irq_on(void)
 		raw_spin_lock_irq(&desc->lock);
 		if (!desc->action && irq_settings_can_probe(desc)) {
 			desc->istate |= IRQS_AUTODETECT | IRQS_WAITING;
+<<<<<<< HEAD
 			if (irq_startup(desc))
+=======
+			if (irq_startup(desc, false))
+>>>>>>> android-omap-tuna-jb
 				desc->istate |= IRQS_PENDING;
 		}
 		raw_spin_unlock_irq(&desc->lock);

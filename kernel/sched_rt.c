@@ -1390,6 +1390,14 @@ static int push_rt_task(struct rq *rq)
 	if (!next_task)
 		return 0;
 
+<<<<<<< HEAD
+=======
+#ifdef __ARCH_WANT_INTERRUPTS_ON_CTXSW
+       if (unlikely(task_running(rq, next_task)))
+               return 0;
+#endif
+
+>>>>>>> android-omap-tuna-jb
 retry:
 	if (unlikely(next_task == rq->curr)) {
 		WARN_ON(1);

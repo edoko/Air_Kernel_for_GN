@@ -792,7 +792,12 @@ void hdmi_ti_4xxx_basic_configure(struct hdmi_ip_data *ip_data,
 		&avi_cfg,
 		&repeat_cfg);
 
+<<<<<<< HEAD
 	hdmi_wp_core_interrupt_set(ip_data, HDMI_WP_IRQENABLE_CORE);
+=======
+	hdmi_wp_core_interrupt_set(ip_data, HDMI_WP_IRQENABLE_CORE |
+				HDMI_WP_AUDIO_FIFO_UNDERFLOW);
+>>>>>>> android-omap-tuna-jb
 
 	hdmi_wp_video_init_format(&video_format, &video_timing, cfg);
 
@@ -898,6 +903,12 @@ u32 hdmi_ti_4xxx_irq_handler(struct hdmi_ip_data *ip_data)
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	if (val & HDMI_WP_AUDIO_FIFO_UNDERFLOW)
+		pr_err("HDMI_WP_AUDIO_FIFO_UNDERFLOW\n");
+
+>>>>>>> android-omap-tuna-jb
 	pr_debug("HDMI_WP_IRQSTATUS = 0x%x\n", val);
 	pr_debug("HDMI_CORE_SYS_INTR_STATE = 0x%x\n", core_state);
 
@@ -1230,6 +1241,11 @@ void hdmi_ti_4xxx_core_audio_config(struct hdmi_ip_data *ip_data,
 	r = FLD_MOD(r, cfg->i2s_cfg.shift, 0, 0);
 	hdmi_write_reg(hdmi_av_base(ip_data), HDMI_CORE_AV_I2S_IN_CTRL, r);
 
+<<<<<<< HEAD
+=======
+	hdmi_write_reg(hdmi_av_base(ip_data), HDMI_CORE_AV_SWAP_I2S, 0x29);
+
+>>>>>>> android-omap-tuna-jb
 	r = hdmi_read_reg(hdmi_av_base(ip_data), HDMI_CORE_AV_I2S_CHST5);
 	r = FLD_MOD(r, cfg->freq_sample, 7, 4);
 	r = FLD_MOD(r, cfg->i2s_cfg.word_length, 3, 1);
@@ -1303,6 +1319,7 @@ void hdmi_ti_4xxx_core_audio_infoframe_config(struct hdmi_ip_data *ip_data,
 }
 EXPORT_SYMBOL(hdmi_ti_4xxx_core_audio_infoframe_config);
 
+<<<<<<< HEAD
 
 void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool enable)
 {
@@ -1315,6 +1332,25 @@ void hdmi_ti_4xxx_audio_enable(struct hdmi_ip_data *ip_data, bool enable)
 			HDMI_WP_AUDIO_CTRL, enable, 30, 30);
 }
 EXPORT_SYMBOL(hdmi_ti_4xxx_audio_enable);
+=======
+void hdmi_ti_4xxx_audio_transfer_en(struct hdmi_ip_data *ip_data,
+						bool enable)
+{
+	REG_FLD_MOD(hdmi_wp_base(ip_data),
+			HDMI_WP_AUDIO_CTRL, enable, 30, 30);
+	REG_FLD_MOD(hdmi_av_base(ip_data),
+			HDMI_CORE_AV_AUD_MODE, enable, 0, 0);
+}
+EXPORT_SYMBOL(hdmi_ti_4xxx_audio_transfer_en);
+
+
+void hdmi_ti_4xxx_wp_audio_enable(struct hdmi_ip_data *ip_data, bool enable)
+{
+	REG_FLD_MOD(hdmi_wp_base(ip_data),
+			HDMI_WP_AUDIO_CTRL, enable, 31, 31);
+}
+EXPORT_SYMBOL(hdmi_ti_4xxx_wp_audio_enable);
+>>>>>>> android-omap-tuna-jb
 
 int hdmi_ti_4xx_check_aksv_data(struct hdmi_ip_data *ip_data)
 {

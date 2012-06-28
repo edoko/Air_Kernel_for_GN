@@ -187,7 +187,11 @@ static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring, bool consumer
  *			prepare_transfer()?
  */
 static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
+<<<<<<< HEAD
 		bool consumer, bool more_trbs_coming)
+=======
+		bool consumer, bool more_trbs_coming, bool isoc)
+>>>>>>> android-omap-tuna-jb
 {
 	u32 chain;
 	union xhci_trb *next;
@@ -214,11 +218,21 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
 				if (!chain && !more_trbs_coming)
 					break;
 
+<<<<<<< HEAD
 				/* If we're not dealing with 0.95 hardware,
 				 * carry over the chain bit of the previous TRB
 				 * (which may mean the chain bit is cleared).
 				 */
 				if (!xhci_link_trb_quirk(xhci)) {
+=======
+				/* If we're not dealing with 0.95 hardware or
+				 * isoc rings on AMD 0.96 host,
+				 * carry over the chain bit of the previous TRB
+				 * (which may mean the chain bit is cleared).
+				 */
+				if (!(isoc && (xhci->quirks & XHCI_AMD_0x96_HOST))
+						&& !xhci_link_trb_quirk(xhci)) {
+>>>>>>> android-omap-tuna-jb
 					next->link.control &=
 						cpu_to_le32(~TRB_CHAIN);
 					next->link.control |=
@@ -817,23 +831,39 @@ void xhci_stop_endpoint_command_watchdog(unsigned long arg)
 	struct xhci_ring *ring;
 	struct xhci_td *cur_td;
 	int ret, i, j;
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+>>>>>>> android-omap-tuna-jb
 
 	ep = (struct xhci_virt_ep *) arg;
 	xhci = ep->xhci;
 
+<<<<<<< HEAD
 	spin_lock(&xhci->lock);
+=======
+	spin_lock_irqsave(&xhci->lock, flags);
+>>>>>>> android-omap-tuna-jb
 
 	ep->stop_cmds_pending--;
 	if (xhci->xhc_state & XHCI_STATE_DYING) {
 		xhci_dbg(xhci, "Stop EP timer ran, but another timer marked "
 				"xHCI as DYING, exiting.\n");
+<<<<<<< HEAD
 		spin_unlock(&xhci->lock);
+=======
+		spin_unlock_irqrestore(&xhci->lock, flags);
+>>>>>>> android-omap-tuna-jb
 		return;
 	}
 	if (!(ep->stop_cmds_pending == 0 && (ep->ep_state & EP_HALT_PENDING))) {
 		xhci_dbg(xhci, "Stop EP timer ran, but no command pending, "
 				"exiting.\n");
+<<<<<<< HEAD
 		spin_unlock(&xhci->lock);
+=======
+		spin_unlock_irqrestore(&xhci->lock, flags);
+>>>>>>> android-omap-tuna-jb
 		return;
 	}
 
@@ -845,11 +875,19 @@ void xhci_stop_endpoint_command_watchdog(unsigned long arg)
 	xhci->xhc_state |= XHCI_STATE_DYING;
 	/* Disable interrupts from the host controller and start halting it */
 	xhci_quiesce(xhci);
+<<<<<<< HEAD
 	spin_unlock(&xhci->lock);
 
 	ret = xhci_halt(xhci);
 
 	spin_lock(&xhci->lock);
+=======
+	spin_unlock_irqrestore(&xhci->lock, flags);
+
+	ret = xhci_halt(xhci);
+
+	spin_lock_irqsave(&xhci->lock, flags);
+>>>>>>> android-omap-tuna-jb
 	if (ret < 0) {
 		/* This is bad; the host is not responding to commands and it's
 		 * not allowing itself to be halted.  At least interrupts are
@@ -897,7 +935,11 @@ void xhci_stop_endpoint_command_watchdog(unsigned long arg)
 			}
 		}
 	}
+<<<<<<< HEAD
 	spin_unlock(&xhci->lock);
+=======
+	spin_unlock_irqrestore(&xhci->lock, flags);
+>>>>>>> android-omap-tuna-jb
 	xhci_dbg(xhci, "Calling usb_hc_died()\n");
 	usb_hc_died(xhci_to_hcd(xhci)->primary_hcd);
 	xhci_dbg(xhci, "xHCI host controller is dead.\n");
@@ -1215,6 +1257,10 @@ static void handle_vendor_event(struct xhci_hcd *xhci,
  *
  * Returns a zero-based port number, which is suitable for indexing into each of
  * the split roothubs' port arrays and bus state arrays.
+<<<<<<< HEAD
+=======
+ * Add one to it in order to call xhci_find_slot_id_by_port.
+>>>>>>> android-omap-tuna-jb
  */
 static unsigned int find_faked_portnum_from_hw_portnum(struct usb_hcd *hcd,
 		struct xhci_hcd *xhci, u32 port_id)
@@ -1337,7 +1383,11 @@ static void handle_port_status(struct xhci_hcd *xhci,
 			temp |= PORT_LINK_STROBE | XDEV_U0;
 			xhci_writel(xhci, temp, port_array[faked_port_index]);
 			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
+<<<<<<< HEAD
 					faked_port_index);
+=======
+					faked_port_index + 1);
+>>>>>>> android-omap-tuna-jb
 			if (!slot_id) {
 				xhci_dbg(xhci, "slot_id is zero\n");
 				goto cleanup;
@@ -1345,10 +1395,15 @@ static void handle_port_status(struct xhci_hcd *xhci,
 			xhci_ring_device(xhci, slot_id);
 			xhci_dbg(xhci, "resume SS port %d finished\n", port_id);
 			/* Clear PORT_PLC */
+<<<<<<< HEAD
 			temp = xhci_readl(xhci, port_array[faked_port_index]);
 			temp = xhci_port_state_to_neutral(temp);
 			temp |= PORT_PLC;
 			xhci_writel(xhci, temp, port_array[faked_port_index]);
+=======
+			xhci_test_and_clear_bit(xhci, port_array,
+						faked_port_index, PORT_PLC);
+>>>>>>> android-omap-tuna-jb
 		} else {
 			xhci_dbg(xhci, "resume HS port %d\n", port_id);
 			bus_state->resume_done[faked_port_index] = jiffies +
@@ -1359,6 +1414,13 @@ static void handle_port_status(struct xhci_hcd *xhci,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	if (hcd->speed != HCD_USB3)
+		xhci_test_and_clear_bit(xhci, port_array, faked_port_index,
+					PORT_PLC);
+
+>>>>>>> android-omap-tuna-jb
 cleanup:
 	/* Update event ring dequeue pointer before dropping the lock */
 	inc_deq(xhci, xhci->event_ring, true);
@@ -1940,8 +2002,15 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 	int status = -EINPROGRESS;
 	struct urb_priv *urb_priv;
 	struct xhci_ep_ctx *ep_ctx;
+<<<<<<< HEAD
 	u32 trb_comp_code;
 	int ret = 0;
+=======
+	struct list_head *tmp;
+	u32 trb_comp_code;
+	int ret = 0;
+	int td_num = 0;
+>>>>>>> android-omap-tuna-jb
 
 	slot_id = TRB_TO_SLOT_ID(le32_to_cpu(event->flags));
 	xdev = xhci->devs[slot_id];
@@ -1963,6 +2032,15 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Count current td numbers if ep->skip is set */
+	if (ep->skip) {
+		list_for_each(tmp, &ep_ring->td_list)
+			td_num++;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	event_dma = le64_to_cpu(event->buffer);
 	trb_comp_code = GET_COMP_CODE(le32_to_cpu(event->transfer_len));
 	/* Look for common error cases */
@@ -2074,7 +2152,22 @@ static int handle_tx_event(struct xhci_hcd *xhci,
 			goto cleanup;
 		}
 
+<<<<<<< HEAD
 		td = list_entry(ep_ring->td_list.next, struct xhci_td, td_list);
+=======
+		/* We've skipped all the TDs on the ep ring when ep->skip set */
+		if (ep->skip && td_num == 0) {
+			ep->skip = false;
+			xhci_dbg(xhci, "All tds on the ep_ring skipped. "
+						"Clear skip flag.\n");
+			ret = 0;
+			goto cleanup;
+		}
+
+		td = list_entry(ep_ring->td_list.next, struct xhci_td, td_list);
+		if (ep->skip)
+			td_num--;
+>>>>>>> android-omap-tuna-jb
 
 		/* Is this a TRB in the currently executing TD? */
 		event_seg = trb_in_td(ep_ring->deq_seg, ep_ring->dequeue,
@@ -2327,7 +2420,11 @@ hw_died:
 		u32 irq_pending;
 		/* Acknowledge the PCI interrupt */
 		irq_pending = xhci_readl(xhci, &xhci->ir_set->irq_pending);
+<<<<<<< HEAD
 		irq_pending |= 0x3;
+=======
+		irq_pending |= IMAN_IP;
+>>>>>>> android-omap-tuna-jb
 		xhci_writel(xhci, irq_pending, &xhci->ir_set->irq_pending);
 	}
 
@@ -2398,7 +2495,11 @@ irqreturn_t xhci_msi_irq(int irq, struct usb_hcd *hcd)
  *			prepare_transfer()?
  */
 static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
+<<<<<<< HEAD
 		bool consumer, bool more_trbs_coming,
+=======
+		bool consumer, bool more_trbs_coming, bool isoc,
+>>>>>>> android-omap-tuna-jb
 		u32 field1, u32 field2, u32 field3, u32 field4)
 {
 	struct xhci_generic_trb *trb;
@@ -2408,7 +2509,11 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
 	trb->field[1] = cpu_to_le32(field2);
 	trb->field[2] = cpu_to_le32(field3);
 	trb->field[3] = cpu_to_le32(field4);
+<<<<<<< HEAD
 	inc_enq(xhci, ring, consumer, more_trbs_coming);
+=======
+	inc_enq(xhci, ring, consumer, more_trbs_coming, isoc);
+>>>>>>> android-omap-tuna-jb
 }
 
 /*
@@ -2416,7 +2521,11 @@ static void queue_trb(struct xhci_hcd *xhci, struct xhci_ring *ring,
  * FIXME allocate segments if the ring is full.
  */
 static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
+<<<<<<< HEAD
 		u32 ep_state, unsigned int num_trbs, gfp_t mem_flags)
+=======
+		u32 ep_state, unsigned int num_trbs, bool isoc, gfp_t mem_flags)
+>>>>>>> android-omap-tuna-jb
 {
 	/* Make sure the endpoint has been added to xHC schedule */
 	switch (ep_state) {
@@ -2458,10 +2567,18 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
 		next = ring->enqueue;
 
 		while (last_trb(xhci, ring, ring->enq_seg, next)) {
+<<<<<<< HEAD
 			/* If we're not dealing with 0.95 hardware,
 			 * clear the chain bit.
 			 */
 			if (!xhci_link_trb_quirk(xhci))
+=======
+			/* If we're not dealing with 0.95 hardware or isoc rings
+			 * on AMD 0.96 host, clear the chain bit.
+			 */
+			if (!xhci_link_trb_quirk(xhci) && !(isoc &&
+					(xhci->quirks & XHCI_AMD_0x96_HOST)))
+>>>>>>> android-omap-tuna-jb
 				next->link.control &= cpu_to_le32(~TRB_CHAIN);
 			else
 				next->link.control |= cpu_to_le32(TRB_CHAIN);
@@ -2494,6 +2611,10 @@ static int prepare_transfer(struct xhci_hcd *xhci,
 		unsigned int num_trbs,
 		struct urb *urb,
 		unsigned int td_index,
+<<<<<<< HEAD
+=======
+		bool isoc,
+>>>>>>> android-omap-tuna-jb
 		gfp_t mem_flags)
 {
 	int ret;
@@ -2511,7 +2632,11 @@ static int prepare_transfer(struct xhci_hcd *xhci,
 
 	ret = prepare_ring(xhci, ep_ring,
 			   le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK,
+<<<<<<< HEAD
 			   num_trbs, mem_flags);
+=======
+			   num_trbs, isoc, mem_flags);
+>>>>>>> android-omap-tuna-jb
 	if (ret)
 		return ret;
 
@@ -2544,7 +2669,11 @@ static unsigned int count_sg_trbs_needed(struct xhci_hcd *xhci, struct urb *urb)
 	struct scatterlist *sg;
 
 	sg = NULL;
+<<<<<<< HEAD
 	num_sgs = urb->num_sgs;
+=======
+	num_sgs = urb->num_mapped_sgs;
+>>>>>>> android-omap-tuna-jb
 	temp = urb->transfer_buffer_length;
 
 	xhci_dbg(xhci, "count sg list trbs: \n");
@@ -2728,13 +2857,21 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		return -EINVAL;
 
 	num_trbs = count_sg_trbs_needed(xhci, urb);
+<<<<<<< HEAD
 	num_sgs = urb->num_sgs;
+=======
+	num_sgs = urb->num_mapped_sgs;
+>>>>>>> android-omap-tuna-jb
 	total_packet_count = roundup(urb->transfer_buffer_length,
 			le16_to_cpu(urb->ep->desc.wMaxPacketSize));
 
 	trb_buff_len = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
+<<<<<<< HEAD
 			num_trbs, urb, 0, mem_flags);
+=======
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> android-omap-tuna-jb
 	if (trb_buff_len < 0)
 		return trb_buff_len;
 
@@ -2829,7 +2966,11 @@ static int queue_bulk_sg_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			more_trbs_coming = true;
 		else
 			more_trbs_coming = false;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, false, more_trbs_coming,
+=======
+		queue_trb(xhci, ep_ring, false, more_trbs_coming, false,
+>>>>>>> android-omap-tuna-jb
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -2920,7 +3061,11 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 
 	ret = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
+<<<<<<< HEAD
 			num_trbs, urb, 0, mem_flags);
+=======
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> android-omap-tuna-jb
 	if (ret < 0)
 		return ret;
 
@@ -2992,7 +3137,11 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 			more_trbs_coming = true;
 		else
 			more_trbs_coming = false;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, false, more_trbs_coming,
+=======
+		queue_trb(xhci, ep_ring, false, more_trbs_coming, false,
+>>>>>>> android-omap-tuna-jb
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -3052,7 +3201,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		num_trbs++;
 	ret = prepare_transfer(xhci, xhci->devs[slot_id],
 			ep_index, urb->stream_id,
+<<<<<<< HEAD
 			num_trbs, urb, 0, mem_flags);
+=======
+			num_trbs, urb, 0, false, mem_flags);
+>>>>>>> android-omap-tuna-jb
 	if (ret < 0)
 		return ret;
 
@@ -3085,7 +3238,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		}
 	}
 
+<<<<<<< HEAD
 	queue_trb(xhci, ep_ring, false, true,
+=======
+	queue_trb(xhci, ep_ring, false, true, false,
+>>>>>>> android-omap-tuna-jb
 		  setup->bRequestType | setup->bRequest << 8 | le16_to_cpu(setup->wValue) << 16,
 		  le16_to_cpu(setup->wIndex) | le16_to_cpu(setup->wLength) << 16,
 		  TRB_LEN(8) | TRB_INTR_TARGET(0),
@@ -3105,7 +3262,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 	if (urb->transfer_buffer_length > 0) {
 		if (setup->bRequestType & USB_DIR_IN)
 			field |= TRB_DIR_IN;
+<<<<<<< HEAD
 		queue_trb(xhci, ep_ring, false, true,
+=======
+		queue_trb(xhci, ep_ring, false, true, false,
+>>>>>>> android-omap-tuna-jb
 				lower_32_bits(urb->transfer_dma),
 				upper_32_bits(urb->transfer_dma),
 				length_field,
@@ -3121,7 +3282,11 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		field = 0;
 	else
 		field = TRB_DIR_IN;
+<<<<<<< HEAD
 	queue_trb(xhci, ep_ring, false, false,
+=======
+	queue_trb(xhci, ep_ring, false, false, false,
+>>>>>>> android-omap-tuna-jb
 			0,
 			0,
 			TRB_INTR_TARGET(0),
@@ -3270,7 +3435,12 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		trbs_per_td = count_isoc_trbs_needed(xhci, urb, i);
 
 		ret = prepare_transfer(xhci, xhci->devs[slot_id], ep_index,
+<<<<<<< HEAD
 				urb->stream_id, trbs_per_td, urb, i, mem_flags);
+=======
+				urb->stream_id, trbs_per_td, urb, i, true,
+				mem_flags);
+>>>>>>> android-omap-tuna-jb
 		if (ret < 0) {
 			if (i == 0)
 				return ret;
@@ -3340,7 +3510,11 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 				remainder |
 				TRB_INTR_TARGET(0);
 
+<<<<<<< HEAD
 			queue_trb(xhci, ep_ring, false, more_trbs_coming,
+=======
+			queue_trb(xhci, ep_ring, false, more_trbs_coming, true,
+>>>>>>> android-omap-tuna-jb
 				lower_32_bits(addr),
 				upper_32_bits(addr),
 				length_field,
@@ -3354,7 +3528,12 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		/* Check TD length */
 		if (running_total != td_len) {
 			xhci_err(xhci, "ISOC TD length unmatch\n");
+<<<<<<< HEAD
 			return -EINVAL;
+=======
+			ret = -EINVAL;
+			goto cleanup;
+>>>>>>> android-omap-tuna-jb
 		}
 	}
 
@@ -3422,7 +3601,11 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
 	 * Do not insert any td of the urb to the ring if the check failed.
 	 */
 	ret = prepare_ring(xhci, ep_ring, le32_to_cpu(ep_ctx->ep_info) & EP_STATE_MASK,
+<<<<<<< HEAD
 			   num_trbs, mem_flags);
+=======
+			   num_trbs, true, mem_flags);
+>>>>>>> android-omap-tuna-jb
 	if (ret)
 		return ret;
 
@@ -3481,7 +3664,11 @@ static int queue_command(struct xhci_hcd *xhci, u32 field1, u32 field2,
 		reserved_trbs++;
 
 	ret = prepare_ring(xhci, xhci->cmd_ring, EP_STATE_RUNNING,
+<<<<<<< HEAD
 			reserved_trbs, GFP_ATOMIC);
+=======
+			reserved_trbs, false, GFP_ATOMIC);
+>>>>>>> android-omap-tuna-jb
 	if (ret < 0) {
 		xhci_err(xhci, "ERR: No room for command on command ring\n");
 		if (command_must_succeed)
@@ -3489,8 +3676,13 @@ static int queue_command(struct xhci_hcd *xhci, u32 field1, u32 field2,
 					"unfailable commands failed.\n");
 		return ret;
 	}
+<<<<<<< HEAD
 	queue_trb(xhci, xhci->cmd_ring, false, false, field1, field2, field3,
 			field4 | xhci->cmd_ring->cycle_state);
+=======
+	queue_trb(xhci, xhci->cmd_ring, false, false, false, field1, field2,
+			field3,	field4 | xhci->cmd_ring->cycle_state);
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 

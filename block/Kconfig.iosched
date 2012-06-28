@@ -43,6 +43,7 @@ config CFQ_GROUP_IOSCHED
 	---help---
 	  Enable group IO scheduling in CFQ.
 
+<<<<<<< HEAD
 config DEBUG_CFQ_IOSCHED
        bool "Debug CFQ Scheduling"
        depends on CFQ_GROUP_IOSCHED
@@ -62,6 +63,8 @@ config IOSCHED_SIO
          basic merging, trying to keep a minimum overhead. It is aimed
          mainly for aleatory access devices (eg: flash devices).
 
+=======
+>>>>>>> android-omap-tuna-jb
 choice
 	prompt "Default I/O scheduler"
 	default DEFAULT_CFQ
@@ -78,9 +81,12 @@ choice
 	config DEFAULT_NOOP
 		bool "No-op"
 
+<<<<<<< HEAD
 	config DEFAULT_SIO
                bool "SIO" if IOSCHED_SIO=y
 
+=======
+>>>>>>> android-omap-tuna-jb
 endchoice
 
 config DEFAULT_IOSCHED
@@ -88,7 +94,10 @@ config DEFAULT_IOSCHED
 	default "deadline" if DEFAULT_DEADLINE
 	default "cfq" if DEFAULT_CFQ
 	default "noop" if DEFAULT_NOOP
+<<<<<<< HEAD
 	default "sio" if DEFAULT_SIO
+=======
+>>>>>>> android-omap-tuna-jb
 
 endmenu
 

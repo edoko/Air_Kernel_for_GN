@@ -468,6 +468,10 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
 	INIT_WORK(&rs->md.event_work, do_table_event);
 	ti->split_io = rs->md.chunk_sectors;
 	ti->private = rs;
+<<<<<<< HEAD
+=======
+	ti->num_flush_requests = 1;
+>>>>>>> android-omap-tuna-jb
 
 	mutex_lock(&rs->md.reconfig_mutex);
 	ret = md_run(&rs->md);

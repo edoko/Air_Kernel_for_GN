@@ -1376,6 +1376,13 @@ static int pl011_startup(struct uart_port *port)
 
 	uap->port.uartclk = clk_get_rate(uap->clk);
 
+<<<<<<< HEAD
+=======
+	/* Clear pending error and receive interrupts */
+	writew(UART011_OEIS | UART011_BEIS | UART011_PEIS | UART011_FEIS |
+	       UART011_RTIS | UART011_RXIS, uap->port.membase + UART011_ICR);
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Allocate the IRQ
 	 */
@@ -1410,10 +1417,13 @@ static int pl011_startup(struct uart_port *port)
 	cr = UART01x_CR_UARTEN | UART011_CR_RXE | UART011_CR_TXE;
 	writew(cr, uap->port.membase + UART011_CR);
 
+<<<<<<< HEAD
 	/* Clear pending error interrupts */
 	writew(UART011_OEIS | UART011_BEIS | UART011_PEIS | UART011_FEIS,
 	       uap->port.membase + UART011_ICR);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * initialise the old status of the modem signals
 	 */
@@ -1428,6 +1438,12 @@ static int pl011_startup(struct uart_port *port)
 	 * as well.
 	 */
 	spin_lock_irq(&uap->port.lock);
+<<<<<<< HEAD
+=======
+	/* Clear out any spuriously appearing RX interrupts */
+	 writew(UART011_RTIS | UART011_RXIS,
+		uap->port.membase + UART011_ICR);
+>>>>>>> android-omap-tuna-jb
 	uap->im = UART011_RTIM;
 	if (!pl011_dma_rx_running(uap))
 		uap->im |= UART011_RXIM;
@@ -1733,9 +1749,25 @@ pl011_console_write(struct console *co, const char *s, unsigned int count)
 {
 	struct uart_amba_port *uap = amba_ports[co->index];
 	unsigned int status, old_cr, new_cr;
+<<<<<<< HEAD
 
 	clk_enable(uap->clk);
 
+=======
+	unsigned long flags;
+	int locked = 1;
+
+	clk_enable(uap->clk);
+
+	local_irq_save(flags);
+	if (uap->port.sysrq)
+		locked = 0;
+	else if (oops_in_progress)
+		locked = spin_trylock(&uap->port.lock);
+	else
+		spin_lock(&uap->port.lock);
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 *	First save the CR then disable the interrupts
 	 */
@@ -1755,6 +1787,13 @@ pl011_console_write(struct console *co, const char *s, unsigned int count)
 	} while (status & UART01x_FR_BUSY);
 	writew(old_cr, uap->port.membase + UART011_CR);
 
+<<<<<<< HEAD
+=======
+	if (locked)
+		spin_unlock(&uap->port.lock);
+	local_irq_restore(flags);
+
+>>>>>>> android-omap-tuna-jb
 	clk_disable(uap->clk);
 }
 
@@ -1906,6 +1945,13 @@ static int pl011_probe(struct amba_device *dev, const struct amba_id *id)
 	uap->port.line = i;
 	pl011_dma_probe(uap);
 
+<<<<<<< HEAD
+=======
+	/* Ensure interrupts from this UART are masked and cleared */
+	writew(0, uap->port.membase + UART011_IMSC);
+	writew(0xffff, uap->port.membase + UART011_ICR);
+
+>>>>>>> android-omap-tuna-jb
 	snprintf(uap->type, sizeof(uap->type), "PL011 rev%u", amba_rev(dev));
 
 	amba_ports[i] = uap;

@@ -383,6 +383,7 @@ static ssize_t manager_cpr_coef_store(struct omap_overlay_manager *mgr,
 
 	return size;
 }
+<<<<<<< HEAD
 static ssize_t manager_gamma_show(
 		struct omap_overlay_manager *mgr, char *buf)
 {
@@ -414,6 +415,8 @@ static ssize_t manager_gamma_store(
 
 	return size;
 }
+=======
+>>>>>>> android-omap-tuna-jb
 
 struct manager_attribute {
 	struct attribute attr;
@@ -447,9 +450,12 @@ static MANAGER_ATTR(cpr_coef, S_IRUGO|S_IWUSR,
 		manager_cpr_coef_show,
 		manager_cpr_coef_store);
 
+<<<<<<< HEAD
 static MANAGER_ATTR(gamma, S_IRUGO|S_IWUSR,
 			manager_gamma_show,
 			manager_gamma_store);
+=======
+>>>>>>> android-omap-tuna-jb
 
 static struct attribute *manager_sysfs_attrs[] = {
 	&manager_attr_name.attr,
@@ -461,7 +467,10 @@ static struct attribute *manager_sysfs_attrs[] = {
 	&manager_attr_alpha_blending_enabled.attr,
 	&manager_attr_cpr_enable.attr,
 	&manager_attr_cpr_coef.attr,
+<<<<<<< HEAD
 	&manager_attr_gamma.attr,
+=======
+>>>>>>> android-omap-tuna-jb
 	NULL
 };
 
@@ -605,7 +614,10 @@ struct manager_cache_data {
 
 	enum omap_dss_trans_key_type trans_key_type;
 	u32 trans_key;
+<<<<<<< HEAD
 	u8 gamma;
+=======
+>>>>>>> android-omap-tuna-jb
 	bool trans_enabled;
 
 	bool alpha_enabled;
@@ -1140,7 +1152,10 @@ static void configure_manager(enum omap_channel channel)
 	dispc_set_default_color(channel, c->default_color);
 	dispc_set_trans_key(channel, c->trans_key_type, c->trans_key);
 	dispc_enable_trans_key(channel, c->trans_enabled);
+<<<<<<< HEAD
 	dispc_enable_gamma(channel, c->gamma);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	/* if we have OMAP3 alpha compatibility, alpha blending is always on */
 	if (dss_has_feature(FEAT_ALPHA_OMAP3_COMPAT)) {
@@ -1885,7 +1900,10 @@ static int omap_dss_mgr_apply(struct omap_overlay_manager *mgr)
 	mc->alpha_enabled = mgr->info.alpha_enabled;
 	mc->cpr_coefs = mgr->info.cpr_coefs;
 	mc->cpr_enable = mgr->info.cpr_enable;
+<<<<<<< HEAD
 	mc->gamma = mgr->info.gamma;
+=======
+>>>>>>> android-omap-tuna-jb
 
 	mc->manual_upd_display =
 		dssdev->caps & OMAP_DSS_DISPLAY_CAP_MANUAL_UPDATE;

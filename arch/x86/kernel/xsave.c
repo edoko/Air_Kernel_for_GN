@@ -47,7 +47,11 @@ void __sanitize_i387_state(struct task_struct *tsk)
 	if (!fx)
 		return;
 
+<<<<<<< HEAD
 	BUG_ON(task_thread_info(tsk)->status & TS_USEDFPU);
+=======
+	BUG_ON(__thread_has_fpu(tsk));
+>>>>>>> android-omap-tuna-jb
 
 	xstate_bv = tsk->thread.fpu.state->xsave.xsave_hdr.xstate_bv;
 
@@ -168,7 +172,11 @@ int save_i387_xstate(void __user *buf)
 	if (!used_math())
 		return 0;
 
+<<<<<<< HEAD
 	if (task_thread_info(tsk)->status & TS_USEDFPU) {
+=======
+	if (user_has_fpu()) {
+>>>>>>> android-omap-tuna-jb
 		if (use_xsave())
 			err = xsave_user(buf);
 		else
@@ -176,8 +184,12 @@ int save_i387_xstate(void __user *buf)
 
 		if (err)
 			return err;
+<<<<<<< HEAD
 		task_thread_info(tsk)->status &= ~TS_USEDFPU;
 		stts();
+=======
+		user_fpu_end();
+>>>>>>> android-omap-tuna-jb
 	} else {
 		sanitize_i387_state(tsk);
 		if (__copy_to_user(buf, &tsk->thread.fpu.state->fxsave,
@@ -292,10 +304,14 @@ int restore_i387_xstate(void __user *buf)
 			return err;
 	}
 
+<<<<<<< HEAD
 	if (!(task_thread_info(current)->status & TS_USEDFPU)) {
 		clts();
 		task_thread_info(current)->status |= TS_USEDFPU;
 	}
+=======
+	user_fpu_begin();
+>>>>>>> android-omap-tuna-jb
 	if (use_xsave())
 		err = restore_user_xstate(buf);
 	else

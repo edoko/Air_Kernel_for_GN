@@ -320,12 +320,42 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
 		} else if (!locked)
 			spin_lock_irq(&zone->lru_lock);
 
+<<<<<<< HEAD
+=======
+		/*
+		 * migrate_pfn does not necessarily start aligned to a
+		 * pageblock. Ensure that pfn_valid is called when moving
+		 * into a new MAX_ORDER_NR_PAGES range in case of large
+		 * memory holes within the zone
+		 */
+		if ((low_pfn & (MAX_ORDER_NR_PAGES - 1)) == 0) {
+			if (!pfn_valid(low_pfn)) {
+				low_pfn += MAX_ORDER_NR_PAGES - 1;
+				continue;
+			}
+		}
+
+>>>>>>> android-omap-tuna-jb
 		if (!pfn_valid_within(low_pfn))
 			continue;
 		nr_scanned++;
 
+<<<<<<< HEAD
 		/* Get the page and skip if free */
 		page = pfn_to_page(low_pfn);
+=======
+		/*
+		 * Get the page and ensure the page is within the same zone.
+		 * See the comment in isolate_freepages about overlapping
+		 * nodes. It is deliberate that the new zone lock is not taken
+		 * as memory compaction should not move pages between nodes.
+		 */
+		page = pfn_to_page(low_pfn);
+		if (page_zone(page) != zone)
+			continue;
+
+		/* Skip if free */
+>>>>>>> android-omap-tuna-jb
 		if (PageBuddy(page))
 			continue;
 

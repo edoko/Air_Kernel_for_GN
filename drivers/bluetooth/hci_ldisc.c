@@ -237,7 +237,10 @@ static void hci_uart_destruct(struct hci_dev *hdev)
 		return;
 
 	BT_DBG("%s", hdev->name);
+<<<<<<< HEAD
 	kfree(hdev->driver_data);
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 /* ------ LDISC part ------ */
@@ -310,12 +313,21 @@ static void hci_uart_tty_close(struct tty_struct *tty)
 			hci_uart_close(hdev);
 
 		if (test_and_clear_bit(HCI_UART_PROTO_SET, &hu->flags)) {
+<<<<<<< HEAD
 			hu->proto->close(hu);
+=======
+>>>>>>> android-omap-tuna-jb
 			if (hdev) {
 				hci_unregister_dev(hdev);
 				hci_free_dev(hdev);
 			}
+<<<<<<< HEAD
 		}
+=======
+			hu->proto->close(hu);
+		}
+		kfree(hu);
+>>>>>>> android-omap-tuna-jb
 	}
 }
 

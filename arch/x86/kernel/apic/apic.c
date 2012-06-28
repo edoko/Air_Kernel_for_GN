@@ -1558,9 +1558,17 @@ static int __init apic_verify(void)
 	mp_lapic_addr = APIC_DEFAULT_PHYS_BASE;
 
 	/* The BIOS may have set up the APIC at some other address */
+<<<<<<< HEAD
 	rdmsr(MSR_IA32_APICBASE, l, h);
 	if (l & MSR_IA32_APICBASE_ENABLE)
 		mp_lapic_addr = l & MSR_IA32_APICBASE_BASE;
+=======
+	if (boot_cpu_data.x86 >= 6) {
+		rdmsr(MSR_IA32_APICBASE, l, h);
+		if (l & MSR_IA32_APICBASE_ENABLE)
+			mp_lapic_addr = l & MSR_IA32_APICBASE_BASE;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	pr_info("Found and enabled local APIC!\n");
 	return 0;
@@ -1578,6 +1586,7 @@ int __init apic_force_enable(unsigned long addr)
 	 * MSR. This can only be done in software for Intel P6 or later
 	 * and AMD K7 (Model > 1) or later.
 	 */
+<<<<<<< HEAD
 	rdmsr(MSR_IA32_APICBASE, l, h);
 	if (!(l & MSR_IA32_APICBASE_ENABLE)) {
 		pr_info("Local APIC disabled by BIOS -- reenabling.\n");
@@ -1585,6 +1594,17 @@ int __init apic_force_enable(unsigned long addr)
 		l |= MSR_IA32_APICBASE_ENABLE | addr;
 		wrmsr(MSR_IA32_APICBASE, l, h);
 		enabled_via_apicbase = 1;
+=======
+	if (boot_cpu_data.x86 >= 6) {
+		rdmsr(MSR_IA32_APICBASE, l, h);
+		if (!(l & MSR_IA32_APICBASE_ENABLE)) {
+			pr_info("Local APIC disabled by BIOS -- reenabling.\n");
+			l &= ~MSR_IA32_APICBASE_BASE;
+			l |= MSR_IA32_APICBASE_ENABLE | addr;
+			wrmsr(MSR_IA32_APICBASE, l, h);
+			enabled_via_apicbase = 1;
+		}
+>>>>>>> android-omap-tuna-jb
 	}
 	return apic_verify();
 }
@@ -2112,10 +2132,19 @@ static void lapic_resume(void)
 		 * FIXME! This will be wrong if we ever support suspend on
 		 * SMP! We'll need to do this as part of the CPU restore!
 		 */
+<<<<<<< HEAD
 		rdmsr(MSR_IA32_APICBASE, l, h);
 		l &= ~MSR_IA32_APICBASE_BASE;
 		l |= MSR_IA32_APICBASE_ENABLE | mp_lapic_addr;
 		wrmsr(MSR_IA32_APICBASE, l, h);
+=======
+		if (boot_cpu_data.x86 >= 6) {
+			rdmsr(MSR_IA32_APICBASE, l, h);
+			l &= ~MSR_IA32_APICBASE_BASE;
+			l |= MSR_IA32_APICBASE_ENABLE | mp_lapic_addr;
+			wrmsr(MSR_IA32_APICBASE, l, h);
+		}
+>>>>>>> android-omap-tuna-jb
 	}
 
 	maxlvt = lapic_get_maxlvt();

@@ -1048,6 +1048,10 @@ static void mmc_sd_detect(struct mmc_host *host)
 
 		mmc_claim_host(host);
 		mmc_detach_bus(host);
+<<<<<<< HEAD
+=======
+		mmc_power_off(host);
+>>>>>>> android-omap-tuna-jb
 		mmc_release_host(host);
 	}
 }

@@ -302,8 +302,12 @@ void __init btfixup(void)
 				case 'i':	/* INT */
 					if ((insn & 0xc1c00000) == 0x01000000) /* %HI */
 						set_addr(addr, q[1], fmangled, (insn & 0xffc00000) | (p[1] >> 10));
+<<<<<<< HEAD
 					else if ((insn & 0x80002000) == 0x80002000 &&
 					         (insn & 0x01800000) != 0x01800000) /* %LO */
+=======
+					else if ((insn & 0x80002000) == 0x80002000) /* %LO */
+>>>>>>> android-omap-tuna-jb
 						set_addr(addr, q[1], fmangled, (insn & 0xffffe000) | (p[1] & 0x3ff));
 					else {
 						prom_printf(insn_i, p, addr, insn);

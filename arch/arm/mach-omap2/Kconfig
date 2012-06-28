@@ -337,6 +337,10 @@ config MACH_TUNA
 config OMAP3_EMU
 	bool "OMAP3 debugging peripherals"
 	depends on ARCH_OMAP3
+<<<<<<< HEAD
+=======
+	select ARM_AMBA
+>>>>>>> android-omap-tuna-jb
 	select OC_ETM
 	help
 	  Say Y here to enable debugging hardware of omap3
@@ -389,6 +393,7 @@ config OMAP4_PPA_CPU1_ONLINE_BUG
 	  If, on the other hand, you do not understand the change, leave the
 	  default as enabled.
 
+<<<<<<< HEAD
 config OMAP_GPU_OVERCLOCK
 	bool "Enable GPU OverClock 512Mhz"
 	default n
@@ -404,4 +409,8 @@ config FORCE_FAST_CHARGE
 	  A simple sysfs interface to force adapters that
 	  are detected as USB to charge as AC.
 
+=======
+endmenu
+
+>>>>>>> android-omap-tuna-jb
 endif

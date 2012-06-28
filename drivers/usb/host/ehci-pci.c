@@ -144,6 +144,17 @@ static int ehci_pci_setup(struct usb_hcd *hcd)
 			hcd->has_tt = 1;
 			tdi_reset(ehci);
 		}
+<<<<<<< HEAD
+=======
+		if (pdev->subsystem_vendor == PCI_VENDOR_ID_ASUSTEK) {
+			/* EHCI #1 or #2 on 6 Series/C200 Series chipset */
+			if (pdev->device == 0x1c26 || pdev->device == 0x1c2d) {
+				ehci_info(ehci, "broken D3 during system sleep on ASUS\n");
+				hcd->broken_pci_sleep = 1;
+				device_set_wakeup_capable(&pdev->dev, false);
+			}
+		}
+>>>>>>> android-omap-tuna-jb
 		break;
 	case PCI_VENDOR_ID_TDI:
 		if (pdev->device == PCI_DEVICE_ID_TDI_EHCI) {
@@ -224,6 +235,14 @@ static int ehci_pci_setup(struct usb_hcd *hcd)
 			pci_dev_put(p_smbus);
 		}
 		break;
+<<<<<<< HEAD
+=======
+	case PCI_VENDOR_ID_NETMOS:
+		/* MosChip frame-index-register bug */
+		ehci_info(ehci, "applying MosChip frame-index workaround\n");
+		ehci->frame_index_bug = 1;
+		break;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	/* optional debug port, normally in the first BAR */

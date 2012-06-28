@@ -89,7 +89,11 @@ unsigned long vm_dirty_bytes;
 /*
  * The interval between `kupdate'-style writebacks
  */
+<<<<<<< HEAD
 unsigned int dirty_writeback_interval = 15 * 100; /* centiseconds */
+=======
+unsigned int dirty_writeback_interval = 5 * 100; /* centiseconds */
+>>>>>>> android-omap-tuna-jb
 
 /*
  * The longest time for which data is allowed to remain dirty

@@ -79,6 +79,13 @@
 #include <asm/uaccess.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(PVR_LDM_MODULE) || defined(PVR_DRI_DRM_PLATFORM_DEV)
+#include <asm/atomic.h>
+#endif
+
+>>>>>>> android-omap-tuna-jb
 #include "img_defs.h"
 #include "services.h"
 #include "kerneldisplay.h"
@@ -99,6 +106,10 @@
 #include "private_data.h"
 #include "lock.h"
 #include "linkage.h"
+<<<<<<< HEAD
+=======
+#include "buffer_manager.h"
+>>>>>>> android-omap-tuna-jb
 
 #if defined(SUPPORT_DRI_DRM)
 #include "pvr_drm.h"
@@ -367,9 +378,23 @@ void PVRSRVDriverShutdown(struct drm_device *pDevice)
 PVR_MOD_STATIC void PVRSRVDriverShutdown(LDM_DEV *pDevice)
 #endif
 {
+<<<<<<< HEAD
 	PVR_TRACE(("PVRSRVDriverShutdown(pDevice=%p)", pDevice));
 
 	(void) PVRSRVSetPowerStateKM(PVRSRV_SYS_POWER_STATE_D3);
+=======
+	static atomic_t sDriverIsShutdown = ATOMIC_INIT(1);
+
+	PVR_TRACE(("PVRSRVDriverShutdown(pDevice=%p)", pDevice));
+
+	if (atomic_dec_and_test(&sDriverIsShutdown))
+	{
+		
+		LinuxLockMutex(&gPVRSRVLock);
+
+		(void) PVRSRVSetPowerStateKM(PVRSRV_SYS_POWER_STATE_D3);
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 #endif 
@@ -560,6 +585,15 @@ static int PVRSRVRelease(struct inode unref__ * pInode, struct file *pFile)
 			}
 
 			
+<<<<<<< HEAD
+=======
+			if (psKernelMemInfo->sShareMemWorkaround.bInUse)
+			{
+				BM_XProcIndexRelease(psKernelMemInfo->sShareMemWorkaround.ui32ShareIndex);
+			}
+
+			
+>>>>>>> android-omap-tuna-jb
 			if(FreeMemCallBackCommon(psKernelMemInfo, 0,
 									 PVRSRV_FREE_CALLBACK_ORIGIN_EXTERNAL) != PVRSRV_OK)
 			{

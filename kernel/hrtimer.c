@@ -885,10 +885,20 @@ static void __remove_hrtimer(struct hrtimer *timer,
 			     struct hrtimer_clock_base *base,
 			     unsigned long newstate, int reprogram)
 {
+<<<<<<< HEAD
 	if (!(timer->state & HRTIMER_STATE_ENQUEUED))
 		goto out;
 
 	if (&timer->node == timerqueue_getnext(&base->active)) {
+=======
+	struct timerqueue_node *next_timer;
+	if (!(timer->state & HRTIMER_STATE_ENQUEUED))
+		goto out;
+
+	next_timer = timerqueue_getnext(&base->active);
+	timerqueue_del(&base->active, &timer->node);
+	if (&timer->node == next_timer) {
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_HIGH_RES_TIMERS
 		/* Reprogram the clock event device. if enabled */
 		if (reprogram && hrtimer_hres_active()) {
@@ -901,7 +911,10 @@ static void __remove_hrtimer(struct hrtimer *timer,
 		}
 #endif
 	}
+<<<<<<< HEAD
 	timerqueue_del(&base->active, &timer->node);
+=======
+>>>>>>> android-omap-tuna-jb
 	if (!timerqueue_getnext(&base->active))
 		base->cpu_base->active_bases &= ~(1 << base->index);
 out:

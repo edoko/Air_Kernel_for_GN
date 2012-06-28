@@ -38,9 +38,12 @@ struct dsscomp_gralloc_t {
 	bool programmed;
 };
 
+<<<<<<< HEAD
 /* local cache */
 static struct kmem_cache *gsync_cachep;
 
+=======
+>>>>>>> android-omap-tuna-jb
 /* queued gralloc compositions */
 static LIST_HEAD(flip_queue);
 
@@ -105,8 +108,12 @@ static void dsscomp_gralloc_cb(void *data, int status)
 
 		if (gsync->cb_fn)
 			gsync->cb_fn(gsync->cb_arg, 1);
+<<<<<<< HEAD
 
 		kmem_cache_free(gsync_cachep, gsync);
+=======
+		kfree(gsync);
+>>>>>>> android-omap-tuna-jb
 	}
 }
 
@@ -184,6 +191,7 @@ int dsscomp_gralloc_queue(struct dsscomp_setup_dispc_data *d,
 
 	mutex_lock(&mtx);
 
+<<<<<<< HEAD
 	/* allocate sync object with 1 temporary ref */
 	gsync = kmem_cache_zalloc(gsync_cachep, GFP_KERNEL);
 	if (!gsync) {
@@ -194,6 +202,10 @@ int dsscomp_gralloc_queue(struct dsscomp_setup_dispc_data *d,
 		BUG();
 	}
 
+=======
+	/* create sync object with 1 temporary ref */
+	gsync = kzalloc(sizeof(*gsync), GFP_KERNEL);
+>>>>>>> android-omap-tuna-jb
 	gsync->cb_arg = cb_arg;
 	gsync->cb_fn = cb_fn;
 	gsync->refs.counter = 1;
@@ -566,12 +578,19 @@ void dsscomp_gralloc_init(struct dsscomp_dev *cdev_)
 {
 	int i;
 
+<<<<<<< HEAD
 	if (!cdev_)
 		return;
 
 	/* save at least cdev pointer */
 	if (!cdev && cdev_) {
 		cdev = cdev_;
+=======
+	/* save at least cdev pointer */
+	if (!cdev && cdev_) {
+		cdev = cdev_;
+
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_HAS_EARLYSUSPEND
 		register_early_suspend(&early_suspend_info);
 #endif
@@ -605,6 +624,7 @@ void dsscomp_gralloc_init(struct dsscomp_dev *cdev_)
 		if (!i)
 			ZERO(free_slots);
 	}
+<<<<<<< HEAD
 
 	/* create cache at first time */
 	if (!gsync_cachep) {
@@ -614,6 +634,8 @@ void dsscomp_gralloc_init(struct dsscomp_dev *cdev_)
 		if (!gsync_cachep)
 			pr_err("DSSCOMP: %s: can't create cache\n", __func__);
 	}
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 void dsscomp_gralloc_exit(void)

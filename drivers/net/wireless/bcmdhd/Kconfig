@@ -32,6 +32,7 @@ config BCMDHD_WEXT
 	help
 	  Enables WEXT support
 
+<<<<<<< HEAD
 config BCMDHD_WIFI_PM
 	bool "Enable support for changing the WiFi power mode"
 	depends on BCMDHD
@@ -40,6 +41,8 @@ config BCMDHD_WIFI_PM
 	  Enable support for changing the WiFi power mode for
 	  screen-off.
 
+=======
+>>>>>>> android-omap-tuna-jb
 config DHD_USE_STATIC_BUF
 	bool "Enable memory preallocation"
 	depends on BCMDHD
@@ -60,4 +63,7 @@ config DHD_ENABLE_P2P
 	default n
 	---help---
 	  Use Enable Wifi Direct
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb

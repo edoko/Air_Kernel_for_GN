@@ -363,6 +363,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	int cpu = smp_processor_id();
 	struct tss_struct *tss = &per_cpu(init_tss, cpu);
 	unsigned fsindex, gsindex;
+<<<<<<< HEAD
 	bool preload_fpu;
 
 	/*
@@ -375,6 +376,11 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	/* we're going to use this soon, after a few expensive things */
 	if (preload_fpu)
 		prefetch(next->fpu.state);
+=======
+	fpu_switch_t fpu;
+
+	fpu = switch_fpu_prepare(prev_p, next_p);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Reload esp0, LDT and the page table pointer:
@@ -404,6 +410,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 
 	load_TLS(next, cpu);
 
+<<<<<<< HEAD
 	/* Must be after DS reload */
 	__unlazy_fpu(prev_p);
 
@@ -411,6 +418,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	if (preload_fpu)
 		clts();
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Leave lazy mode, flushing any hypercalls made here.
 	 * This must be done before restoring TLS segments so
@@ -451,6 +460,11 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 		wrmsrl(MSR_KERNEL_GS_BASE, next->gs);
 	prev->gsindex = gsindex;
 
+<<<<<<< HEAD
+=======
+	switch_fpu_finish(next_p, fpu);
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Switch the PDA and FPU contexts.
 	 */
@@ -469,6 +483,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
 		__switch_to_xtra(prev_p, next_p, tss);
 
+<<<<<<< HEAD
 	/*
 	 * Preload the FPU context, now that we've determined that the
 	 * task is likely to be using it. 
@@ -476,6 +491,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	if (preload_fpu)
 		__math_state_restore();
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return prev_p;
 }
 

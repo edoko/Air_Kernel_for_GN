@@ -355,11 +355,30 @@ static inline struct page *compound_head(struct page *page)
 	return page;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * The atomic page->_mapcount, starts from -1: so that transitions
+ * both from it and to it can be tracked, using atomic_inc_and_test
+ * and atomic_add_negative(-1).
+ */
+static inline void reset_page_mapcount(struct page *page)
+{
+	atomic_set(&(page)->_mapcount, -1);
+}
+
+static inline int page_mapcount(struct page *page)
+{
+	return atomic_read(&(page)->_mapcount) + 1;
+}
+
+>>>>>>> android-omap-tuna-jb
 static inline int page_count(struct page *page)
 {
 	return atomic_read(&compound_head(page)->_count);
 }
 
+<<<<<<< HEAD
 static inline void get_page(struct page *page)
 {
 	/*
@@ -385,6 +404,32 @@ static inline void get_page(struct page *page)
 		VM_BUG_ON(atomic_read(&page->first_page->_count) <= 0);
 		atomic_inc(&page->first_page->_count);
 	}
+=======
+static inline void get_huge_page_tail(struct page *page)
+{
+	/*
+	 * __split_huge_page_refcount() cannot run
+	 * from under us.
+	 */
+	VM_BUG_ON(page_mapcount(page) < 0);
+	VM_BUG_ON(atomic_read(&page->_count) != 0);
+	atomic_inc(&page->_mapcount);
+}
+
+extern bool __get_page_tail(struct page *page);
+
+static inline void get_page(struct page *page)
+{
+	if (unlikely(PageTail(page)))
+		if (likely(__get_page_tail(page)))
+			return;
+	/*
+	 * Getting a normal page or the head of a compound page
+	 * requires to already have an elevated page->_count.
+	 */
+	VM_BUG_ON(atomic_read(&page->_count) <= 0);
+	atomic_inc(&page->_count);
+>>>>>>> android-omap-tuna-jb
 }
 
 static inline struct page *virt_to_head_page(const void *x)
@@ -803,6 +848,7 @@ static inline pgoff_t page_index(struct page *page)
 }
 
 /*
+<<<<<<< HEAD
  * The atomic page->_mapcount, like _count, starts from -1:
  * so that transitions both from it and to it can be tracked,
  * using atomic_inc_and_test and atomic_add_negative(-1).
@@ -818,6 +864,8 @@ static inline int page_mapcount(struct page *page)
 }
 
 /*
+=======
+>>>>>>> android-omap-tuna-jb
  * Return true if this page is mapped into pagetables.
  */
 static inline int page_mapped(struct page *page)
@@ -1470,7 +1518,11 @@ int write_one_page(struct page *page, int wait);
 void task_dirty_inc(struct task_struct *tsk);
 
 /* readahead.c */
+<<<<<<< HEAD
 #define VM_MAX_READAHEAD	1024	/* kbytes */
+=======
+#define VM_MAX_READAHEAD	128	/* kbytes */
+>>>>>>> android-omap-tuna-jb
 #define VM_MIN_READAHEAD	16	/* kbytes (includes current page) */
 
 int force_page_cache_readahead(struct address_space *mapping, struct file *filp,

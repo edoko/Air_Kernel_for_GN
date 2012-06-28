@@ -135,7 +135,11 @@ typedef struct _SGX_BRIDGE_INIT_INFO_
 #endif
 #endif
 
+<<<<<<< HEAD
 #if defined(FIX_HW_BRN_31542)
+=======
+#if defined(FIX_HW_BRN_31542) || defined(FIX_HW_BRN_36513)
+>>>>>>> android-omap-tuna-jb
 #if defined (SUPPORT_SID_INTERFACE)
 	IMG_SID hKernelClearClipWAVDMStreamMemInfo;
 	IMG_SID hKernelClearClipWAIndexStreamMemInfo;
@@ -157,7 +161,11 @@ typedef struct _SGX_BRIDGE_INIT_INFO_
 #endif
 #endif
 
+<<<<<<< HEAD
 #if defined(SGX_FEATURE_VDM_CONTEXT_SWITCH) && defined(FIX_HW_BRN_31425)
+=======
+#if defined(SGX_FEATURE_VDM_CONTEXT_SWITCH) && defined(FIX_HW_BRN_31559)
+>>>>>>> android-omap-tuna-jb
 	IMG_HANDLE	hKernelVDMSnapShotBufferMemInfo;
 	IMG_HANDLE	hKernelVDMCtrlStreamBufferMemInfo;
 #endif
@@ -172,6 +180,7 @@ typedef struct _SGX_BRIDGE_INIT_INFO_
 	IMG_HANDLE	hKernelEDMStatusBufferMemInfo;
 #endif
 #endif
+<<<<<<< HEAD
 #if defined(SGX_FEATURE_OVERLAPPED_SPM)
 #if defined (SUPPORT_SID_INTERFACE)
 	IMG_SID		hKernelTmpRgnHeaderMemInfo;
@@ -179,6 +188,8 @@ typedef struct _SGX_BRIDGE_INIT_INFO_
 	IMG_HANDLE hKernelTmpRgnHeaderMemInfo;
 #endif
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 	IMG_UINT32 ui32EDMTaskReg0;
 	IMG_UINT32 ui32EDMTaskReg1;
@@ -315,9 +326,15 @@ typedef struct _SGX_CCB_KICK_
 	
 	IMG_UINT32	ui32NumSrcSyncs;
 #if defined (SUPPORT_SID_INTERFACE)
+<<<<<<< HEAD
 	IMG_SID		ahSrcKernelSyncInfo[SGX_MAX_SRC_SYNCS];
 #else
 	IMG_HANDLE	ahSrcKernelSyncInfo[SGX_MAX_SRC_SYNCS];
+=======
+	IMG_SID		ahSrcKernelSyncInfo[SGX_MAX_SRC_SYNCS_TA];
+#else
+	IMG_HANDLE	ahSrcKernelSyncInfo[SGX_MAX_SRC_SYNCS_TA];
+>>>>>>> android-omap-tuna-jb
 #endif
 #endif
 

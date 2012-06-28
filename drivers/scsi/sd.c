@@ -1073,6 +1073,13 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
 	SCSI_LOG_IOCTL(1, printk("sd_ioctl: disk=%s, cmd=0x%x\n",
 						disk->disk_name, cmd));
 
+<<<<<<< HEAD
+=======
+	error = scsi_verify_blk_ioctl(bdev, cmd);
+	if (error < 0)
+		return error;
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * If we are in the middle of error recovery, don't let anyone
 	 * else try and use this device.  Also, if error recovery fails, it
@@ -1095,7 +1102,11 @@ static int sd_ioctl(struct block_device *bdev, fmode_t mode,
 			error = scsi_ioctl(sdp, cmd, p);
 			break;
 		default:
+<<<<<<< HEAD
 			error = scsi_cmd_ioctl(disk->queue, disk, mode, cmd, p);
+=======
+			error = scsi_cmd_blk_ioctl(bdev, mode, cmd, p);
+>>>>>>> android-omap-tuna-jb
 			if (error != -ENOTTY)
 				break;
 			error = scsi_ioctl(sdp, cmd, p);
@@ -1265,6 +1276,14 @@ static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
 			   unsigned int cmd, unsigned long arg)
 {
 	struct scsi_device *sdev = scsi_disk(bdev->bd_disk)->device;
+<<<<<<< HEAD
+=======
+	int ret;
+
+	ret = scsi_verify_blk_ioctl(bdev, cmd);
+	if (ret < 0)
+		return -ENOIOCTLCMD;
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * If we are in the middle of error recovery, don't let anyone
@@ -1276,8 +1295,11 @@ static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
 		return -ENODEV;
 	       
 	if (sdev->host->hostt->compat_ioctl) {
+<<<<<<< HEAD
 		int ret;
 
+=======
+>>>>>>> android-omap-tuna-jb
 		ret = sdev->host->hostt->compat_ioctl(sdev, cmd, (void __user *)arg);
 
 		return ret;

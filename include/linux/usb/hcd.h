@@ -128,6 +128,11 @@ struct usb_hcd {
 	unsigned		wireless:1;	/* Wireless USB HCD */
 	unsigned		authorized_default:1;
 	unsigned		has_tt:1;	/* Integrated TT in root hub */
+<<<<<<< HEAD
+=======
+	unsigned		broken_pci_sleep:1;	/* Don't put the
+			controller in PCI-D3 for system sleep */
+>>>>>>> android-omap-tuna-jb
 
 	int			irq;		/* irq allocated */
 	void __iomem		*regs;		/* device memory/io */
@@ -178,7 +183,11 @@ struct usb_hcd {
 	 * this structure.
 	 */
 	unsigned long hcd_priv[0]
+<<<<<<< HEAD
 			__attribute__ ((aligned(sizeof(unsigned long))));
+=======
+			__attribute__ ((aligned(sizeof(s64))));
+>>>>>>> android-omap-tuna-jb
 };
 
 /* 2.4 does this a bit differently ... */

@@ -1031,8 +1031,14 @@ static int iommu_setup_msi(struct amd_iommu *iommu)
 {
 	int r;
 
+<<<<<<< HEAD
 	if (pci_enable_msi(iommu->dev))
 		return 1;
+=======
+	r = pci_enable_msi(iommu->dev);
+	if (r)
+		return r;
+>>>>>>> android-omap-tuna-jb
 
 	r = request_threaded_irq(iommu->dev->irq,
 				 amd_iommu_int_handler,
@@ -1042,17 +1048,25 @@ static int iommu_setup_msi(struct amd_iommu *iommu)
 
 	if (r) {
 		pci_disable_msi(iommu->dev);
+<<<<<<< HEAD
 		return 1;
 	}
 
 	iommu->int_enabled = true;
 	iommu_feature_enable(iommu, CONTROL_EVT_INT_EN);
+=======
+		return r;
+	}
+
+	iommu->int_enabled = true;
+>>>>>>> android-omap-tuna-jb
 
 	return 0;
 }
 
 static int iommu_init_msi(struct amd_iommu *iommu)
 {
+<<<<<<< HEAD
 	if (iommu->int_enabled)
 		return 0;
 
@@ -1060,6 +1074,25 @@ static int iommu_init_msi(struct amd_iommu *iommu)
 		return iommu_setup_msi(iommu);
 
 	return 1;
+=======
+	int ret;
+
+	if (iommu->int_enabled)
+		goto enable_faults;
+
+	if (pci_find_capability(iommu->dev, PCI_CAP_ID_MSI))
+		ret = iommu_setup_msi(iommu);
+	else
+		ret = -ENODEV;
+
+	if (ret)
+		return ret;
+
+enable_faults:
+	iommu_feature_enable(iommu, CONTROL_EVT_INT_EN);
+
+	return 0;
+>>>>>>> android-omap-tuna-jb
 }
 
 /****************************************************************************

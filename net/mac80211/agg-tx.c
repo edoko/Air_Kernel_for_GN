@@ -162,6 +162,15 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 		return -ENOENT;
 	}
 
+<<<<<<< HEAD
+=======
+	/* if we're already stopping ignore any new requests to stop */
+	if (test_bit(HT_AGG_STATE_STOPPING, &tid_tx->state)) {
+		spin_unlock_bh(&sta->lock);
+		return -EALREADY;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	if (test_bit(HT_AGG_STATE_WANT_START, &tid_tx->state)) {
 		/* not even started yet! */
 		ieee80211_assign_tid_tx(sta, tid, NULL);
@@ -170,6 +179,11 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 		return 0;
 	}
 
+<<<<<<< HEAD
+=======
+	set_bit(HT_AGG_STATE_STOPPING, &tid_tx->state);
+
+>>>>>>> android-omap-tuna-jb
 	spin_unlock_bh(&sta->lock);
 
 #ifdef CONFIG_MAC80211_HT_DEBUG
@@ -177,8 +191,11 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 	       sta->sta.addr, tid);
 #endif /* CONFIG_MAC80211_HT_DEBUG */
 
+<<<<<<< HEAD
 	set_bit(HT_AGG_STATE_STOPPING, &tid_tx->state);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	del_timer_sync(&tid_tx->addba_resp_timer);
 
 	/*
@@ -188,6 +205,23 @@ int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
 	 */
 	clear_bit(HT_AGG_STATE_OPERATIONAL, &tid_tx->state);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * There might be a few packets being processed right now (on
+	 * another CPU) that have already gotten past the aggregation
+	 * check when it was still OPERATIONAL and consequently have
+	 * IEEE80211_TX_CTL_AMPDU set. In that case, this code might
+	 * call into the driver at the same time or even before the
+	 * TX paths calls into it, which could confuse the driver.
+	 *
+	 * Wait for all currently running TX paths to finish before
+	 * telling the driver. New packets will not go through since
+	 * the aggregation session is no longer OPERATIONAL.
+	 */
+	synchronize_net();
+
+>>>>>>> android-omap-tuna-jb
 	tid_tx->stop_initiator = initiator;
 	tid_tx->tx_stop = tx;
 
@@ -284,6 +318,41 @@ ieee80211_wake_queue_agg(struct ieee80211_local *local, int tid)
 	__release(agg_queue);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * splice packets from the STA's pending to the local pending,
+ * requires a call to ieee80211_agg_splice_finish later
+ */
+static void __acquires(agg_queue)
+ieee80211_agg_splice_packets(struct ieee80211_local *local,
+			     struct tid_ampdu_tx *tid_tx, u16 tid)
+{
+	int queue = ieee80211_ac_from_tid(tid);
+	unsigned long flags;
+
+	ieee80211_stop_queue_agg(local, tid);
+
+	if (WARN(!tid_tx, "TID %d gone but expected when splicing aggregates"
+			  " from the pending queue\n", tid))
+		return;
+
+	if (!skb_queue_empty(&tid_tx->pending)) {
+		spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+		/* copy over remaining packets */
+		skb_queue_splice_tail_init(&tid_tx->pending,
+					   &local->pending[queue]);
+		spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+	}
+}
+
+static void __releases(agg_queue)
+ieee80211_agg_splice_finish(struct ieee80211_local *local, u16 tid)
+{
+	ieee80211_wake_queue_agg(local, tid);
+}
+
+>>>>>>> android-omap-tuna-jb
 void ieee80211_tx_ba_session_handle_start(struct sta_info *sta, int tid)
 {
 	struct tid_ampdu_tx *tid_tx;
@@ -295,6 +364,7 @@ void ieee80211_tx_ba_session_handle_start(struct sta_info *sta, int tid)
 	tid_tx = rcu_dereference_protected_tid_tx(sta, tid);
 
 	/*
+<<<<<<< HEAD
 	 * While we're asking the driver about the aggregation,
 	 * stop the AC queue so that we don't have to worry
 	 * about frames that came in while we were doing that,
@@ -308,6 +378,19 @@ void ieee80211_tx_ba_session_handle_start(struct sta_info *sta, int tid)
 	/*
 	 * make sure no packets are being processed to get
 	 * valid starting sequence number
+=======
+	 * Start queuing up packets for this aggregation session.
+	 * We're going to release them once the driver is OK with
+	 * that.
+	 */
+	clear_bit(HT_AGG_STATE_WANT_START, &tid_tx->state);
+
+	/*
+	 * Make sure no packets are being processed. This ensures that
+	 * we have a valid starting sequence number and that in-flight
+	 * packets have been flushed out and no packets for this TID
+	 * will go into the driver during the ampdu_action call.
+>>>>>>> android-omap-tuna-jb
 	 */
 	synchronize_net();
 
@@ -321,17 +404,28 @@ void ieee80211_tx_ba_session_handle_start(struct sta_info *sta, int tid)
 					" tid %d\n", tid);
 #endif
 		spin_lock_bh(&sta->lock);
+<<<<<<< HEAD
 		ieee80211_assign_tid_tx(sta, tid, NULL);
 		spin_unlock_bh(&sta->lock);
 
 		ieee80211_wake_queue_agg(local, tid);
+=======
+		ieee80211_agg_splice_packets(local, tid_tx, tid);
+		ieee80211_assign_tid_tx(sta, tid, NULL);
+		ieee80211_agg_splice_finish(local, tid);
+		spin_unlock_bh(&sta->lock);
+
+>>>>>>> android-omap-tuna-jb
 		kfree_rcu(tid_tx, rcu_head);
 		return;
 	}
 
+<<<<<<< HEAD
 	/* we can take packets again now */
 	ieee80211_wake_queue_agg(local, tid);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* activate the timer for the recipient's addBA response */
 	mod_timer(&tid_tx->addba_resp_timer, jiffies + ADDBA_RESP_INTERVAL);
 #ifdef CONFIG_MAC80211_HT_DEBUG
@@ -451,6 +545,7 @@ int ieee80211_start_tx_ba_session(struct ieee80211_sta *pubsta, u16 tid,
 }
 EXPORT_SYMBOL(ieee80211_start_tx_ba_session);
 
+<<<<<<< HEAD
 /*
  * splice packets from the STA's pending to the local pending,
  * requires a call to ieee80211_agg_splice_finish later
@@ -483,6 +578,8 @@ ieee80211_agg_splice_finish(struct ieee80211_local *local, u16 tid)
 	ieee80211_wake_queue_agg(local, tid);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static void ieee80211_agg_tx_operational(struct ieee80211_local *local,
 					 struct sta_info *sta, u16 tid)
 {
@@ -772,12 +869,34 @@ void ieee80211_process_addba_resp(struct ieee80211_local *local,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	del_timer(&tid_tx->addba_resp_timer);
+=======
+	del_timer_sync(&tid_tx->addba_resp_timer);
+>>>>>>> android-omap-tuna-jb
 
 #ifdef CONFIG_MAC80211_HT_DEBUG
 	printk(KERN_DEBUG "switched off addBA timer for tid %d\n", tid);
 #endif
 
+<<<<<<< HEAD
+=======
+	/*
+	 * addba_resp_timer may have fired before we got here, and
+	 * caused WANT_STOP to be set. If the stop then was already
+	 * processed further, STOPPING might be set.
+	 */
+	if (test_bit(HT_AGG_STATE_WANT_STOP, &tid_tx->state) ||
+	    test_bit(HT_AGG_STATE_STOPPING, &tid_tx->state)) {
+#ifdef CONFIG_MAC80211_HT_DEBUG
+		printk(KERN_DEBUG
+		       "got addBA resp for tid %d but we already gave up\n",
+		       tid);
+#endif
+		goto out;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	if (le16_to_cpu(mgmt->u.action.u.addba_resp.status)
 			== WLAN_STATUS_SUCCESS) {
 		/*

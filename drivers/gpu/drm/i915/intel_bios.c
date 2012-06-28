@@ -24,6 +24,10 @@
  *    Eric Anholt <eric@anholt.net>
  *
  */
+<<<<<<< HEAD
+=======
+#include <linux/dmi.h>
+>>>>>>> android-omap-tuna-jb
 #include <drm/drm_dp_helper.h>
 #include "drmP.h"
 #include "drm.h"
@@ -592,6 +596,29 @@ init_vbt_defaults(struct drm_i915_private *dev_priv)
 	dev_priv->edp.bpp = 18;
 }
 
+<<<<<<< HEAD
+=======
+static int __init intel_no_opregion_vbt_callback(const struct dmi_system_id *id)
+{
+	DRM_DEBUG_KMS("Falling back to manually reading VBT from "
+		      "VBIOS ROM for %s\n",
+		      id->ident);
+	return 1;
+}
+
+static const struct dmi_system_id intel_no_opregion_vbt[] = {
+	{
+		.callback = intel_no_opregion_vbt_callback,
+		.ident = "ThinkCentre A57",
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+			DMI_MATCH(DMI_PRODUCT_NAME, "97027RG"),
+		},
+	},
+	{ }
+};
+
+>>>>>>> android-omap-tuna-jb
 /**
  * intel_parse_bios - find VBT and initialize settings from the BIOS
  * @dev: DRM device
@@ -612,7 +639,11 @@ intel_parse_bios(struct drm_device *dev)
 	init_vbt_defaults(dev_priv);
 
 	/* XXX Should this validation be moved to intel_opregion.c? */
+<<<<<<< HEAD
 	if (dev_priv->opregion.vbt) {
+=======
+	if (!dmi_check_system(intel_no_opregion_vbt) && dev_priv->opregion.vbt) {
+>>>>>>> android-omap-tuna-jb
 		struct vbt_header *vbt = dev_priv->opregion.vbt;
 		if (memcmp(vbt->signature, "$VBT", 4) == 0) {
 			DRM_DEBUG_DRIVER("Using VBT from OpRegion: %20s\n",

@@ -360,6 +360,13 @@ int hfsplus_rename_cat(u32 cnid,
 	err = hfs_brec_find(&src_fd);
 	if (err)
 		goto out;
+<<<<<<< HEAD
+=======
+	if (src_fd.entrylength > sizeof(entry) || src_fd.entrylength < 0) {
+		err = -EIO;
+		goto out;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	hfs_bnode_read(src_fd.bnode, &entry, src_fd.entryoffset,
 				src_fd.entrylength);

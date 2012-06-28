@@ -101,7 +101,13 @@ static s32 scaled_ppm_to_ppb(long ppm)
 
 static int ptp_clock_getres(struct posix_clock *pc, struct timespec *tp)
 {
+<<<<<<< HEAD
 	return 1; /* always round timer functions to one nanosecond */
+=======
+	tp->tv_sec = 0;
+	tp->tv_nsec = 1;
+	return 0;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int ptp_clock_settime(struct posix_clock *pc, const struct timespec *tp)

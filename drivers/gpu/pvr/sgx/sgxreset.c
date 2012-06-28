@@ -29,6 +29,10 @@
 #include "services_headers.h"
 #include "sgxinfokm.h"
 #include "sgxconfig.h"
+<<<<<<< HEAD
+=======
+#include "sgxutils.h"
+>>>>>>> android-omap-tuna-jb
 
 #include "pdump_km.h"
 
@@ -168,7 +172,11 @@ static IMG_VOID SGXResetSleep(PVRSRV_SGXDEV_INFO	*psDevInfo,
 #endif 
 
 	
+<<<<<<< HEAD
 	OSWaitus(100 * 1000000 / psDevInfo->ui32CoreClockSpeed);
+=======
+	SGXWaitClocks(psDevInfo, 100);
+>>>>>>> android-omap-tuna-jb
 	if (bPDump)
 	{
 		PDUMPIDLWITHFLAGS(30, ui32PDUMPFlags);
@@ -570,7 +578,11 @@ IMG_VOID SGXReset(PVRSRV_SGXDEV_INFO	*psDevInfo,
 
 #if defined(SGX_FEATURE_SYSTEM_CACHE)
 	#if defined(SGX_BYPASS_SYSTEM_CACHE)
+<<<<<<< HEAD
 		#error SGX_BYPASS_SYSTEM_CACHE not supported
+=======
+		ui32RegVal = EUR_CR_MASTER_SLC_CTRL_BYPASS_ALL_MASK;
+>>>>>>> android-omap-tuna-jb
 	#else
 		ui32RegVal = EUR_CR_MASTER_SLC_CTRL_USSE_INVAL_REQ0_MASK |
 		#if defined(FIX_HW_BRN_30954)
@@ -598,10 +610,17 @@ IMG_VOID SGXReset(PVRSRV_SGXDEV_INFO	*psDevInfo,
 				EUR_CR_MASTER_SLC_CTRL_BYPASS_REQ_USE3_MASK |
 				EUR_CR_MASTER_SLC_CTRL_BYPASS_REQ_TA_MASK;
 	#endif
+<<<<<<< HEAD
 		OSWriteHWReg(psDevInfo->pvRegsBaseKM, EUR_CR_MASTER_SLC_CTRL_BYPASS, ui32RegVal);
 		PDUMPCOMMENTWITHFLAGS(ui32PDUMPFlags, "Initialise the hydra SLC bypass control\r\n");
 		PDUMPREG(SGX_PDUMPREG_NAME, EUR_CR_MASTER_SLC_CTRL_BYPASS, ui32RegVal);
 	#endif 
+=======
+	#endif 
+		OSWriteHWReg(psDevInfo->pvRegsBaseKM, EUR_CR_MASTER_SLC_CTRL_BYPASS, ui32RegVal);
+		PDUMPCOMMENTWITHFLAGS(ui32PDUMPFlags, "Initialise the hydra SLC bypass control\r\n");
+		PDUMPREG(SGX_PDUMPREG_NAME, EUR_CR_MASTER_SLC_CTRL_BYPASS, ui32RegVal);
+>>>>>>> android-omap-tuna-jb
 #endif 
 
 	SGXResetSleep(psDevInfo, ui32PDUMPFlags, IMG_TRUE);

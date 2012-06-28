@@ -136,8 +136,11 @@ static void ah_output_done(struct crypto_async_request *base, int err)
 		memcpy(top_iph+1, iph+1, top_iph->ihl*4 - sizeof(struct iphdr));
 	}
 
+<<<<<<< HEAD
 	err = ah->nexthdr;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	kfree(AH_SKB_CB(skb)->tmp);
 	xfrm_output_resume(skb, err);
 }
@@ -264,12 +267,20 @@ static void ah_input_done(struct crypto_async_request *base, int err)
 	if (err)
 		goto out;
 
+<<<<<<< HEAD
+=======
+	err = ah->nexthdr;
+
+>>>>>>> android-omap-tuna-jb
 	skb->network_header += ah_hlen;
 	memcpy(skb_network_header(skb), work_iph, ihl);
 	__skb_pull(skb, ah_hlen + ihl);
 	skb_set_transport_header(skb, -ihl);
+<<<<<<< HEAD
 
 	err = ah->nexthdr;
+=======
+>>>>>>> android-omap-tuna-jb
 out:
 	kfree(AH_SKB_CB(skb)->tmp);
 	xfrm_input_resume(skb, err);
@@ -371,8 +382,11 @@ static int ah_input(struct xfrm_state *x, struct sk_buff *skb)
 		if (err == -EINPROGRESS)
 			goto out;
 
+<<<<<<< HEAD
 		if (err == -EBUSY)
 			err = NET_XMIT_DROP;
+=======
+>>>>>>> android-omap-tuna-jb
 		goto out_free;
 	}
 

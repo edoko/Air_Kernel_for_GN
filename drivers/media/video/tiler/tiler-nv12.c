@@ -334,9 +334,15 @@ static u16 nv12_together(u16 o, u16 a, u16 w, u16 n, u16 *area, u8 *packing)
 
 /* reserve nv12 blocks */
 static void reserve_nv12(u32 n, u32 width, u32 height,
+<<<<<<< HEAD
 					u32 gid, struct security_info *si)
 {
 	u16 w, h, band, a, o = 0, r = 0;
+=======
+					u32 gid, struct process_info *pi)
+{
+	u16 w, h, band, a, o = 0;
+>>>>>>> android-omap-tuna-jb
 	struct gid_info *gi;
 	int res = 0, res2, i;
 	u16 n_t, n_s, area_t, area_s;
@@ -349,11 +355,19 @@ static void reserve_nv12(u32 n, u32 width, u32 height,
 		return;
 
 	/* calculate dimensions, band, and alignment in slots */
+<<<<<<< HEAD
 	if (ops->analize(TILFMT_8BIT, width, height, &w, &h, &band, &a, &o, &r))
 		return;
 
 	/* get group context */
 	gi = ops->get_gi(si, gid);
+=======
+	if (ops->analize(TILFMT_8BIT, width, height, &w, &h, &band, &a))
+		return;
+
+	/* get group context */
+	gi = ops->get_gi(pi, gid);
+>>>>>>> android-omap-tuna-jb
 	if (!gi)
 		return;
 
@@ -378,10 +392,17 @@ static void reserve_nv12(u32 n, u32 width, u32 height,
 			 * able to reserve both 8- and 16-bit blocks as the
 			 * offsets of them must match.
 			 */
+<<<<<<< HEAD
 			res = ops->lay_2d(TILFMT_8BIT, n_s, w, h, band_8, a, o,
 						gi, &reserved);
 			res2 = ops->lay_2d(TILFMT_16BIT, n_s, (w + 1) >> 1, h,
 				band_16, a >> 1, o >> 1, gi, &reserved);
+=======
+			res = ops->lay_2d(TILFMT_8BIT, n_s, w, h, band_8, a,
+						gi, &reserved);
+			res2 = ops->lay_2d(TILFMT_16BIT, n_s, (w + 1) >> 1, h,
+				band_16, a >> 1, gi, &reserved);
+>>>>>>> android-omap-tuna-jb
 
 			if (res2 < 0 || res < 0 || res != res2) {
 				/* clean up */

@@ -157,7 +157,12 @@ enum ftdi_chip_type {
 	FT232RL = 5,
 	FT2232H = 6,
 	FT4232H = 7,
+<<<<<<< HEAD
 	FT232H  = 8
+=======
+	FT232H  = 8,
+	FTX     = 9,
+>>>>>>> android-omap-tuna-jb
 };
 
 enum ftdi_sio_baudrate {

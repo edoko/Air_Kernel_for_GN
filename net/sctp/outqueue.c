@@ -411,8 +411,12 @@ void sctp_retransmit_mark(struct sctp_outq *q,
 					chunk->transport->flight_size -=
 							sctp_data_size(chunk);
 				q->outstanding_bytes -= sctp_data_size(chunk);
+<<<<<<< HEAD
 				q->asoc->peer.rwnd += (sctp_data_size(chunk) +
 							sizeof(struct sk_buff));
+=======
+				q->asoc->peer.rwnd += sctp_data_size(chunk);
+>>>>>>> android-omap-tuna-jb
 			}
 			continue;
 		}
@@ -432,8 +436,12 @@ void sctp_retransmit_mark(struct sctp_outq *q,
 			 * (Section 7.2.4)), add the data size of those
 			 * chunks to the rwnd.
 			 */
+<<<<<<< HEAD
 			q->asoc->peer.rwnd += (sctp_data_size(chunk) +
 						sizeof(struct sk_buff));
+=======
+			q->asoc->peer.rwnd += sctp_data_size(chunk);
+>>>>>>> android-omap-tuna-jb
 			q->outstanding_bytes -= sctp_data_size(chunk);
 			if (chunk->transport)
 				transport->flight_size -= sctp_data_size(chunk);

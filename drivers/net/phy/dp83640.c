@@ -875,6 +875,10 @@ static void dp83640_remove(struct phy_device *phydev)
 	struct dp83640_clock *clock;
 	struct list_head *this, *next;
 	struct dp83640_private *tmp, *dp83640 = phydev->priv;
+<<<<<<< HEAD
+=======
+	struct sk_buff *skb;
+>>>>>>> android-omap-tuna-jb
 
 	if (phydev->addr == BROADCAST_ADDR)
 		return;
@@ -882,6 +886,15 @@ static void dp83640_remove(struct phy_device *phydev)
 	enable_status_frames(phydev, false);
 	cancel_work_sync(&dp83640->ts_work);
 
+<<<<<<< HEAD
+=======
+	while ((skb = skb_dequeue(&dp83640->rx_queue)) != NULL)
+		kfree_skb(skb);
+
+	while ((skb = skb_dequeue(&dp83640->tx_queue)) != NULL)
+		skb_complete_tx_timestamp(skb, NULL);
+
+>>>>>>> android-omap-tuna-jb
 	clock = dp83640_clock_get(dp83640->clock);
 
 	if (dp83640 == clock->chosen) {
@@ -1060,7 +1073,11 @@ static void dp83640_txtstamp(struct phy_device *phydev,
 	struct dp83640_private *dp83640 = phydev->priv;
 
 	if (!dp83640->hwts_tx_en) {
+<<<<<<< HEAD
 		kfree_skb(skb);
+=======
+		skb_complete_tx_timestamp(skb, NULL);
+>>>>>>> android-omap-tuna-jb
 		return;
 	}
 	skb_queue_tail(&dp83640->tx_queue, skb);

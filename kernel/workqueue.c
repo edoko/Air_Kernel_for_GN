@@ -252,11 +252,19 @@ struct workqueue_struct *system_long_wq __read_mostly;
 struct workqueue_struct *system_nrt_wq __read_mostly;
 struct workqueue_struct *system_unbound_wq __read_mostly;
 struct workqueue_struct *system_freezable_wq __read_mostly;
+<<<<<<< HEAD
+=======
+struct workqueue_struct *system_nrt_freezable_wq __read_mostly;
+>>>>>>> android-omap-tuna-jb
 EXPORT_SYMBOL_GPL(system_wq);
 EXPORT_SYMBOL_GPL(system_long_wq);
 EXPORT_SYMBOL_GPL(system_nrt_wq);
 EXPORT_SYMBOL_GPL(system_unbound_wq);
 EXPORT_SYMBOL_GPL(system_freezable_wq);
+<<<<<<< HEAD
+=======
+EXPORT_SYMBOL_GPL(system_nrt_freezable_wq);
+>>>>>>> android-omap-tuna-jb
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/workqueue.h>
@@ -3796,8 +3804,16 @@ static int __init init_workqueues(void)
 					    WQ_UNBOUND_MAX_ACTIVE);
 	system_freezable_wq = alloc_workqueue("events_freezable",
 					      WQ_FREEZABLE, 0);
+<<<<<<< HEAD
 	BUG_ON(!system_wq || !system_long_wq || !system_nrt_wq ||
 	       !system_unbound_wq || !system_freezable_wq);
+=======
+	system_nrt_freezable_wq = alloc_workqueue("events_nrt_freezable",
+			WQ_NON_REENTRANT | WQ_FREEZABLE, 0);
+	BUG_ON(!system_wq || !system_long_wq || !system_nrt_wq ||
+	       !system_unbound_wq || !system_freezable_wq ||
+		!system_nrt_freezable_wq);
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 early_initcall(init_workqueues);

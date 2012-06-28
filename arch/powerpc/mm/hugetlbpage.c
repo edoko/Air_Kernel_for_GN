@@ -390,7 +390,11 @@ static noinline int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long add
 {
 	unsigned long mask;
 	unsigned long pte_end;
+<<<<<<< HEAD
 	struct page *head, *page;
+=======
+	struct page *head, *page, *tail;
+>>>>>>> android-omap-tuna-jb
 	pte_t pte;
 	int refs;
 
@@ -413,6 +417,10 @@ static noinline int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long add
 	head = pte_page(pte);
 
 	page = head + ((addr & (sz-1)) >> PAGE_SHIFT);
+<<<<<<< HEAD
+=======
+	tail = page;
+>>>>>>> android-omap-tuna-jb
 	do {
 		VM_BUG_ON(compound_head(page) != head);
 		pages[*nr] = page;
@@ -428,10 +436,27 @@ static noinline int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long add
 
 	if (unlikely(pte_val(pte) != pte_val(*ptep))) {
 		/* Could be optimized better */
+<<<<<<< HEAD
 		while (*nr) {
 			put_page(page);
 			(*nr)--;
 		}
+=======
+		*nr -= refs;
+		while (refs--)
+			put_page(head);
+		return 0;
+	}
+
+	/*
+	 * Any tail page need their mapcount reference taken before we
+	 * return.
+	 */
+	while (refs--) {
+		if (PageTail(tail))
+			get_huge_page_tail(tail);
+		tail++;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	return 1;

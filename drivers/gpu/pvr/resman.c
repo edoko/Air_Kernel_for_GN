@@ -598,17 +598,24 @@ static PVRSRV_ERROR FreeResourceByPtr(RESMAN_ITEM	*psItem,
 			(IMG_UINTPTR_T)psItem->pfnFreeResource, psItem->ui32Flags));
 
 	
+<<<<<<< HEAD
 	List_RESMAN_ITEM_Remove(psItem);
 
 
 	
+=======
+>>>>>>> android-omap-tuna-jb
 	RELEASE_SYNC_OBJ;
 
 	
 	if (bExecuteCallback)
 	{
 		eError = psItem->pfnFreeResource(psItem->pvParam, psItem->ui32Param, bForceCleanup);
+<<<<<<< HEAD
 	 	if (eError != PVRSRV_OK)
+=======
+	 	if ((eError != PVRSRV_OK) && (eError != PVRSRV_ERROR_RETRY))
+>>>>>>> android-omap-tuna-jb
 		{
 			PVR_DPF((PVR_DBG_ERROR, "FreeResourceByPtr: ERROR calling FreeResource function"));
 		}
@@ -617,8 +624,19 @@ static PVRSRV_ERROR FreeResourceByPtr(RESMAN_ITEM	*psItem,
 	
 	ACQUIRE_SYNC_OBJ;
 
+<<<<<<< HEAD
 	
 	OSFreeMem(PVRSRV_OS_PAGEABLE_HEAP, sizeof(RESMAN_ITEM), psItem, IMG_NULL);
+=======
+	if (eError != PVRSRV_ERROR_RETRY)
+	{
+		
+		List_RESMAN_ITEM_Remove(psItem);
+
+		
+		OSFreeMem(PVRSRV_OS_PAGEABLE_HEAP, sizeof(RESMAN_ITEM), psItem, IMG_NULL);
+	}
+>>>>>>> android-omap-tuna-jb
 
 	return(eError);
 }
@@ -679,7 +697,23 @@ static PVRSRV_ERROR FreeResourceByCriteria(PRESMAN_CONTEXT	psResManContext,
 						 				ui32Param)) != IMG_NULL
 		  	&& eError == PVRSRV_OK)
 	{
+<<<<<<< HEAD
 		eError = FreeResourceByPtr(psCurItem, bExecuteCallback, CLEANUP_WITH_POLL);
+=======
+		do
+		{
+			eError = FreeResourceByPtr(psCurItem, bExecuteCallback, CLEANUP_WITH_POLL);
+			if (eError == PVRSRV_ERROR_RETRY)
+			{
+				RELEASE_SYNC_OBJ;
+				OSReleaseBridgeLock();
+				
+				OSSleepms(MAX_CLEANUP_TIME_WAIT_US/1000);
+				OSReacquireBridgeLock();
+				ACQUIRE_SYNC_OBJ;
+			}
+		} while (eError == PVRSRV_ERROR_RETRY);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	return eError;

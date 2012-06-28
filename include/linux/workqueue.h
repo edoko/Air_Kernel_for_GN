@@ -289,12 +289,22 @@ enum {
  *
  * system_freezable_wq is equivalent to system_wq except that it's
  * freezable.
+<<<<<<< HEAD
+=======
+ *
+ * system_nrt_freezable_wq is equivalent to system_nrt_wq except that
+ * it's freezable.
+>>>>>>> android-omap-tuna-jb
  */
 extern struct workqueue_struct *system_wq;
 extern struct workqueue_struct *system_long_wq;
 extern struct workqueue_struct *system_nrt_wq;
 extern struct workqueue_struct *system_unbound_wq;
 extern struct workqueue_struct *system_freezable_wq;
+<<<<<<< HEAD
+=======
+extern struct workqueue_struct *system_nrt_freezable_wq;
+>>>>>>> android-omap-tuna-jb
 
 extern struct workqueue_struct *
 __alloc_workqueue_key(const char *name, unsigned int flags, int max_active,

@@ -175,6 +175,10 @@ struct mpage_da_data {
  */
 #define	EXT4_IO_END_UNWRITTEN	0x0001
 #define EXT4_IO_END_ERROR	0x0002
+<<<<<<< HEAD
+=======
+#define EXT4_IO_END_QUEUED	0x0004
+>>>>>>> android-omap-tuna-jb
 
 struct ext4_io_page {
 	struct page	*p_page;
@@ -357,8 +361,12 @@ struct flex_groups {
 
 /* Flags that should be inherited by new inodes from their parent. */
 #define EXT4_FL_INHERITED (EXT4_SECRM_FL | EXT4_UNRM_FL | EXT4_COMPR_FL |\
+<<<<<<< HEAD
 			   EXT4_SYNC_FL | EXT4_IMMUTABLE_FL | EXT4_APPEND_FL |\
 			   EXT4_NODUMP_FL | EXT4_NOATIME_FL |\
+=======
+			   EXT4_SYNC_FL | EXT4_NODUMP_FL | EXT4_NOATIME_FL |\
+>>>>>>> android-omap-tuna-jb
 			   EXT4_NOCOMPR_FL | EXT4_JOURNAL_DATA_FL |\
 			   EXT4_NOTAIL_FL | EXT4_DIRSYNC_FL)
 
@@ -885,6 +893,10 @@ struct ext4_inode_info {
 /*
  * Mount flags
  */
+<<<<<<< HEAD
+=======
+#define EXT4_MOUNT_OLDALLOC		0x00002  /* Don't use the new Orlov allocator */
+>>>>>>> android-omap-tuna-jb
 #define EXT4_MOUNT_GRPID		0x00004	/* Create files with directory's group */
 #define EXT4_MOUNT_DEBUG		0x00008	/* Some debugging messages */
 #define EXT4_MOUNT_ERRORS_CONT		0x00010	/* Continue on errors */

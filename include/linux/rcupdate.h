@@ -33,7 +33,10 @@
 #ifndef __LINUX_RCUPDATE_H
 #define __LINUX_RCUPDATE_H
 
+<<<<<<< HEAD
 #include <linux/rcu_types.h>
+=======
+>>>>>>> android-omap-tuna-jb
 #include <linux/cache.h>
 #include <linux/spinlock.h>
 #include <linux/threads.h>
@@ -65,6 +68,19 @@ static inline void rcutorture_record_progress(unsigned long vernum)
 #define ULONG_CMP_GE(a, b)	(ULONG_MAX / 2 >= (a) - (b))
 #define ULONG_CMP_LT(a, b)	(ULONG_MAX / 2 < (a) - (b))
 
+<<<<<<< HEAD
+=======
+/**
+ * struct rcu_head - callback structure for use with RCU
+ * @next: next update requests in a list
+ * @func: actual update function to call after the grace period.
+ */
+struct rcu_head {
+	struct rcu_head *next;
+	void (*func)(struct rcu_head *head);
+};
+
+>>>>>>> android-omap-tuna-jb
 /* Exported common interfaces */
 extern void call_rcu_sched(struct rcu_head *head,
 			   void (*func)(struct rcu_head *rcu));
@@ -147,8 +163,11 @@ static inline void rcu_exit_nohz(void)
 #include <linux/rcutree.h>
 #elif defined(CONFIG_TINY_RCU) || defined(CONFIG_TINY_PREEMPT_RCU)
 #include <linux/rcutiny.h>
+<<<<<<< HEAD
 #elif defined(CONFIG_JRCU)
 #include <linux/jrcu.h>
+=======
+>>>>>>> android-omap-tuna-jb
 #else
 #error "Unknown RCU implementation specified to kernel configuration"
 #endif

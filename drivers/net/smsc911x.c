@@ -1083,10 +1083,15 @@ smsc911x_rx_counterrors(struct net_device *dev, unsigned int rxstat)
 
 /* Quickly dumps bad packets */
 static void
+<<<<<<< HEAD
 smsc911x_rx_fastforward(struct smsc911x_data *pdata, unsigned int pktbytes)
 {
 	unsigned int pktwords = (pktbytes + NET_IP_ALIGN + 3) >> 2;
 
+=======
+smsc911x_rx_fastforward(struct smsc911x_data *pdata, unsigned int pktwords)
+{
+>>>>>>> android-omap-tuna-jb
 	if (likely(pktwords >= 4)) {
 		unsigned int timeout = 500;
 		unsigned int val;
@@ -1150,7 +1155,11 @@ static int smsc911x_poll(struct napi_struct *napi, int budget)
 			continue;
 		}
 
+<<<<<<< HEAD
 		skb = netdev_alloc_skb(dev, pktlength + NET_IP_ALIGN);
+=======
+		skb = netdev_alloc_skb(dev, pktwords << 2);
+>>>>>>> android-omap-tuna-jb
 		if (unlikely(!skb)) {
 			SMSC_WARN(pdata, rx_err,
 				  "Unable to allocate skb for rx packet");
@@ -1160,14 +1169,22 @@ static int smsc911x_poll(struct napi_struct *napi, int budget)
 			break;
 		}
 
+<<<<<<< HEAD
 		skb->data = skb->head;
 		skb_reset_tail_pointer(skb);
+=======
+		pdata->ops->rx_readfifo(pdata,
+				 (unsigned int *)skb->data, pktwords);
+>>>>>>> android-omap-tuna-jb
 
 		/* Align IP on 16B boundary */
 		skb_reserve(skb, NET_IP_ALIGN);
 		skb_put(skb, pktlength - 4);
+<<<<<<< HEAD
 		pdata->ops->rx_readfifo(pdata,
 				 (unsigned int *)skb->head, pktwords);
+=======
+>>>>>>> android-omap-tuna-jb
 		skb->protocol = eth_type_trans(skb, dev);
 		skb_checksum_none_assert(skb);
 		netif_receive_skb(skb);
@@ -1390,7 +1407,11 @@ static int smsc911x_open(struct net_device *dev)
 	smsc911x_reg_write(pdata, FIFO_INT, temp);
 
 	/* set RX Data offset to 2 bytes for alignment */
+<<<<<<< HEAD
 	smsc911x_reg_write(pdata, RX_CFG, (2 << 8));
+=======
+	smsc911x_reg_write(pdata, RX_CFG, (NET_IP_ALIGN << 8));
+>>>>>>> android-omap-tuna-jb
 
 	/* enable NAPI polling before enabling RX interrupts */
 	napi_enable(&pdata->napi);

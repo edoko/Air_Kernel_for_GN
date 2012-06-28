@@ -516,7 +516,18 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVAllocSyncInfoKM(IMG_HANDLE					hDevCookie,
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
 	}
 
+<<<<<<< HEAD
 	psKernelSyncInfo->ui32RefCount = 0;
+=======
+	eError = OSAtomicAlloc(&psKernelSyncInfo->pvRefCount);
+	if (eError != PVRSRV_OK)
+	{
+		PVR_DPF((PVR_DBG_ERROR,"PVRSRVAllocSyncInfoKM: Failed to allocate atomic"));
+		OSFreeMem(PVRSRV_PAGEABLE_SELECT, sizeof(PVRSRV_KERNEL_SYNC_INFO), psKernelSyncInfo, IMG_NULL);
+		return PVRSRV_ERROR_OUT_OF_MEMORY;
+	}
+	
+>>>>>>> android-omap-tuna-jb
 
 	
 	pBMContext = (BM_CONTEXT*)hDevMemContext;
@@ -541,6 +552,10 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVAllocSyncInfoKM(IMG_HANDLE					hDevCookie,
 	{
 
 		PVR_DPF((PVR_DBG_ERROR,"PVRSRVAllocSyncInfoKM: Failed to alloc memory"));
+<<<<<<< HEAD
+=======
+		OSAtomicFree(psKernelSyncInfo->pvRefCount);
+>>>>>>> android-omap-tuna-jb
 		OSFreeMem(PVRSRV_PAGEABLE_SELECT, sizeof(PVRSRV_KERNEL_SYNC_INFO), psKernelSyncInfo, IMG_NULL);
 		
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
@@ -558,6 +573,10 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVAllocSyncInfoKM(IMG_HANDLE					hDevCookie,
 	psSyncData->ui32ReadOps2Complete = 0;
 	psSyncData->ui32LastOpDumpVal = 0;
 	psSyncData->ui32LastReadOpDumpVal = 0;
+<<<<<<< HEAD
+=======
+	psSyncData->ui64LastWrite = 0;
+>>>>>>> android-omap-tuna-jb
 
 #if defined(PDUMP)
 	PDUMPCOMMENT("Allocating kernel sync object");
@@ -577,12 +596,18 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVAllocSyncInfoKM(IMG_HANDLE					hDevCookie,
 	
 	psKernelSyncInfo->psSyncDataMemInfoKM->psKernelSyncInfo = IMG_NULL;
 
+<<<<<<< HEAD
+=======
+	OSAtomicInc(psKernelSyncInfo->pvRefCount);
+
+>>>>>>> android-omap-tuna-jb
 	
 	*ppsKernelSyncInfo = psKernelSyncInfo;
 
 	return PVRSRV_OK;
 }
 
+<<<<<<< HEAD
 
 IMG_EXPORT
 PVRSRV_ERROR IMG_CALLCONV PVRSRVFreeSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernelSyncInfo)
@@ -605,6 +630,28 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVFreeSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernel
 	
 
 	return eError;
+=======
+IMG_EXPORT
+IMG_VOID PVRSRVAcquireSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO *psKernelSyncInfo)
+{
+	OSAtomicInc(psKernelSyncInfo->pvRefCount);
+}
+
+IMG_EXPORT
+IMG_VOID IMG_CALLCONV PVRSRVReleaseSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernelSyncInfo)
+{
+	if (OSAtomicDecAndTest(psKernelSyncInfo->pvRefCount))
+	{
+		FreeDeviceMem(psKernelSyncInfo->psSyncDataMemInfoKM);
+	
+		
+		psKernelSyncInfo->psSyncDataMemInfoKM = IMG_NULL;
+		psKernelSyncInfo->psSyncData = IMG_NULL;
+		OSAtomicFree(psKernelSyncInfo->pvRefCount);
+		(IMG_VOID)OSFreeMem(PVRSRV_PAGEABLE_SELECT, sizeof(PVRSRV_KERNEL_SYNC_INFO), psKernelSyncInfo, IMG_NULL);
+		
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 static IMG_VOID freeWrapped(PVRSRV_KERNEL_MEM_INFO *psMemInfo)
@@ -661,7 +708,11 @@ PVRSRV_ERROR _PollUntilAtLeast(volatile IMG_UINT32* pui32WatchedValue,
 			if(psSysData->psGlobalEventObject)
 			{
 				eError = OSEventObjectOpenKM(psSysData->psGlobalEventObject, &hOSEventKM);
+<<<<<<< HEAD
 				if (eError |= PVRSRV_OK)
+=======
+				if (eError != PVRSRV_OK)
+>>>>>>> android-omap-tuna-jb
 				{
 					PVR_DPF((PVR_DBG_ERROR,
 								"_PollUntilAtLeast: OSEventObjectOpen failed"));
@@ -791,6 +842,7 @@ PVRSRV_ERROR FreeMemCallBackCommon(PVRSRV_KERNEL_MEM_INFO *psMemInfo,
 			case PVRSRV_MEMTYPE_WRAPPED:
 				freeWrapped(psMemInfo);
 			case PVRSRV_MEMTYPE_DEVICE:
+<<<<<<< HEAD
 				if (psMemInfo->psKernelSyncInfo)
 				{
 					PVRSRVKernelSyncInfoDecRef(psMemInfo->psKernelSyncInfo, psMemInfo);
@@ -800,6 +852,13 @@ PVRSRV_ERROR FreeMemCallBackCommon(PVRSRV_KERNEL_MEM_INFO *psMemInfo,
 					}
 				}
 			case PVRSRV_MEMTYPE_DEVICECLASS:
+=======
+			case PVRSRV_MEMTYPE_DEVICECLASS:
+				if (psMemInfo->psKernelSyncInfo)
+				{
+					PVRSRVKernelSyncInfoDecRef(psMemInfo->psKernelSyncInfo, psMemInfo);
+				}
+>>>>>>> android-omap-tuna-jb
 				break;
 			default:
 				PVR_DPF((PVR_DBG_ERROR, "FreeMemCallBackCommon: Unknown memType"));
@@ -921,8 +980,11 @@ PVRSRV_ERROR IMG_CALLCONV _PVRSRVAllocDeviceMemKM(IMG_HANDLE				hDevCookie,
 		{
 			goto free_mainalloc;
 		}
+<<<<<<< HEAD
 
 		PVRSRVKernelSyncInfoIncRef(psMemInfo->psKernelSyncInfo, psMemInfo);
+=======
+>>>>>>> android-omap-tuna-jb
 	}
 
 	
@@ -957,6 +1019,13 @@ PVRSRV_ERROR IMG_CALLCONV _PVRSRVAllocDeviceMemKM(IMG_HANDLE				hDevCookie,
 	return (PVRSRV_OK);
 
 free_mainalloc:
+<<<<<<< HEAD
+=======
+	if (psMemInfo->psKernelSyncInfo)
+	{
+		PVRSRVKernelSyncInfoDecRef(psMemInfo->psKernelSyncInfo, psMemInfo);
+	}
+>>>>>>> android-omap-tuna-jb
 	FreeDeviceMem(psMemInfo);
 
 	return eError;
@@ -1204,8 +1273,11 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVWrapExtMemoryKM(IMG_HANDLE				hDevCookie,
 		goto ErrorExitPhase4;
 	}
 
+<<<<<<< HEAD
 	PVRSRVKernelSyncInfoIncRef(psMemInfo->psKernelSyncInfo, psMemInfo);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	
 	PVRSRVKernelMemInfoIncRef(psMemInfo);
 
@@ -1290,6 +1362,7 @@ static PVRSRV_ERROR UnmapDeviceMemoryCallBack(IMG_PVOID  pvParam,
 	if( psMapData->psMemInfo->psKernelSyncInfo )
 	{
 		PVRSRVKernelSyncInfoDecRef(psMapData->psMemInfo->psKernelSyncInfo, psMapData->psMemInfo);
+<<<<<<< HEAD
 		if (psMapData->psMemInfo->psKernelSyncInfo->ui32RefCount == 0)
 		{
 			eError = PVRSRVFreeSyncInfoKM(psMapData->psMemInfo->psKernelSyncInfo);
@@ -1299,6 +1372,8 @@ static PVRSRV_ERROR UnmapDeviceMemoryCallBack(IMG_PVOID  pvParam,
 				return eError;
 			}
 		}
+=======
+>>>>>>> android-omap-tuna-jb
 	}
 
 	eError = FreeDeviceMem(psMapData->psMemInfo);
@@ -1723,6 +1798,15 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVMapDeviceClassMemoryKM(PVRSRV_PER_PROCESS_DATA	*
 	psMemInfo->uAllocSize = uByteSize;
 	psMemInfo->psKernelSyncInfo = psDeviceClassBuffer->psKernelSyncInfo;
 
+<<<<<<< HEAD
+=======
+	PVR_ASSERT(psMemInfo->psKernelSyncInfo != IMG_NULL);
+	if (psMemInfo->psKernelSyncInfo)
+	{
+		PVRSRVKernelSyncInfoIncRef(psMemInfo->psKernelSyncInfo, psMemInfo);
+	}
+
+>>>>>>> android-omap-tuna-jb
 	
 
 	psMemInfo->pvSysBackupBuffer = IMG_NULL;
@@ -1766,8 +1850,17 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVMapDeviceClassMemoryKM(PVRSRV_PER_PROCESS_DATA	*
 
 #if defined(SUPPORT_PDUMP_MULTI_PROCESS)
 	
+<<<<<<< HEAD
 	PDUMPCOMMENT("Dump display surface");
 	PDUMPMEM(IMG_NULL, psMemInfo, ui32Offset, psMemInfo->uAllocSize, PDUMP_FLAGS_CONTINUOUS, ((BM_BUF*)psMemInfo->sMemBlk.hBuffer)->pMapping);
+=======
+	if(psMemInfo->pvLinAddrKM)
+	{
+		
+		PDUMPCOMMENT("Dump display surface");
+		PDUMPMEM(IMG_NULL, psMemInfo, ui32Offset, psMemInfo->uAllocSize, PDUMP_FLAGS_CONTINUOUS, ((BM_BUF*)psMemInfo->sMemBlk.hBuffer)->pMapping);
+	}
+>>>>>>> android-omap-tuna-jb
 #endif
 	return PVRSRV_OK;
 
@@ -1775,6 +1868,14 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVMapDeviceClassMemoryKM(PVRSRV_PER_PROCESS_DATA	*
 ErrorExitPhase3:
 	if(psMemInfo)
 	{
+<<<<<<< HEAD
+=======
+		if (psMemInfo->psKernelSyncInfo)
+		{
+			PVRSRVKernelSyncInfoDecRef(psMemInfo->psKernelSyncInfo, psMemInfo);
+		}
+
+>>>>>>> android-omap-tuna-jb
 		FreeDeviceMem(psMemInfo);
 		
 

@@ -715,6 +715,10 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
 		dret = radeon_ddc_probe(radeon_connector,
 					radeon_connector->requires_extended_probe);
 	if (dret) {
+<<<<<<< HEAD
+=======
+		radeon_connector->detected_by_load = false;
+>>>>>>> android-omap-tuna-jb
 		if (radeon_connector->edid) {
 			kfree(radeon_connector->edid);
 			radeon_connector->edid = NULL;
@@ -741,12 +745,29 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
 	} else {
 
 		/* if we aren't forcing don't do destructive polling */
+<<<<<<< HEAD
 		if (!force)
 			return connector->status;
+=======
+		if (!force) {
+			/* only return the previous status if we last
+			 * detected a monitor via load.
+			 */
+			if (radeon_connector->detected_by_load)
+				return connector->status;
+			else
+				return ret;
+		}
+>>>>>>> android-omap-tuna-jb
 
 		if (radeon_connector->dac_load_detect && encoder) {
 			encoder_funcs = encoder->helper_private;
 			ret = encoder_funcs->detect(encoder, connector);
+<<<<<<< HEAD
+=======
+			if (ret != connector_status_disconnected)
+				radeon_connector->detected_by_load = true;
+>>>>>>> android-omap-tuna-jb
 		}
 	}
 
@@ -888,6 +909,10 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 		dret = radeon_ddc_probe(radeon_connector,
 					radeon_connector->requires_extended_probe);
 	if (dret) {
+<<<<<<< HEAD
+=======
+		radeon_connector->detected_by_load = false;
+>>>>>>> android-omap-tuna-jb
 		if (radeon_connector->edid) {
 			kfree(radeon_connector->edid);
 			radeon_connector->edid = NULL;
@@ -950,8 +975,23 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 	if ((ret == connector_status_connected) && (radeon_connector->use_digital == true))
 		goto out;
 
+<<<<<<< HEAD
 	if (!force) {
 		ret = connector->status;
+=======
+	/* DVI-D and HDMI-A are digital only */
+	if ((connector->connector_type == DRM_MODE_CONNECTOR_DVID) ||
+	    (connector->connector_type == DRM_MODE_CONNECTOR_HDMIA))
+		goto out;
+
+	/* if we aren't forcing don't do destructive polling */
+	if (!force) {
+		/* only return the previous status if we last
+		 * detected a monitor via load.
+		 */
+		if (radeon_connector->detected_by_load)
+			ret = connector->status;
+>>>>>>> android-omap-tuna-jb
 		goto out;
 	}
 
@@ -969,6 +1009,13 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 
 			encoder = obj_to_encoder(obj);
 
+<<<<<<< HEAD
+=======
+			if (encoder->encoder_type != DRM_MODE_ENCODER_DAC &&
+			    encoder->encoder_type != DRM_MODE_ENCODER_TVDAC)
+				continue;
+
+>>>>>>> android-omap-tuna-jb
 			encoder_funcs = encoder->helper_private;
 			if (encoder_funcs->detect) {
 				if (ret != connector_status_connected) {
@@ -976,6 +1023,11 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 					if (ret == connector_status_connected) {
 						radeon_connector->use_digital = false;
 					}
+<<<<<<< HEAD
+=======
+					if (ret != connector_status_disconnected)
+						radeon_connector->detected_by_load = true;
+>>>>>>> android-omap-tuna-jb
 				}
 				break;
 			}
@@ -993,6 +1045,10 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 	 * cases the DVI port is actually a virtual KVM port connected to the service
 	 * processor.
 	 */
+<<<<<<< HEAD
+=======
+out:
+>>>>>>> android-omap-tuna-jb
 	if ((!rdev->is_atom_bios) &&
 	    (ret == connector_status_disconnected) &&
 	    rdev->mode_info.bios_hardcoded_edid_size) {
@@ -1000,7 +1056,10 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
 		ret = connector_status_connected;
 	}
 
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> android-omap-tuna-jb
 	/* updated in get modes as well since we need to know if it's analog or digital */
 	radeon_connector_update_scratch_regs(connector, ret);
 	return ret;

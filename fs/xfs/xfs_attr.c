@@ -822,6 +822,7 @@ xfs_attr_inactive(xfs_inode_t *dp)
 	error = xfs_attr_root_inactive(&trans, dp);
 	if (error)
 		goto out;
+<<<<<<< HEAD
 	/*
 	 * signal synchronous inactive transactions unless this
 	 * is a synchronous mount filesystem in which case we
@@ -833,6 +834,11 @@ xfs_attr_inactive(xfs_inode_t *dp)
 	if ((error = xfs_itruncate_finish(&trans, dp, 0LL, XFS_ATTR_FORK,
 				(!(mp->m_flags & XFS_MOUNT_WSYNC)
 				 ? 1 : 0))))
+=======
+
+	error = xfs_itruncate_finish(&trans, dp, 0LL, XFS_ATTR_FORK, 0);
+	if (error)
+>>>>>>> android-omap-tuna-jb
 		goto out;
 
 	/*

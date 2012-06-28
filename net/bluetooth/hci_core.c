@@ -510,6 +510,14 @@ int hci_dev_open(__u16 dev)
 
 	hci_req_lock(hdev);
 
+<<<<<<< HEAD
+=======
+	if (test_bit(HCI_UNREGISTER, &hdev->flags)) {
+		ret = -ENODEV;
+		goto done;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	if (hdev->rfkill && rfkill_blocked(hdev->rfkill)) {
 		ret = -ERFKILL;
 		goto done;
@@ -1563,6 +1571,11 @@ int hci_unregister_dev(struct hci_dev *hdev)
 
 	BT_DBG("%p name %s bus %d", hdev, hdev->name, hdev->bus);
 
+<<<<<<< HEAD
+=======
+	set_bit(HCI_UNREGISTER, &hdev->flags);
+
+>>>>>>> android-omap-tuna-jb
 	write_lock_bh(&hci_dev_list_lock);
 	list_del(&hdev->list);
 	write_unlock_bh(&hci_dev_list_lock);

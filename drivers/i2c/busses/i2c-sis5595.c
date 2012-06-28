@@ -147,7 +147,11 @@ static int __devinit sis5595_setup(struct pci_dev *SIS5595_dev)
 	u16 a;
 	u8 val;
 	int *i;
+<<<<<<< HEAD
 	int retval = -ENODEV;
+=======
+	int retval;
+>>>>>>> android-omap-tuna-jb
 
 	/* Look for imposters */
 	for (i = blacklist; *i != 0; i++) {
@@ -223,7 +227,11 @@ static int __devinit sis5595_setup(struct pci_dev *SIS5595_dev)
 
 error:
 	release_region(sis5595_base + SMB_INDEX, 2);
+<<<<<<< HEAD
 	return retval;
+=======
+	return -ENODEV;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int sis5595_transaction(struct i2c_adapter *adap)

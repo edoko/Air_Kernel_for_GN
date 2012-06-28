@@ -36,6 +36,10 @@ static DEFINE_IDR(ext_devt_idr);
 
 static struct device_type disk_type;
 
+<<<<<<< HEAD
+=======
+static void disk_alloc_events(struct gendisk *disk);
+>>>>>>> android-omap-tuna-jb
 static void disk_add_events(struct gendisk *disk);
 static void disk_del_events(struct gendisk *disk);
 static void disk_release_events(struct gendisk *disk);
@@ -602,6 +606,11 @@ void add_disk(struct gendisk *disk)
 	disk->major = MAJOR(devt);
 	disk->first_minor = MINOR(devt);
 
+<<<<<<< HEAD
+=======
+	disk_alloc_events(disk);
+
+>>>>>>> android-omap-tuna-jb
 	/* Register BDI before referencing it from bdev */ 
 	bdi = &disk->queue->backing_dev_info;
 	bdi_register_dev(bdi, disk_devt(disk));
@@ -611,10 +620,20 @@ void add_disk(struct gendisk *disk)
 	register_disk(disk);
 	blk_register_queue(disk);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Take an extra ref on queue which will be put on disk_release()
+	 * so that it sticks around as long as @disk is there.
+	 */
+	WARN_ON_ONCE(blk_get_queue(disk->queue));
+
+>>>>>>> android-omap-tuna-jb
 	retval = sysfs_create_link(&disk_to_dev(disk)->kobj, &bdi->dev->kobj,
 				   "bdi");
 	WARN_ON(retval);
 
+<<<<<<< HEAD
 	/*
 	 * Limit default readahead size for small devices.
 	 *        disk size    readahead size
@@ -635,6 +654,8 @@ void add_disk(struct gendisk *disk)
 		bdi->ra_pages = min(bdi->ra_pages, size);
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	disk_add_events(disk);
 }
 EXPORT_SYMBOL(add_disk);
@@ -1123,6 +1144,11 @@ static void disk_release(struct device *dev)
 	disk_replace_part_tbl(disk, NULL);
 	free_part_stats(&disk->part0);
 	free_part_info(&disk->part0);
+<<<<<<< HEAD
+=======
+	if (disk->queue)
+		blk_put_queue(disk->queue);
+>>>>>>> android-omap-tuna-jb
 	kfree(disk);
 }
 
@@ -1513,9 +1539,15 @@ static void __disk_unblock_events(struct gendisk *disk, bool check_now)
 	intv = disk_events_poll_jiffies(disk);
 	set_timer_slack(&ev->dwork.timer, intv / 4);
 	if (check_now)
+<<<<<<< HEAD
 		queue_delayed_work(system_nrt_wq, &ev->dwork, 0);
 	else if (intv)
 		queue_delayed_work(system_nrt_wq, &ev->dwork, intv);
+=======
+		queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, 0);
+	else if (intv)
+		queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, intv);
+>>>>>>> android-omap-tuna-jb
 out_unlock:
 	spin_unlock_irqrestore(&ev->lock, flags);
 }
@@ -1556,7 +1588,11 @@ void disk_check_events(struct gendisk *disk)
 	spin_lock_irqsave(&ev->lock, flags);
 	if (!ev->block) {
 		cancel_delayed_work(&ev->dwork);
+<<<<<<< HEAD
 		queue_delayed_work(system_nrt_wq, &ev->dwork, 0);
+=======
+		queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, 0);
+>>>>>>> android-omap-tuna-jb
 	}
 	spin_unlock_irqrestore(&ev->lock, flags);
 }
@@ -1594,7 +1630,11 @@ unsigned int disk_clear_events(struct gendisk *disk, unsigned int mask)
 
 	/* uncondtionally schedule event check and wait for it to finish */
 	disk_block_events(disk);
+<<<<<<< HEAD
 	queue_delayed_work(system_nrt_wq, &ev->dwork, 0);
+=======
+	queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, 0);
+>>>>>>> android-omap-tuna-jb
 	flush_delayed_work(&ev->dwork);
 	__disk_unblock_events(disk, false);
 
@@ -1631,7 +1671,11 @@ static void disk_events_workfn(struct work_struct *work)
 
 	intv = disk_events_poll_jiffies(disk);
 	if (!ev->block && intv)
+<<<<<<< HEAD
 		queue_delayed_work(system_nrt_wq, &ev->dwork, intv);
+=======
+		queue_delayed_work(system_nrt_freezable_wq, &ev->dwork, intv);
+>>>>>>> android-omap-tuna-jb
 
 	spin_unlock_irq(&ev->lock);
 
@@ -1769,9 +1813,15 @@ module_param_cb(events_dfl_poll_msecs, &disk_events_dfl_poll_msecs_param_ops,
 		&disk_events_dfl_poll_msecs, 0644);
 
 /*
+<<<<<<< HEAD
  * disk_{add|del|release}_events - initialize and destroy disk_events.
  */
 static void disk_add_events(struct gendisk *disk)
+=======
+ * disk_{alloc|add|del|release}_events - initialize and destroy disk_events.
+ */
+static void disk_alloc_events(struct gendisk *disk)
+>>>>>>> android-omap-tuna-jb
 {
 	struct disk_events *ev;
 
@@ -1784,6 +1834,7 @@ static void disk_add_events(struct gendisk *disk)
 		return;
 	}
 
+<<<<<<< HEAD
 	if (sysfs_create_files(&disk_to_dev(disk)->kobj,
 			       disk_events_attrs) < 0) {
 		pr_warn("%s: failed to create sysfs files for events\n",
@@ -1794,6 +1845,8 @@ static void disk_add_events(struct gendisk *disk)
 
 	disk->ev = ev;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	INIT_LIST_HEAD(&ev->node);
 	ev->disk = disk;
 	spin_lock_init(&ev->lock);
@@ -1802,8 +1855,26 @@ static void disk_add_events(struct gendisk *disk)
 	ev->poll_msecs = -1;
 	INIT_DELAYED_WORK(&ev->dwork, disk_events_workfn);
 
+<<<<<<< HEAD
 	mutex_lock(&disk_events_mutex);
 	list_add_tail(&ev->node, &disk_events);
+=======
+	disk->ev = ev;
+}
+
+static void disk_add_events(struct gendisk *disk)
+{
+	if (!disk->ev)
+		return;
+
+	/* FIXME: error handling */
+	if (sysfs_create_files(&disk_to_dev(disk)->kobj, disk_events_attrs) < 0)
+		pr_warn("%s: failed to create sysfs files for events\n",
+			disk->disk_name);
+
+	mutex_lock(&disk_events_mutex);
+	list_add_tail(&disk->ev->node, &disk_events);
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&disk_events_mutex);
 
 	/*

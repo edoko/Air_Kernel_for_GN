@@ -60,7 +60,11 @@ static ssize_t show_power(struct device *dev,
 	pci_bus_read_config_dword(f4->bus, PCI_DEVFN(PCI_SLOT(f4->devfn), 5),
 				  REG_TDP_RUNNING_AVERAGE, &val);
 	running_avg_capture = (val >> 4) & 0x3fffff;
+<<<<<<< HEAD
 	running_avg_capture = sign_extend32(running_avg_capture, 22);
+=======
+	running_avg_capture = sign_extend32(running_avg_capture, 21);
+>>>>>>> android-omap-tuna-jb
 	running_avg_range = val & 0xf;
 
 	pci_bus_read_config_dword(f4->bus, PCI_DEVFN(PCI_SLOT(f4->devfn), 5),
@@ -122,6 +126,44 @@ static bool __devinit fam15h_power_is_internal_node0(struct pci_dev *f4)
 	return true;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Newer BKDG versions have an updated recommendation on how to properly
+ * initialize the running average range (was: 0xE, now: 0x9). This avoids
+ * counter saturations resulting in bogus power readings.
+ * We correct this value ourselves to cope with older BIOSes.
+ */
+static DEFINE_PCI_DEVICE_TABLE(affected_device) = {
+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_15H_NB_F4) },
+	{ 0 }
+};
+
+static void __devinit tweak_runavg_range(struct pci_dev *pdev)
+{
+	u32 val;
+
+	/*
+	 * let this quirk apply only to the current version of the
+	 * northbridge, since future versions may change the behavior
+	 */
+	if (!pci_match_id(affected_device, pdev))
+		return;
+
+	pci_bus_read_config_dword(pdev->bus,
+		PCI_DEVFN(PCI_SLOT(pdev->devfn), 5),
+		REG_TDP_RUNNING_AVERAGE, &val);
+	if ((val & 0xf) != 0xe)
+		return;
+
+	val &= ~0xf;
+	val |=  0x9;
+	pci_bus_write_config_dword(pdev->bus,
+		PCI_DEVFN(PCI_SLOT(pdev->devfn), 5),
+		REG_TDP_RUNNING_AVERAGE, val);
+}
+
+>>>>>>> android-omap-tuna-jb
 static void __devinit fam15h_power_init_data(struct pci_dev *f4,
 					     struct fam15h_power_data *data)
 {
@@ -155,6 +197,16 @@ static int __devinit fam15h_power_probe(struct pci_dev *pdev,
 	struct device *dev;
 	int err;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * though we ignore every other northbridge, we still have to
+	 * do the tweaking on _each_ node in MCM processors as the counters
+	 * are working hand-in-hand
+	 */
+	tweak_runavg_range(pdev);
+
+>>>>>>> android-omap-tuna-jb
 	if (!fam15h_power_is_internal_node0(pdev)) {
 		err = -ENODEV;
 		goto exit;

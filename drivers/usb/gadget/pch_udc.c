@@ -320,6 +320,10 @@ struct pch_udc_ep {
  * @registered:		driver regsitered with system
  * @suspended:		driver in suspended state
  * @connected:		gadget driver associated
+<<<<<<< HEAD
+=======
+ * @vbus_session:	required vbus_session state
+>>>>>>> android-omap-tuna-jb
  * @set_cfg_not_acked:	pending acknowledgement 4 setup
  * @waiting_zlp_ack:	pending acknowledgement 4 ZLP
  * @data_requests:	DMA pool for data requests
@@ -346,6 +350,10 @@ struct pch_udc_dev {
 			registered:1,
 			suspended:1,
 			connected:1,
+<<<<<<< HEAD
+=======
+			vbus_session:1,
+>>>>>>> android-omap-tuna-jb
 			set_cfg_not_acked:1,
 			waiting_zlp_ack:1;
 	struct pci_pool		*data_requests;
@@ -363,6 +371,10 @@ struct pch_udc_dev {
 #define PCI_DEVICE_ID_INTEL_EG20T_UDC	0x8808
 #define PCI_VENDOR_ID_ROHM		0x10DB
 #define PCI_DEVICE_ID_ML7213_IOH_UDC	0x801D
+<<<<<<< HEAD
+=======
+#define PCI_DEVICE_ID_ML7831_IOH_UDC	0x8808
+>>>>>>> android-omap-tuna-jb
 
 static const char	ep0_string[] = "ep0in";
 static DEFINE_SPINLOCK(udc_stall_spinlock);	/* stall spin lock */
@@ -562,6 +574,32 @@ static void pch_udc_clear_disconnect(struct pch_udc_dev *dev)
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * pch_udc_reconnect() - This API initializes usb device controller,
+ *						and clear the disconnect status.
+ * @dev:		Reference to pch_udc_regs structure
+ */
+static void pch_udc_init(struct pch_udc_dev *dev);
+static void pch_udc_reconnect(struct pch_udc_dev *dev)
+{
+	pch_udc_init(dev);
+
+	/* enable device interrupts */
+	/* pch_udc_enable_interrupts() */
+	pch_udc_bit_clr(dev, UDC_DEVIRQMSK_ADDR,
+			UDC_DEVINT_UR | UDC_DEVINT_ENUM);
+
+	/* Clear the disconnect */
+	pch_udc_bit_set(dev, UDC_DEVCTL_ADDR, UDC_DEVCTL_RES);
+	pch_udc_bit_clr(dev, UDC_DEVCTL_ADDR, UDC_DEVCTL_SD);
+	mdelay(1);
+	/* Resume USB signalling */
+	pch_udc_bit_clr(dev, UDC_DEVCTL_ADDR, UDC_DEVCTL_RES);
+}
+
+/**
+>>>>>>> android-omap-tuna-jb
  * pch_udc_vbus_session() - set or clearr the disconnect status.
  * @dev:	Reference to pch_udc_regs structure
  * @is_active:	Parameter specifying the action
@@ -571,10 +609,25 @@ static void pch_udc_clear_disconnect(struct pch_udc_dev *dev)
 static inline void pch_udc_vbus_session(struct pch_udc_dev *dev,
 					  int is_active)
 {
+<<<<<<< HEAD
 	if (is_active)
 		pch_udc_clear_disconnect(dev);
 	else
 		pch_udc_set_disconnect(dev);
+=======
+	if (is_active) {
+		pch_udc_reconnect(dev);
+		dev->vbus_session = 1;
+	} else {
+		if (dev->driver && dev->driver->disconnect) {
+			spin_unlock(&dev->lock);
+			dev->driver->disconnect(&dev->gadget);
+			spin_lock(&dev->lock);
+		}
+		pch_udc_set_disconnect(dev);
+		dev->vbus_session = 0;
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -1134,7 +1187,21 @@ static int pch_udc_pcd_pullup(struct usb_gadget *gadget, int is_on)
 	if (!gadget)
 		return -EINVAL;
 	dev = container_of(gadget, struct pch_udc_dev, gadget);
+<<<<<<< HEAD
 	pch_udc_vbus_session(dev, is_on);
+=======
+	if (is_on) {
+		pch_udc_reconnect(dev);
+	} else {
+		if (dev->driver && dev->driver->disconnect) {
+			spin_unlock(&dev->lock);
+			dev->driver->disconnect(&dev->gadget);
+			spin_lock(&dev->lock);
+		}
+		pch_udc_set_disconnect(dev);
+	}
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -2338,8 +2405,16 @@ static void pch_udc_svc_ur_interrupt(struct pch_udc_dev *dev)
 		/* Complete request queue */
 		empty_req_queue(ep);
 	}
+<<<<<<< HEAD
 	if (dev->driver && dev->driver->disconnect)
 		dev->driver->disconnect(&dev->gadget);
+=======
+	if (dev->driver && dev->driver->disconnect) {
+		spin_unlock(&dev->lock);
+		dev->driver->disconnect(&dev->gadget);
+		spin_lock(&dev->lock);
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -2374,6 +2449,14 @@ static void pch_udc_svc_enum_interrupt(struct pch_udc_dev *dev)
 	pch_udc_set_dma(dev, DMA_DIR_TX);
 	pch_udc_set_dma(dev, DMA_DIR_RX);
 	pch_udc_ep_set_rrdy(&(dev->ep[UDC_EP0OUT_IDX]));
+<<<<<<< HEAD
+=======
+
+	/* enable device interrupts */
+	pch_udc_enable_interrupts(dev, UDC_DEVINT_UR | UDC_DEVINT_US |
+					UDC_DEVINT_ES | UDC_DEVINT_ENUM |
+					UDC_DEVINT_SI | UDC_DEVINT_SC);
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -2475,8 +2558,29 @@ static void pch_udc_dev_isr(struct pch_udc_dev *dev, u32 dev_intr)
 	if (dev_intr & UDC_DEVINT_SC)
 		pch_udc_svc_cfg_interrupt(dev);
 	/* USB Suspend interrupt */
+<<<<<<< HEAD
 	if (dev_intr & UDC_DEVINT_US)
 		dev_dbg(&dev->pdev->dev, "USB_SUSPEND\n");
+=======
+	if (dev_intr & UDC_DEVINT_US) {
+		if (dev->driver
+			&& dev->driver->suspend) {
+			spin_unlock(&dev->lock);
+			dev->driver->suspend(&dev->gadget);
+			spin_lock(&dev->lock);
+		}
+
+		if (dev->vbus_session == 0) {
+			if (dev->driver && dev->driver->disconnect) {
+				spin_unlock(&dev->lock);
+				dev->driver->disconnect(&dev->gadget);
+				spin_lock(&dev->lock);
+			}
+			pch_udc_reconnect(dev);
+		}
+		dev_dbg(&dev->pdev->dev, "USB_SUSPEND\n");
+	}
+>>>>>>> android-omap-tuna-jb
 	/* Clear the SOF interrupt, if enabled */
 	if (dev_intr & UDC_DEVINT_SOF)
 		dev_dbg(&dev->pdev->dev, "SOF\n");
@@ -2502,6 +2606,17 @@ static irqreturn_t pch_udc_isr(int irq, void *pdev)
 	dev_intr = pch_udc_read_device_interrupts(dev);
 	ep_intr = pch_udc_read_ep_interrupts(dev);
 
+<<<<<<< HEAD
+=======
+	/* For a hot plug, this find that the controller is hung up. */
+	if (dev_intr == ep_intr)
+		if (dev_intr == pch_udc_readl(dev, UDC_DEVCFG_ADDR)) {
+			dev_dbg(&dev->pdev->dev, "UDC: Hung up\n");
+			/* The controller is reset */
+			pch_udc_writel(dev, UDC_SRST, UDC_SRST_ADDR);
+			return IRQ_HANDLED;
+		}
+>>>>>>> android-omap-tuna-jb
 	if (dev_intr)
 		/* Clear device interrupts */
 		pch_udc_write_device_interrupts(dev, dev_intr);
@@ -2915,8 +3030,15 @@ static int pch_udc_probe(struct pci_dev *pdev,
 	}
 	pch_udc = dev;
 	/* initialize the hardware */
+<<<<<<< HEAD
 	if (pch_udc_pcd_init(dev))
 		goto finished;
+=======
+	if (pch_udc_pcd_init(dev)) {
+		retval = -ENODEV;
+		goto finished;
+	}
+>>>>>>> android-omap-tuna-jb
 	if (request_irq(pdev->irq, pch_udc_isr, IRQF_SHARED, KBUILD_MODNAME,
 			dev)) {
 		dev_err(&pdev->dev, "%s: request_irq(%d) fail\n", __func__,
@@ -2971,6 +3093,14 @@ static DEFINE_PCI_DEVICE_TABLE(pch_udc_pcidev_id) = {
 		.class = (PCI_CLASS_SERIAL_USB << 8) | 0xfe,
 		.class_mask = 0xffffffff,
 	},
+<<<<<<< HEAD
+=======
+	{
+		PCI_DEVICE(PCI_VENDOR_ID_ROHM, PCI_DEVICE_ID_ML7831_IOH_UDC),
+		.class = (PCI_CLASS_SERIAL_USB << 8) | 0xfe,
+		.class_mask = 0xffffffff,
+	},
+>>>>>>> android-omap-tuna-jb
 	{ 0 },
 };
 

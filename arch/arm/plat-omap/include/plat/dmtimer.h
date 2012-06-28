@@ -156,5 +156,14 @@ int omap_dm_timer_write_counter(struct omap_dm_timer *timer,
 
 int omap_dm_timers_active(void);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_OMAP_DM_TIMER_DEBUG
+void omap_dm_timer_dump_regs(struct omap_dm_timer *timer);
+#else
+#define omap_dm_timer_dump_regs(timer)
+#endif
+
+>>>>>>> android-omap-tuna-jb
 
 #endif /* __ASM_ARCH_DMTIMER_H */

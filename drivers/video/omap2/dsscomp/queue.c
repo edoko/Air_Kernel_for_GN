@@ -99,6 +99,7 @@ static void maskref_decmask(struct maskref *om, u32 mask)
  * ===========================================================================
  */
 
+<<<<<<< HEAD
 struct dsscomp_cb_work {
 	struct work_struct work;
 	struct dsscomp_data *comp;
@@ -114,6 +115,8 @@ struct dsscomp_apply_work {
 static struct kmem_cache *dsscomp_cb_wk_cachep;
 static struct kmem_cache *dsscomp_app_wk_cachep;
 
+=======
+>>>>>>> android-omap-tuna-jb
 /* Initialize queue structures, and set up state of the displays */
 int dsscomp_queue_init(struct dsscomp_dev *cdev_)
 {
@@ -144,6 +147,7 @@ int dsscomp_queue_init(struct dsscomp_dev *cdev_)
 	if (!cb_wkq)
 		goto error;
 
+<<<<<<< HEAD
 	/* create cache for dsscomp_cb_work structures */
 	if (!dsscomp_cb_wk_cachep) {
 		dsscomp_cb_wk_cachep = kmem_cache_create("cb_wk_cache",
@@ -169,6 +173,8 @@ int dsscomp_queue_init(struct dsscomp_dev *cdev_)
 		}
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return 0;
 error:
 	while (i--)
@@ -409,6 +415,15 @@ void dsscomp_drop(dsscomp_t comp)
 }
 EXPORT_SYMBOL(dsscomp_drop);
 
+<<<<<<< HEAD
+=======
+struct dsscomp_cb_work {
+	struct work_struct work;
+	struct dsscomp_data *comp;
+	int status;
+};
+
+>>>>>>> android-omap-tuna-jb
 static void dsscomp_mgr_delayed_cb(struct work_struct *work)
 {
 	struct dsscomp_cb_work *wk = container_of(work, typeof(*wk), work);
@@ -416,7 +431,11 @@ static void dsscomp_mgr_delayed_cb(struct work_struct *work)
 	int status = wk->status;
 	u32 ix;
 
+<<<<<<< HEAD
 	kmem_cache_free(dsscomp_cb_wk_cachep, wk);
+=======
+	kfree(work);
+>>>>>>> android-omap-tuna-jb
 
 	mutex_lock(&mtx);
 
@@ -463,6 +482,7 @@ static u32 dsscomp_mgr_callback(void *data, int id, int status)
 	    (status == DSS_COMPLETION_DISPLAYED &&
 	     comp->state != DSSCOMP_STATE_DISPLAYED) ||
 	    (status & DSS_COMPLETION_RELEASED)) {
+<<<<<<< HEAD
 		struct dsscomp_cb_work *wk;
 
 		/* allocate work object from cache */
@@ -473,6 +493,9 @@ static u32 dsscomp_mgr_callback(void *data, int id, int status)
 			BUG();
 		}
 
+=======
+		struct dsscomp_cb_work *wk = kzalloc(sizeof(*wk), GFP_ATOMIC);
+>>>>>>> android-omap-tuna-jb
 		wk->comp = comp;
 		wk->status = status;
 		INIT_WORK(&wk->work, dsscomp_mgr_delayed_cb);
@@ -674,6 +697,14 @@ done:
 	return r;
 }
 
+<<<<<<< HEAD
+=======
+struct dsscomp_apply_work {
+	struct work_struct work;
+	dsscomp_t comp;
+};
+
+>>>>>>> android-omap-tuna-jb
 int dsscomp_state_notifier(struct notifier_block *nb,
 						unsigned long arg, void *ptr)
 {
@@ -700,12 +731,17 @@ static void dsscomp_do_apply(struct work_struct *work)
 	/* complete compositions that failed to apply */
 	if (dsscomp_apply(wk->comp))
 		dsscomp_mgr_callback(wk->comp, -1, DSS_COMPLETION_ECLIPSED_SET);
+<<<<<<< HEAD
 	kmem_cache_free(dsscomp_app_wk_cachep, wk);
+=======
+	kfree(wk);
+>>>>>>> android-omap-tuna-jb
 }
 
 int dsscomp_delayed_apply(dsscomp_t comp)
 {
 	/* don't block in case we are called from interrupt context */
+<<<<<<< HEAD
 	struct dsscomp_apply_work *wk;
 
 	/* allocate work object from cache */
@@ -715,6 +751,11 @@ int dsscomp_delayed_apply(dsscomp_t comp)
 								__func__);
 		return -ENOMEM;
 	}
+=======
+	struct dsscomp_apply_work *wk = kzalloc(sizeof(*wk), GFP_NOWAIT);
+	if (!wk)
+		return -ENOMEM;
+>>>>>>> android-omap-tuna-jb
 
 	mutex_lock(&mtx);
 

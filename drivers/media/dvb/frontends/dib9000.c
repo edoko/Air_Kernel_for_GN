@@ -38,6 +38,18 @@ struct i2c_device {
 #define DibInitLock(lock) mutex_init(lock)
 #define DibFreeLock(lock)
 
+<<<<<<< HEAD
+=======
+struct dib9000_pid_ctrl {
+#define DIB9000_PID_FILTER_CTRL 0
+#define DIB9000_PID_FILTER      1
+	u8 cmd;
+	u8 id;
+	u16 pid;
+	u8 onoff;
+};
+
+>>>>>>> android-omap-tuna-jb
 struct dib9000_state {
 	struct i2c_device i2c;
 
@@ -99,6 +111,13 @@ struct dib9000_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[255];
 	u8 i2c_read_buffer[255];
+<<<<<<< HEAD
+=======
+	DIB_LOCK demod_lock;
+	u8 get_frontend_internal;
+	struct dib9000_pid_ctrl pid_ctrl[10];
+	s8 pid_ctrl_index; /* -1: empty list; -2: do not use the list */
+>>>>>>> android-omap-tuna-jb
 };
 
 static const u32 fe_info[44] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1743,19 +1762,69 @@ EXPORT_SYMBOL(dib9000_set_gpio);
 int dib9000_fw_pid_filter_ctrl(struct dvb_frontend *fe, u8 onoff)
 {
 	struct dib9000_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 	u16 val = dib9000_read_word(state, 294 + 1) & 0xffef;
 	val |= (onoff & 0x1) << 4;
 
 	dprintk("PID filter enabled %d", onoff);
 	return dib9000_write_word(state, 294 + 1, val);
+=======
+	u16 val;
+	int ret;
+
+	if ((state->pid_ctrl_index != -2) && (state->pid_ctrl_index < 9)) {
+		/* postpone the pid filtering cmd */
+		dprintk("pid filter cmd postpone");
+		state->pid_ctrl_index++;
+		state->pid_ctrl[state->pid_ctrl_index].cmd = DIB9000_PID_FILTER_CTRL;
+		state->pid_ctrl[state->pid_ctrl_index].onoff = onoff;
+		return 0;
+	}
+
+	DibAcquireLock(&state->demod_lock);
+
+	val = dib9000_read_word(state, 294 + 1) & 0xffef;
+	val |= (onoff & 0x1) << 4;
+
+	dprintk("PID filter enabled %d", onoff);
+	ret = dib9000_write_word(state, 294 + 1, val);
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+
+>>>>>>> android-omap-tuna-jb
 }
 EXPORT_SYMBOL(dib9000_fw_pid_filter_ctrl);
 
 int dib9000_fw_pid_filter(struct dvb_frontend *fe, u8 id, u16 pid, u8 onoff)
 {
 	struct dib9000_state *state = fe->demodulator_priv;
+<<<<<<< HEAD
 	dprintk("Index %x, PID %d, OnOff %d", id, pid, onoff);
 	return dib9000_write_word(state, 300 + 1 + id, onoff ? (1 << 13) | pid : 0);
+=======
+	int ret;
+
+	if (state->pid_ctrl_index != -2) {
+		/* postpone the pid filtering cmd */
+		dprintk("pid filter postpone");
+		if (state->pid_ctrl_index < 9) {
+			state->pid_ctrl_index++;
+			state->pid_ctrl[state->pid_ctrl_index].cmd = DIB9000_PID_FILTER;
+			state->pid_ctrl[state->pid_ctrl_index].id = id;
+			state->pid_ctrl[state->pid_ctrl_index].pid = pid;
+			state->pid_ctrl[state->pid_ctrl_index].onoff = onoff;
+		} else
+			dprintk("can not add any more pid ctrl cmd");
+		return 0;
+	}
+
+	DibAcquireLock(&state->demod_lock);
+	dprintk("Index %x, PID %d, OnOff %d", id, pid, onoff);
+	ret = dib9000_write_word(state, 300 + 1 + id,
+			onoff ? (1 << 13) | pid : 0);
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 EXPORT_SYMBOL(dib9000_fw_pid_filter);
 
@@ -1778,6 +1847,10 @@ static void dib9000_release(struct dvb_frontend *demod)
 	DibFreeLock(&state->platform.risc.mbx_lock);
 	DibFreeLock(&state->platform.risc.mem_lock);
 	DibFreeLock(&state->platform.risc.mem_mbx_lock);
+<<<<<<< HEAD
+=======
+	DibFreeLock(&state->demod_lock);
+>>>>>>> android-omap-tuna-jb
 	dibx000_exit_i2c_master(&st->i2c_master);
 
 	i2c_del_adapter(&st->tuner_adap);
@@ -1795,6 +1868,7 @@ static int dib9000_sleep(struct dvb_frontend *fe)
 {
 	struct dib9000_state *state = fe->demodulator_priv;
 	u8 index_frontend;
+<<<<<<< HEAD
 	int ret;
 
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
@@ -1803,6 +1877,21 @@ static int dib9000_sleep(struct dvb_frontend *fe)
 			return ret;
 	}
 	return dib9000_mbx_send(state, OUT_MSG_FE_SLEEP, NULL, 0);
+=======
+	int ret = 0;
+
+	DibAcquireLock(&state->demod_lock);
+	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
+		ret = state->fe[index_frontend]->ops.sleep(state->fe[index_frontend]);
+		if (ret < 0)
+			goto error;
+	}
+	ret = dib9000_mbx_send(state, OUT_MSG_FE_SLEEP, NULL, 0);
+
+error:
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int dib9000_fe_get_tune_settings(struct dvb_frontend *fe, struct dvb_frontend_tune_settings *tune)
@@ -1816,7 +1905,14 @@ static int dib9000_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	struct dib9000_state *state = fe->demodulator_priv;
 	u8 index_frontend, sub_index_frontend;
 	fe_status_t stat;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret = 0;
+
+	if (state->get_frontend_internal == 0)
+		DibAcquireLock(&state->demod_lock);
+>>>>>>> android-omap-tuna-jb
 
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
 		state->fe[index_frontend]->ops.read_status(state->fe[index_frontend], &stat);
@@ -1846,14 +1942,23 @@ static int dib9000_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 					    state->fe[index_frontend]->dtv_property_cache.rolloff;
 				}
 			}
+<<<<<<< HEAD
 			return 0;
+=======
+			ret = 0;
+			goto return_value;
+>>>>>>> android-omap-tuna-jb
 		}
 	}
 
 	/* get the channel from master chip */
 	ret = dib9000_fw_get_channel(fe, fep);
 	if (ret != 0)
+<<<<<<< HEAD
 		return ret;
+=======
+		goto return_value;
+>>>>>>> android-omap-tuna-jb
 
 	/* synchronize the cache with the other frontends */
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
@@ -1866,8 +1971,17 @@ static int dib9000_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 		state->fe[index_frontend]->dtv_property_cache.code_rate_LP = fe->dtv_property_cache.code_rate_LP;
 		state->fe[index_frontend]->dtv_property_cache.rolloff = fe->dtv_property_cache.rolloff;
 	}
+<<<<<<< HEAD
 
 	return 0;
+=======
+	ret = 0;
+
+return_value:
+	if (state->get_frontend_internal == 0)
+		DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int dib9000_set_tune_state(struct dvb_frontend *fe, enum frontend_tune_state tune_state)
@@ -1912,6 +2026,13 @@ static int dib9000_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 		dprintk("dib9000: must specify bandwidth ");
 		return 0;
 	}
+<<<<<<< HEAD
+=======
+
+	state->pid_ctrl_index = -1; /* postpone the pid filtering cmd */
+	DibAcquireLock(&state->demod_lock);
+
+>>>>>>> android-omap-tuna-jb
 	fe->dtv_property_cache.delivery_system = SYS_DVBT;
 
 	/* set the master status */
@@ -1974,13 +2095,25 @@ static int dib9000_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	/* check the tune result */
 	if (exit_condition == 1) {	/* tune failed */
 		dprintk("tune failed");
+<<<<<<< HEAD
+=======
+		DibReleaseLock(&state->demod_lock);
+		/* tune failed; put all the pid filtering cmd to junk */
+		state->pid_ctrl_index = -1;
+>>>>>>> android-omap-tuna-jb
 		return 0;
 	}
 
 	dprintk("tune success on frontend%i", index_frontend_success);
 
 	/* synchronize all the channel cache */
+<<<<<<< HEAD
 	dib9000_get_frontend(state->fe[0], fep);
+=======
+	state->get_frontend_internal = 1;
+	dib9000_get_frontend(state->fe[0], fep);
+	state->get_frontend_internal = 0;
+>>>>>>> android-omap-tuna-jb
 
 	/* retune the other frontends with the found channel */
 	channel_status.status = CHANNEL_STATUS_PARAMETERS_SET;
@@ -2025,6 +2158,31 @@ static int dib9000_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	/* turn off the diversity for the last frontend */
 	dib9000_fw_set_diversity_in(state->fe[index_frontend - 1], 0);
 
+<<<<<<< HEAD
+=======
+	DibReleaseLock(&state->demod_lock);
+	if (state->pid_ctrl_index >= 0) {
+		u8 index_pid_filter_cmd;
+		u8 pid_ctrl_index = state->pid_ctrl_index;
+
+		state->pid_ctrl_index = -2;
+		for (index_pid_filter_cmd = 0;
+				index_pid_filter_cmd <= pid_ctrl_index;
+				index_pid_filter_cmd++) {
+			if (state->pid_ctrl[index_pid_filter_cmd].cmd == DIB9000_PID_FILTER_CTRL)
+				dib9000_fw_pid_filter_ctrl(state->fe[0],
+						state->pid_ctrl[index_pid_filter_cmd].onoff);
+			else if (state->pid_ctrl[index_pid_filter_cmd].cmd == DIB9000_PID_FILTER)
+				dib9000_fw_pid_filter(state->fe[0],
+						state->pid_ctrl[index_pid_filter_cmd].id,
+						state->pid_ctrl[index_pid_filter_cmd].pid,
+						state->pid_ctrl[index_pid_filter_cmd].onoff);
+		}
+	}
+	/* do not postpone any more the pid filtering */
+	state->pid_ctrl_index = -2;
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -2041,6 +2199,10 @@ static int dib9000_read_status(struct dvb_frontend *fe, fe_status_t * stat)
 	u8 index_frontend;
 	u16 lock = 0, lock_slave = 0;
 
+<<<<<<< HEAD
+=======
+	DibAcquireLock(&state->demod_lock);
+>>>>>>> android-omap-tuna-jb
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++)
 		lock_slave |= dib9000_read_lock(state->fe[index_frontend]);
 
@@ -2059,6 +2221,11 @@ static int dib9000_read_status(struct dvb_frontend *fe, fe_status_t * stat)
 	if ((lock & 0x0008) || (lock_slave & 0x0008))
 		*stat |= FE_HAS_LOCK;
 
+<<<<<<< HEAD
+=======
+	DibReleaseLock(&state->demod_lock);
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -2066,10 +2233,21 @@ static int dib9000_read_ber(struct dvb_frontend *fe, u32 * ber)
 {
 	struct dib9000_state *state = fe->demodulator_priv;
 	u16 *c;
+<<<<<<< HEAD
 
 	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
 	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0)
 		return -EIO;
+=======
+	int ret = 0;
+
+	DibAcquireLock(&state->demod_lock);
+	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
+	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0) {
+		ret = -EIO;
+		goto error;
+	}
+>>>>>>> android-omap-tuna-jb
 	dib9000_risc_mem_read(state, FE_MM_R_FE_MONITOR,
 			state->i2c_read_buffer, 16 * 2);
 	DibReleaseLock(&state->platform.risc.mem_mbx_lock);
@@ -2077,7 +2255,14 @@ static int dib9000_read_ber(struct dvb_frontend *fe, u32 * ber)
 	c = (u16 *)state->i2c_read_buffer;
 
 	*ber = c[10] << 16 | c[11];
+<<<<<<< HEAD
 	return 0;
+=======
+
+error:
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int dib9000_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
@@ -2086,7 +2271,13 @@ static int dib9000_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
 	u8 index_frontend;
 	u16 *c = (u16 *)state->i2c_read_buffer;
 	u16 val;
+<<<<<<< HEAD
 
+=======
+	int ret = 0;
+
+	DibAcquireLock(&state->demod_lock);
+>>>>>>> android-omap-tuna-jb
 	*strength = 0;
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++) {
 		state->fe[index_frontend]->ops.read_signal_strength(state->fe[index_frontend], &val);
@@ -2097,8 +2288,15 @@ static int dib9000_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
 	}
 
 	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
+<<<<<<< HEAD
 	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0)
 		return -EIO;
+=======
+	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0) {
+		ret = -EIO;
+		goto error;
+	}
+>>>>>>> android-omap-tuna-jb
 	dib9000_risc_mem_read(state, FE_MM_R_FE_MONITOR, (u8 *) c, 16 * 2);
 	DibReleaseLock(&state->platform.risc.mem_mbx_lock);
 
@@ -2107,7 +2305,14 @@ static int dib9000_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
 		*strength = 65535;
 	else
 		*strength += val;
+<<<<<<< HEAD
 	return 0;
+=======
+
+error:
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static u32 dib9000_get_snr(struct dvb_frontend *fe)
@@ -2151,6 +2356,10 @@ static int dib9000_read_snr(struct dvb_frontend *fe, u16 * snr)
 	u8 index_frontend;
 	u32 snr_master;
 
+<<<<<<< HEAD
+=======
+	DibAcquireLock(&state->demod_lock);
+>>>>>>> android-omap-tuna-jb
 	snr_master = dib9000_get_snr(fe);
 	for (index_frontend = 1; (index_frontend < MAX_NUMBER_OF_FRONTENDS) && (state->fe[index_frontend] != NULL); index_frontend++)
 		snr_master += dib9000_get_snr(state->fe[index_frontend]);
@@ -2161,6 +2370,11 @@ static int dib9000_read_snr(struct dvb_frontend *fe, u16 * snr)
 	} else
 		*snr = 0;
 
+<<<<<<< HEAD
+=======
+	DibReleaseLock(&state->demod_lock);
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -2168,15 +2382,33 @@ static int dib9000_read_unc_blocks(struct dvb_frontend *fe, u32 * unc)
 {
 	struct dib9000_state *state = fe->demodulator_priv;
 	u16 *c = (u16 *)state->i2c_read_buffer;
+<<<<<<< HEAD
 
 	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
 	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0)
 		return -EIO;
+=======
+	int ret = 0;
+
+	DibAcquireLock(&state->demod_lock);
+	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
+	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0) {
+		ret = -EIO;
+		goto error;
+	}
+>>>>>>> android-omap-tuna-jb
 	dib9000_risc_mem_read(state, FE_MM_R_FE_MONITOR, (u8 *) c, 16 * 2);
 	DibReleaseLock(&state->platform.risc.mem_mbx_lock);
 
 	*unc = c[12];
+<<<<<<< HEAD
 	return 0;
+=======
+
+error:
+	DibReleaseLock(&state->demod_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 int dib9000_i2c_enumeration(struct i2c_adapter *i2c, int no_of_demods, u8 default_addr, u8 first_addr)
@@ -2322,6 +2554,13 @@ struct dvb_frontend *dib9000_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, c
 	DibInitLock(&st->platform.risc.mbx_lock);
 	DibInitLock(&st->platform.risc.mem_lock);
 	DibInitLock(&st->platform.risc.mem_mbx_lock);
+<<<<<<< HEAD
+=======
+	DibInitLock(&st->demod_lock);
+	st->get_frontend_internal = 0;
+
+	st->pid_ctrl_index = -2;
+>>>>>>> android-omap-tuna-jb
 
 	st->fe[0] = fe;
 	fe->demodulator_priv = st;

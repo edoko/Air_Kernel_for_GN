@@ -484,6 +484,11 @@ struct fb_monspecs {
 	__u8  revision;			/* ...and revision */
 	__u8  max_x;			/* Maximum horizontal size (cm) */
 	__u8  max_y;			/* Maximum vertical size (cm) */
+<<<<<<< HEAD
+=======
+	struct fb_audio *audiodb;	/* audio database */
+	__u32 audiodb_len;		/* audio database length */
+>>>>>>> android-omap-tuna-jb
 };
 
 struct fb_cmap_user {
@@ -1003,6 +1008,10 @@ extern ssize_t fb_sys_write(struct fb_info *info, const char __user *buf,
 /* drivers/video/fbmem.c */
 extern int register_framebuffer(struct fb_info *fb_info);
 extern int unregister_framebuffer(struct fb_info *fb_info);
+<<<<<<< HEAD
+=======
+extern int unlink_framebuffer(struct fb_info *fb_info);
+>>>>>>> android-omap-tuna-jb
 extern void remove_conflicting_framebuffers(struct apertures_struct *a,
 				const char *name, bool primary);
 extern int fb_prepare_logo(struct fb_info *fb_info, int rotate);
@@ -1160,6 +1169,30 @@ struct fb_videomode {
 	u32 flag;
 };
 
+<<<<<<< HEAD
+=======
+#define FB_AUDIO_LPCM	1
+
+#define FB_AUDIO_192KHZ	(1 << 6)
+#define FB_AUDIO_176KHZ	(1 << 5)
+#define FB_AUDIO_96KHZ	(1 << 4)
+#define FB_AUDIO_88KHZ	(1 << 3)
+#define FB_AUDIO_48KHZ	(1 << 2)
+#define FB_AUDIO_44KHZ	(1 << 1)
+#define FB_AUDIO_32KHZ	(1 << 0)
+
+#define FB_AUDIO_24BIT	(1 << 2)
+#define FB_AUDIO_20BIT	(1 << 1)
+#define FB_AUDIO_16BIT	(1 << 0)
+
+struct fb_audio {
+	u8 format;
+	u8 channel_count;
+	u8 sample_rates;
+	u8 bit_rates;
+};
+
+>>>>>>> android-omap-tuna-jb
 extern const char *fb_mode_option;
 extern const struct fb_videomode vesa_modes[];
 extern const struct fb_videomode cea_modes[];

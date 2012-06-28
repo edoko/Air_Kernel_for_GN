@@ -160,7 +160,11 @@
 #define LP_MODE_DISABLE		0
 #define LP_MODE_CLOCK_STOP	1
 #define LP_MODE_SELF_REFRESH	2
+<<<<<<< HEAD
 #define LP_MODE_PWR_DN		4
+=======
+#define LP_MODE_PWR_DN		3
+>>>>>>> android-omap-tuna-jb
 
 /* REG_DPD_EN */
 #define DPD_DISABLE	0
@@ -258,6 +262,11 @@ struct emif_regs {
 
 int omap_emif_setup_registers(u32 freq,
 			      u32 volt_state);
+<<<<<<< HEAD
+=======
+void omap_emif_frequency_pre_notify(void);
+void omap_emif_frequency_post_notify(void);
+>>>>>>> android-omap-tuna-jb
 int omap_emif_setup_device_details(
 			const struct emif_device_details *emif1_devices,
 			const struct emif_device_details *emif2_devices);

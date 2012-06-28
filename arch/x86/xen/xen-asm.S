@@ -96,7 +96,11 @@ ENTRY(xen_restore_fl_direct)
 
 	/* check for unmasked and pending */
 	cmpw $0x0001, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_pending
+<<<<<<< HEAD
 	jz 1f
+=======
+	jnz 1f
+>>>>>>> android-omap-tuna-jb
 2:	call check_events
 1:
 ENDPATCH(xen_restore_fl_direct)

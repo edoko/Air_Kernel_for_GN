@@ -223,8 +223,16 @@ int radeon_wb_init(struct radeon_device *rdev)
 	if (radeon_no_wb == 1)
 		rdev->wb.enabled = false;
 	else {
+<<<<<<< HEAD
 		/* often unreliable on AGP */
 		if (rdev->flags & RADEON_IS_AGP) {
+=======
+		if (rdev->flags & RADEON_IS_AGP) {
+			/* often unreliable on AGP */
+			rdev->wb.enabled = false;
+		} else if (rdev->family < CHIP_R300) {
+			/* often unreliable on pre-r300 */
+>>>>>>> android-omap-tuna-jb
 			rdev->wb.enabled = false;
 		} else {
 			rdev->wb.enabled = true;
@@ -854,6 +862,11 @@ int radeon_suspend_kms(struct drm_device *dev, pm_message_t state)
 	if (dev->switch_power_state == DRM_SWITCH_POWER_OFF)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	drm_kms_helper_poll_disable(dev);
+
+>>>>>>> android-omap-tuna-jb
 	/* turn off display hw */
 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
 		drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
@@ -940,6 +953,11 @@ int radeon_resume_kms(struct drm_device *dev)
 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
 		drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
 	}
+<<<<<<< HEAD
+=======
+
+	drm_kms_helper_poll_enable(dev);
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 

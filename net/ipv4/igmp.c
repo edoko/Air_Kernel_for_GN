@@ -875,6 +875,11 @@ static void igmp_heard_query(struct in_device *in_dev, struct sk_buff *skb,
 		 * to be intended in a v3 query.
 		 */
 		max_delay = IGMPV3_MRC(ih3->code)*(HZ/IGMP_TIMER_SCALE);
+<<<<<<< HEAD
+=======
+		if (!max_delay)
+			max_delay = 1;	/* can't mod w/ 0 */
+>>>>>>> android-omap-tuna-jb
 	} else { /* v3 */
 		if (!pskb_may_pull(skb, sizeof(struct igmpv3_query)))
 			return;

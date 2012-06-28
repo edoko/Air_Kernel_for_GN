@@ -871,16 +871,24 @@ static void alb_send_learning_packets(struct slave *slave, u8 mac_addr[])
 	}
 }
 
+<<<<<<< HEAD
 /* hw is a boolean parameter that determines whether we should try and
  * set the hw address of the device as well as the hw address of the
  * net_device
  */
 static int alb_set_slave_mac_addr(struct slave *slave, u8 addr[], int hw)
+=======
+static int alb_set_slave_mac_addr(struct slave *slave, u8 addr[])
+>>>>>>> android-omap-tuna-jb
 {
 	struct net_device *dev = slave->dev;
 	struct sockaddr s_addr;
 
+<<<<<<< HEAD
 	if (!hw) {
+=======
+	if (slave->bond->params.mode == BOND_MODE_TLB) {
+>>>>>>> android-omap-tuna-jb
 		memcpy(dev->dev_addr, addr, dev->addr_len);
 		return 0;
 	}
@@ -910,8 +918,13 @@ static void alb_swap_mac_addr(struct bonding *bond, struct slave *slave1, struct
 	u8 tmp_mac_addr[ETH_ALEN];
 
 	memcpy(tmp_mac_addr, slave1->dev->dev_addr, ETH_ALEN);
+<<<<<<< HEAD
 	alb_set_slave_mac_addr(slave1, slave2->dev->dev_addr, bond->alb_info.rlb_enabled);
 	alb_set_slave_mac_addr(slave2, tmp_mac_addr, bond->alb_info.rlb_enabled);
+=======
+	alb_set_slave_mac_addr(slave1, slave2->dev->dev_addr);
+	alb_set_slave_mac_addr(slave2, tmp_mac_addr);
+>>>>>>> android-omap-tuna-jb
 
 }
 
@@ -1058,8 +1071,12 @@ static int alb_handle_addr_collision_on_attach(struct bonding *bond, struct slav
 
 		/* Try setting slave mac to bond address and fall-through
 		   to code handling that situation below... */
+<<<<<<< HEAD
 		alb_set_slave_mac_addr(slave, bond->dev->dev_addr,
 				       bond->alb_info.rlb_enabled);
+=======
+		alb_set_slave_mac_addr(slave, bond->dev->dev_addr);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	/* The slave's address is equal to the address of the bond.
@@ -1095,8 +1112,12 @@ static int alb_handle_addr_collision_on_attach(struct bonding *bond, struct slav
 	}
 
 	if (free_mac_slave) {
+<<<<<<< HEAD
 		alb_set_slave_mac_addr(slave, free_mac_slave->perm_hwaddr,
 				       bond->alb_info.rlb_enabled);
+=======
+		alb_set_slave_mac_addr(slave, free_mac_slave->perm_hwaddr);
+>>>>>>> android-omap-tuna-jb
 
 		pr_warning("%s: Warning: the hw address of slave %s is in use by the bond; giving it the hw address of %s\n",
 			   bond->dev->name, slave->dev->name,
@@ -1452,8 +1473,12 @@ int bond_alb_init_slave(struct bonding *bond, struct slave *slave)
 {
 	int res;
 
+<<<<<<< HEAD
 	res = alb_set_slave_mac_addr(slave, slave->perm_hwaddr,
 				     bond->alb_info.rlb_enabled);
+=======
+	res = alb_set_slave_mac_addr(slave, slave->perm_hwaddr);
+>>>>>>> android-omap-tuna-jb
 	if (res) {
 		return res;
 	}
@@ -1604,8 +1629,12 @@ void bond_alb_handle_active_change(struct bonding *bond, struct slave *new_slave
 		alb_swap_mac_addr(bond, swap_slave, new_slave);
 	} else {
 		/* set the new_slave to the bond mac address */
+<<<<<<< HEAD
 		alb_set_slave_mac_addr(new_slave, bond->dev->dev_addr,
 				       bond->alb_info.rlb_enabled);
+=======
+		alb_set_slave_mac_addr(new_slave, bond->dev->dev_addr);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (swap_slave) {
@@ -1665,8 +1694,12 @@ int bond_alb_set_mac_address(struct net_device *bond_dev, void *addr)
 		alb_swap_mac_addr(bond, swap_slave, bond->curr_active_slave);
 		alb_fasten_mac_swap(bond, swap_slave, bond->curr_active_slave);
 	} else {
+<<<<<<< HEAD
 		alb_set_slave_mac_addr(bond->curr_active_slave, bond_dev->dev_addr,
 				       bond->alb_info.rlb_enabled);
+=======
+		alb_set_slave_mac_addr(bond->curr_active_slave, bond_dev->dev_addr);
+>>>>>>> android-omap-tuna-jb
 
 		read_lock(&bond->lock);
 		alb_send_learning_packets(bond->curr_active_slave, bond_dev->dev_addr);

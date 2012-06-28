@@ -410,6 +410,7 @@ tiler_blk_handle tiler_alloc_block_area(enum tiler_fmt fmt, u32 width,
 					u32 *virt_array);
 
 /**
+<<<<<<< HEAD
  * Allocate an area of container space in the Tiler with a specific alignment
  * and user specified security token
  *
@@ -433,6 +434,8 @@ tiler_blk_handle tiler_alloc_block_area_aligned(enum tiler_fmt fmt, u32 width,
 			u32 offset, u32 token);
 
 /**
+=======
+>>>>>>> android-omap-tuna-jb
  * Free a reserved area in the Tiler
  *
  * @param handle	Handle to tiler block information

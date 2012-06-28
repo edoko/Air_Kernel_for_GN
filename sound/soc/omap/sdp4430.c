@@ -22,7 +22,10 @@
 #include <linux/clk.h>
 #include <linux/platform_device.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
 #include <linux/regulator/consumer.h>
+=======
+>>>>>>> android-omap-tuna-jb
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -52,7 +55,10 @@
 static int twl6040_power_mode;
 static int mcbsp_cfg;
 static struct snd_soc_codec *twl6040_codec;
+<<<<<<< HEAD
 struct regulator *twl6040_clk32kreg;
+=======
+>>>>>>> android-omap-tuna-jb
 
 int omap4_tuna_get_type(void);
 
@@ -180,6 +186,7 @@ static struct snd_soc_ops sdp4430_modem_ops = {
 	.hw_free = sdp4430_modem_hw_free,
 };
 
+<<<<<<< HEAD
 static int sdp4430_mcpdm_hw_params(struct snd_pcm_substream *substream,
 	struct snd_pcm_hw_params *params)
 {
@@ -187,6 +194,23 @@ static int sdp4430_mcpdm_hw_params(struct snd_pcm_substream *substream,
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
 	int clk_id, freq, ret;
 
+=======
+static int sdp4430_mcpdm_startup(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct twl6040 *twl6040 = codec->control_data;
+	int clk_id, freq, ret;
+
+	/* TWL6040 supplies McPDM PAD_CLKS */
+	ret = twl6040_enable(twl6040);
+	if (ret) {
+		printk(KERN_ERR "failed to enable TWL6040\n");
+		return ret;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	if (twl6040_power_mode) {
 		clk_id = TWL6040_HPPLL_ID;
 		freq = 38400000;
@@ -198,6 +222,7 @@ static int sdp4430_mcpdm_hw_params(struct snd_pcm_substream *substream,
 	/* set the codec mclk */
 	ret = snd_soc_dai_set_sysclk(codec_dai, clk_id, freq,
 				SND_SOC_CLOCK_IN);
+<<<<<<< HEAD
 	if (ret)
 		printk(KERN_ERR "can't set codec system clock\n");
 
@@ -206,6 +231,33 @@ static int sdp4430_mcpdm_hw_params(struct snd_pcm_substream *substream,
 
 static struct snd_soc_ops sdp4430_mcpdm_ops = {
 	.hw_params = sdp4430_mcpdm_hw_params,
+=======
+	if (ret) {
+		printk(KERN_ERR "can't set codec system clock\n");
+		goto err;
+	}
+
+	return 0;
+
+err:
+	twl6040_disable(twl6040);
+	return ret;
+}
+
+static void sdp4430_mcpdm_shutdown(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_codec *codec = rtd->codec;
+	struct twl6040 *twl6040 = codec->control_data;
+
+	/* TWL6040 supplies McPDM PAD_CLKS */
+	twl6040_disable(twl6040);
+}
+
+static struct snd_soc_ops sdp4430_mcpdm_ops = {
+	.startup = sdp4430_mcpdm_startup,
+	.shutdown = sdp4430_mcpdm_shutdown,
+>>>>>>> android-omap-tuna-jb
 };
 
 static int sdp4430_mcbsp_hw_params(struct snd_pcm_substream *substream,
@@ -400,6 +452,7 @@ static int sdp4430_set_pdm_dl1_gains(struct snd_soc_dapm_context *dapm)
 	return omap_abe_set_dl1_output(output);
 }
 
+<<<<<<< HEAD
 static int sdp4430_mcpdm_twl6040_pre(struct snd_pcm_substream *substream)
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
@@ -440,6 +493,8 @@ static void sdp4430_mcpdm_twl6040_post(struct snd_pcm_substream *substream)
 		printk(KERN_ERR "failed to disable TWL6040 CLK32K\n");
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int sdp4430_twl6040_init(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_soc_codec *codec = rtd->codec;
@@ -780,8 +835,11 @@ static struct snd_soc_dai_link sdp4430_dai[] = {
 		.codec_dai_name =  "twl6040-dl1",
 		.codec_name = "twl6040-codec",
 
+<<<<<<< HEAD
 		.pre = sdp4430_mcpdm_twl6040_pre,
 		.post = sdp4430_mcpdm_twl6040_post,
+=======
+>>>>>>> android-omap-tuna-jb
 		.ops = &sdp4430_mcpdm_ops,
 		.ignore_suspend = 1,
 	},
@@ -816,8 +874,11 @@ static struct snd_soc_dai_link sdp4430_dai[] = {
 
 		.no_pcm = 1, /* don't create ALSA pcm for this */
 		.init = sdp4430_twl6040_init,
+<<<<<<< HEAD
 		.pre = sdp4430_mcpdm_twl6040_pre,
 		.post = sdp4430_mcpdm_twl6040_post,
+=======
+>>>>>>> android-omap-tuna-jb
 		.ops = &sdp4430_mcpdm_ops,
 		.be_id = OMAP_ABE_DAI_PDM_DL1,
 		.ignore_suspend = 1,
@@ -836,8 +897,11 @@ static struct snd_soc_dai_link sdp4430_dai[] = {
 
 		.no_pcm = 1, /* don't create ALSA pcm for this */
 		.ops = &sdp4430_mcpdm_ops,
+<<<<<<< HEAD
 		.pre = sdp4430_mcpdm_twl6040_pre,
 		.post = sdp4430_mcpdm_twl6040_post,
+=======
+>>>>>>> android-omap-tuna-jb
 		.be_id = OMAP_ABE_DAI_PDM_UL,
 		.ignore_suspend = 1,
 	},
@@ -855,8 +919,11 @@ static struct snd_soc_dai_link sdp4430_dai[] = {
 
 		.no_pcm = 1, /* don't create ALSA pcm for this */
 		.init = sdp4430_twl6040_dl2_init,
+<<<<<<< HEAD
 		.pre = sdp4430_mcpdm_twl6040_pre,
 		.post = sdp4430_mcpdm_twl6040_post,
+=======
+>>>>>>> android-omap-tuna-jb
 		.ops = &sdp4430_mcpdm_ops,
 		.be_id = OMAP_ABE_DAI_PDM_DL2,
 		.ignore_suspend = 1,
@@ -874,8 +941,11 @@ static struct snd_soc_dai_link sdp4430_dai[] = {
 		.codec_name = "twl6040-codec",
 
 		.no_pcm = 1, /* don't create ALSA pcm for this */
+<<<<<<< HEAD
 		.pre = sdp4430_mcpdm_twl6040_pre,
 		.post = sdp4430_mcpdm_twl6040_post,
+=======
+>>>>>>> android-omap-tuna-jb
 		.ops = &sdp4430_mcpdm_ops,
 		.be_id = OMAP_ABE_DAI_PDM_VIB,
 	},
@@ -996,6 +1066,7 @@ static int __init sdp4430_soc_init(void)
 	else if (machine_is_tuna())
 		snd_soc_sdp4430.name = "Tuna";
 
+<<<<<<< HEAD
 	twl6040_clk32kreg = regulator_get(NULL, "twl6040_clk32k");
 	if (IS_ERR(twl6040_clk32kreg)) {
 		ret = PTR_ERR(twl6040_clk32kreg);
@@ -1010,6 +1081,8 @@ static int __init sdp4430_soc_init(void)
 		goto clk32kreg_ena_err;
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	sdp4430_snd_device = platform_device_alloc("soc-audio", -1);
 	if (!sdp4430_snd_device) {
 		printk(KERN_ERR "Platform device allocation failed\n");
@@ -1026,8 +1099,11 @@ static int __init sdp4430_soc_init(void)
 	if (ret)
 		goto err;
 
+<<<<<<< HEAD
 	regulator_disable(twl6040_clk32kreg);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	twl6040_codec = snd_soc_card_get_codec(&snd_soc_sdp4430,
 					"twl6040-codec");
 
@@ -1037,10 +1113,13 @@ err:
 	printk(KERN_ERR "Unable to add platform device\n");
 	platform_device_put(sdp4430_snd_device);
 device_err:
+<<<<<<< HEAD
 	regulator_disable(twl6040_clk32kreg);
 clk32kreg_ena_err:
 	regulator_put(twl6040_clk32kreg);
 clk32kreg_err:
+=======
+>>>>>>> android-omap-tuna-jb
 	if (machine_is_tuna())
 		gpio_free(TUNA_SUB_MIC_GPIO);
 submic_gpio_err:
@@ -1057,7 +1136,10 @@ static void __exit sdp4430_soc_exit(void)
 		gpio_free(TUNA_SUB_MIC_GPIO);
 		gpio_free(TUNA_MAIN_MIC_GPIO);
 	}
+<<<<<<< HEAD
 	regulator_put(twl6040_clk32kreg);
+=======
+>>>>>>> android-omap-tuna-jb
 	platform_device_unregister(sdp4430_snd_device);
 }
 module_exit(sdp4430_soc_exit);

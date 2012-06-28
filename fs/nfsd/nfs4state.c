@@ -188,8 +188,20 @@ static void nfs4_file_put_fd(struct nfs4_file *fp, int oflag)
 static void __nfs4_file_put_access(struct nfs4_file *fp, int oflag)
 {
 	if (atomic_dec_and_test(&fp->fi_access[oflag])) {
+<<<<<<< HEAD
 		nfs4_file_put_fd(fp, O_RDWR);
 		nfs4_file_put_fd(fp, oflag);
+=======
+		nfs4_file_put_fd(fp, oflag);
+		/*
+		 * It's also safe to get rid of the RDWR open *if*
+		 * we no longer have need of the other kind of access
+		 * or if we already have the other kind of open:
+		 */
+		if (fp->fi_fds[1-oflag]
+			|| atomic_read(&fp->fi_access[1 - oflag]) == 0)
+			nfs4_file_put_fd(fp, O_RDWR);
+>>>>>>> android-omap-tuna-jb
 	}
 }
 
@@ -1903,7 +1915,11 @@ nfsd4_setclientid(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	 * of 5 bullet points, labeled as CASE0 - CASE4 below.
 	 */
 	unconf = find_unconfirmed_client_by_str(dname, strhashval);
+<<<<<<< HEAD
 	status = nfserr_resource;
+=======
+	status = nfserr_jukebox;
+>>>>>>> android-omap-tuna-jb
 	if (!conf) {
 		/*
 		 * RFC 3530 14.2.33 CASE 4:
@@ -2440,7 +2456,11 @@ renew:
 	if (open->op_stateowner == NULL) {
 		sop = alloc_init_open_stateowner(strhashval, clp, open);
 		if (sop == NULL)
+<<<<<<< HEAD
 			return nfserr_resource;
+=======
+			return nfserr_jukebox;
+>>>>>>> android-omap-tuna-jb
 		open->op_stateowner = sop;
 	}
 	list_del_init(&sop->so_close_lru);
@@ -2576,7 +2596,11 @@ nfs4_new_open(struct svc_rqst *rqstp, struct nfs4_stateid **stpp,
 
 	stp = nfs4_alloc_stateid();
 	if (stp == NULL)
+<<<<<<< HEAD
 		return nfserr_resource;
+=======
+		return nfserr_jukebox;
+>>>>>>> android-omap-tuna-jb
 
 	status = nfs4_get_vfs_file(rqstp, fp, cur_fh, open);
 	if (status) {
@@ -2807,7 +2831,11 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 		status = nfserr_bad_stateid;
 		if (open->op_claim_type == NFS4_OPEN_CLAIM_DELEGATE_CUR)
 			goto out;
+<<<<<<< HEAD
 		status = nfserr_resource;
+=======
+		status = nfserr_jukebox;
+>>>>>>> android-omap-tuna-jb
 		fp = alloc_init_file(ino);
 		if (fp == NULL)
 			goto out;
@@ -3381,8 +3409,14 @@ static inline void nfs4_file_downgrade(struct nfs4_stateid *stp, unsigned int to
 	int i;
 
 	for (i = 1; i < 4; i++) {
+<<<<<<< HEAD
 		if (test_bit(i, &stp->st_access_bmap) && !(i & to_access)) {
 			nfs4_file_put_access(stp->st_file, i);
+=======
+		if (test_bit(i, &stp->st_access_bmap)
+					&& ((i & to_access) != i)) {
+			nfs4_file_put_access(stp->st_file, nfs4_access_to_omode(i));
+>>>>>>> android-omap-tuna-jb
 			__clear_bit(i, &stp->st_access_bmap);
 		}
 	}
@@ -3413,6 +3447,11 @@ nfsd4_open_downgrade(struct svc_rqst *rqstp,
 	if (!access_valid(od->od_share_access, cstate->minorversion)
 			|| !deny_valid(od->od_share_deny))
 		return nfserr_inval;
+<<<<<<< HEAD
+=======
+	/* We don't yet support WANT bits: */
+	od->od_share_access &= NFS4_SHARE_ACCESS_MASK;
+>>>>>>> android-omap-tuna-jb
 
 	nfs4_lock_state();
 	if ((status = nfs4_preprocess_seqid_op(cstate,
@@ -3840,7 +3879,11 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 		/* XXX: Do we need to check for duplicate stateowners on
 		 * the same file, or should they just be allowed (and
 		 * create new stateids)? */
+<<<<<<< HEAD
 		status = nfserr_resource;
+=======
+		status = nfserr_jukebox;
+>>>>>>> android-omap-tuna-jb
 		lock_sop = alloc_init_lock_stateowner(strhashval,
 				open_sop->so_client, open_stp, lock);
 		if (lock_sop == NULL)
@@ -3924,9 +3967,15 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 	case (EDEADLK):
 		status = nfserr_deadlock;
 		break;
+<<<<<<< HEAD
 	default:        
 		dprintk("NFSD: nfsd4_lock: vfs_lock_file() failed! status %d\n",err);
 		status = nfserr_resource;
+=======
+	default:
+		dprintk("NFSD: nfsd4_lock: vfs_lock_file() failed! status %d\n",err);
+		status = nfserrno(err);
+>>>>>>> android-omap-tuna-jb
 		break;
 	}
 out:
@@ -3946,6 +3995,7 @@ out:
  * vfs_test_lock.  (Arguably perhaps test_lock should be done with an
  * inode operation.)
  */
+<<<<<<< HEAD
 static int nfsd_test_lock(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file_lock *lock)
 {
 	struct file *file;
@@ -3956,6 +4006,16 @@ static int nfsd_test_lock(struct svc_rqst *rqstp, struct svc_fh *fhp, struct fil
 		return err;
 	err = vfs_test_lock(file, lock);
 	nfsd_close(file);
+=======
+static __be32 nfsd_test_lock(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file_lock *lock)
+{
+	struct file *file;
+	__be32 err = nfsd_open(rqstp, fhp, S_IFREG, NFSD_MAY_READ, &file);
+	if (!err) {
+		err = nfserrno(vfs_test_lock(file, lock));
+		nfsd_close(file);
+	}
+>>>>>>> android-omap-tuna-jb
 	return err;
 }
 
@@ -3968,7 +4028,10 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 {
 	struct inode *inode;
 	struct file_lock file_lock;
+<<<<<<< HEAD
 	int error;
+=======
+>>>>>>> android-omap-tuna-jb
 	__be32 status;
 
 	if (locks_in_grace())
@@ -4020,12 +4083,19 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
 
 	nfs4_transform_lock_offset(&file_lock);
 
+<<<<<<< HEAD
 	status = nfs_ok;
 	error = nfsd_test_lock(rqstp, &cstate->current_fh, &file_lock);
 	if (error) {
 		status = nfserrno(error);
 		goto out;
 	}
+=======
+	status = nfsd_test_lock(rqstp, &cstate->current_fh, &file_lock);
+	if (status)
+		goto out;
+
+>>>>>>> android-omap-tuna-jb
 	if (file_lock.fl_type != F_UNLCK) {
 		status = nfserr_denied;
 		nfs4_set_lock_denied(&file_lock, &lockt->lt_denied);

@@ -55,6 +55,12 @@ MODULE_PARM_DESC(grain, "Granularity (bytes)");
 module_param_named(alloc_debug, tiler_alloc_debug, uint, 0644);
 MODULE_PARM_DESC(alloc_debug, "Allocation debug flag");
 
+<<<<<<< HEAD
+=======
+struct tiler_dev {
+	struct cdev cdev;
+};
+>>>>>>> android-omap-tuna-jb
 static struct dentry *dbgfs;
 static struct dentry *dbg_map;
 
@@ -64,6 +70,7 @@ static struct list_head blocks;		/* all tiler blocks */
 static struct list_head orphan_areas;	/* orphaned 2D areas */
 static struct list_head orphan_onedim;	/* orphaned 1D areas */
 
+<<<<<<< HEAD
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 struct tiler_dev {
 	struct cdev cdev;
@@ -72,6 +79,11 @@ static s32 tiler_major;
 static s32 tiler_minor;
 static struct tiler_dev *tiler_device;
 #endif
+=======
+static s32 tiler_major;
+static s32 tiler_minor;
+static struct tiler_dev *tiler_device;
+>>>>>>> android-omap-tuna-jb
 static struct class *tilerdev_class;
 static struct mutex mtx;
 static struct tcm *tcm[TILER_FORMATS];
@@ -79,7 +91,10 @@ static struct tmm *tmm[TILER_FORMATS];
 static u32 *dmac_va;
 static dma_addr_t dmac_pa;
 static DEFINE_MUTEX(dmac_mtx);
+<<<<<<< HEAD
 static dev_t dev;
+=======
+>>>>>>> android-omap-tuna-jb
 
 /*
  *  TMM connectors
@@ -343,14 +358,22 @@ static const struct file_operations tiler_debug_fops = {
  */
 
 /* get or create new gid_info object */
+<<<<<<< HEAD
 static struct gid_info *_m_get_gi(struct security_info *si, u32 gid)
+=======
+static struct gid_info *_m_get_gi(struct process_info *pi, u32 gid)
+>>>>>>> android-omap-tuna-jb
 {
 	struct gid_info *gi;
 
 	/* have mutex */
 
 	/* see if group already exist */
+<<<<<<< HEAD
 	list_for_each_entry(gi, &si->groups, by_sid) {
+=======
+	list_for_each_entry(gi, &pi->groups, by_pid) {
+>>>>>>> android-omap-tuna-jb
 		if (gi->gid == gid)
 			goto done;
 	}
@@ -364,9 +387,15 @@ static struct gid_info *_m_get_gi(struct security_info *si, u32 gid)
 	INIT_LIST_HEAD(&gi->areas);
 	INIT_LIST_HEAD(&gi->onedim);
 	INIT_LIST_HEAD(&gi->reserved);
+<<<<<<< HEAD
 	gi->si = si;
 	gi->gid = gid;
 	list_add(&gi->by_sid, &si->groups);
+=======
+	gi->pi = pi;
+	gi->gid = gid;
+	list_add(&gi->by_pid, &pi->groups);
+>>>>>>> android-omap-tuna-jb
 done:
 	/*
 	 * Once area is allocated, the group info's ref count will be
@@ -384,6 +413,7 @@ static void _m_try_free_group(struct gid_info *gi)
 	    /* also ensure noone is still using this group */
 	    !gi->refs) {
 		BUG_ON(!list_empty(&gi->reserved));
+<<<<<<< HEAD
 		list_del(&gi->by_sid);
 
 		/* if group is tracking kernel objects, we may free even
@@ -392,6 +422,15 @@ static void _m_try_free_group(struct gid_info *gi)
 			list_empty(&gi->si->groups)) {
 			list_del(&gi->si->list);
 			kfree(gi->si);
+=======
+		list_del(&gi->by_pid);
+
+		/* if group is tracking kernel objects, we may free even
+		   the process info */
+		if (gi->pi->kernel && list_empty(&gi->pi->groups)) {
+			list_del(&gi->pi->list);
+			kfree(gi->pi);
+>>>>>>> android-omap-tuna-jb
 		}
 
 		kfree(gi);
@@ -400,11 +439,19 @@ static void _m_try_free_group(struct gid_info *gi)
 
 /* --- external versions --- */
 
+<<<<<<< HEAD
 static struct gid_info *get_gi(struct security_info *si, u32 gid)
 {
 	struct gid_info *gi;
 	mutex_lock(&mtx);
 	gi = _m_get_gi(si, gid);
+=======
+static struct gid_info *get_gi(struct process_info *pi, u32 gid)
+{
+	struct gid_info *gi;
+	mutex_lock(&mtx);
+	gi = _m_get_gi(pi, gid);
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&mtx);
 	return gi;
 }
@@ -457,6 +504,7 @@ static inline void _m_area_free(struct area_info *ai)
 }
 
 static s32 __analize_area(enum tiler_fmt fmt, u32 width, u32 height,
+<<<<<<< HEAD
 			  u16 *x_area, u16 *y_area, u16 *band, u16 *align,
 			u16 *offs, u16 *remainder)
 {
@@ -500,6 +548,38 @@ static s32 __analize_area(enum tiler_fmt fmt, u32 width, u32 height,
 	   guard against overflow */
 	if (width > (g->slot_w * tiler.width) ||
 		height > (g->slot_h * tiler.height))
+=======
+			  u16 *x_area, u16 *y_area, u16 *band,
+			  u16 *align)
+{
+	/* input: width, height is in pixels */
+	/* output: x_area, y_area, band, align */
+
+	/* slot width, height, and row size */
+	u32 slot_row, min_align;
+	const struct tiler_geom *g;
+
+	/* set alignment to page size */
+	*align = PAGE_SIZE;
+
+	/* width and height must be positive */
+	if (!width || !height)
+		return -EINVAL;
+
+	if (fmt == TILFMT_PAGE) {
+		/* for 1D area keep the height (1), width is in tiler slots */
+		*x_area = DIV_ROUND_UP(width, tiler.page);
+		*y_area = *band = 1;
+
+		if (*x_area * *y_area > tiler.width * tiler.height)
+			return -ENOMEM;
+		return 0;
+	}
+
+	/* format must be valid */
+	g = tiler.geom(fmt);
+	if (!g)
+>>>>>>> android-omap-tuna-jb
 		return -EINVAL;
 
 	/* get the # of bytes per row in 1 slot */
@@ -510,6 +590,7 @@ static s32 __analize_area(enum tiler_fmt fmt, u32 width, u32 height,
 
 	/* minimum alignment is at least 1 slot */
 	min_align = max(slot_row, granularity);
+<<<<<<< HEAD
 	*align = ALIGN(*align ? : PAGE_SIZE, min_align);
 
 	/* offset must be multiple of bpp */
@@ -524,12 +605,18 @@ static s32 __analize_area(enum tiler_fmt fmt, u32 width, u32 height,
 
 	/* expand width to block size */
 	width = ALIGN(width, min_align / g->bpp);
+=======
+	*align = ALIGN(*align, min_align);
+>>>>>>> android-omap-tuna-jb
 
 	/* adjust to slots */
 	*x_area = DIV_ROUND_UP(width, g->slot_w);
 	*y_area = DIV_ROUND_UP(height, g->slot_h);
 	*align /= slot_row;
+<<<<<<< HEAD
 	*offs /= slot_row;
+=======
+>>>>>>> android-omap-tuna-jb
 
 	if (*x_area > tiler.width || *y_area > tiler.height)
 		return -ENOMEM;
@@ -585,10 +672,17 @@ void fill_virt_array(struct tiler_block_t *blk, u32 *virt_array)
  *
  * (must have mutex)
  */
+<<<<<<< HEAD
 static u16 _m_blk_find_fit(u16 w, u16 align, u16 offs,
 		     struct area_info *ai, struct list_head **before)
 {
 	int x = ai->area.p0.x + w + offs;
+=======
+static u16 _m_blk_find_fit(u16 w, u16 align,
+		     struct area_info *ai, struct list_head **before)
+{
+	int x = ai->area.p0.x + w;
+>>>>>>> android-omap-tuna-jb
 	struct mem_info *mi;
 
 	/* area blocks are sorted by x */
@@ -598,7 +692,11 @@ static u16 _m_blk_find_fit(u16 w, u16 align, u16 offs,
 			*before = &mi->by_area;
 			return x;
 		}
+<<<<<<< HEAD
 		x = ALIGN(mi->area.p1.x + 1 -offs, align) + w + offs;
+=======
+		x = ALIGN(mi->area.p1.x + 1, align) + w;
+>>>>>>> android-omap-tuna-jb
 	}
 	*before = &ai->blocks;
 
@@ -620,7 +718,11 @@ struct mem_info *_m_add2area(struct mem_info *mi, struct area_info *ai,
 	return mi;
 }
 
+<<<<<<< HEAD
 static struct mem_info *get_2d_area(u16 w, u16 h, u16 align, u16 offs, u16 band,
+=======
+static struct mem_info *get_2d_area(u16 w, u16 h, u16 align, u16 band,
+>>>>>>> android-omap-tuna-jb
 					struct gid_info *gi, struct tcm *tcm)
 {
 	struct area_info *ai = NULL;
@@ -636,7 +738,11 @@ static struct mem_info *get_2d_area(u16 w, u16 h, u16 align, u16 offs, u16 band,
 		if (mi->area.tcm == tcm &&
 		    tcm_aheight(mi->area) == h &&
 		    tcm_awidth(mi->area) == w &&
+<<<<<<< HEAD
 		    (mi->area.p0.x & (align - 1)) == offs) {
+=======
+		    (mi->area.p0.x & (align - 1)) == 0) {
+>>>>>>> android-omap-tuna-jb
 			/* this area is already set up */
 
 			/* remove from reserved list */
@@ -667,7 +773,11 @@ static struct mem_info *get_2d_area(u16 w, u16 h, u16 align, u16 offs, u16 band,
 	list_for_each_entry(ai, &gi->areas, by_gid) {
 		if (ai->area.tcm == tcm &&
 		    tcm_aheight(ai->area) == h) {
+<<<<<<< HEAD
 			x = _m_blk_find_fit(w, align, offs, ai, &before);
+=======
+			x = _m_blk_find_fit(w, align, ai, &before);
+>>>>>>> android-omap-tuna-jb
 			if (x) {
 				_m_add2area(mi, ai, x - w, w, before);
 
@@ -687,10 +797,17 @@ static struct mem_info *get_2d_area(u16 w, u16 h, u16 align, u16 offs, u16 band,
 	mutex_unlock(&mtx);
 
 	/* if no area fit, reserve a new one */
+<<<<<<< HEAD
 	ai = area_new_m(ALIGN(w + offs, max(band, align)), h,
 		      max(band, align), tcm, gi);
 	if (ai) {
 		_m_add2area(mi, ai, ai->area.p0.x + offs, w, &ai->blocks);
+=======
+	ai = area_new_m(ALIGN(w, max(band, align)), h,
+		      max(band, align), tcm, gi);
+	if (ai) {
+		_m_add2area(mi, ai, ai->area.p0.x, w, &ai->blocks);
+>>>>>>> android-omap-tuna-jb
 		if (tiler_alloc_debug & 1)
 			printk(KERN_ERR "(+2d (%d-%d,%d-%d) in (%d-%d,%d-%d) new)\n",
 					mi->area.p0.x, mi->area.p1.x,
@@ -709,9 +826,15 @@ done:
 }
 
 /* layout reserved 2d blocks in a larger area */
+<<<<<<< HEAD
 /* NOTE: band, w, h, a(lign), o(ffs) is in slots */
 static s32 lay_2d(enum tiler_fmt fmt, u16 n, u16 w, u16 h, u16 band,
 		      u16 align, u16 offs, struct gid_info *gi,
+=======
+/* NOTE: band, w, h, a(lign) is in slots */
+static s32 lay_2d(enum tiler_fmt fmt, u16 n, u16 w, u16 h, u16 band,
+		      u16 align, struct gid_info *gi,
+>>>>>>> android-omap-tuna-jb
 		      struct list_head *pos)
 {
 	u16 x, x0, e = ALIGN(w, align), w_res = (n - 1) * e + w;
@@ -721,15 +844,25 @@ static s32 lay_2d(enum tiler_fmt fmt, u16 n, u16 w, u16 h, u16 band,
 	printk(KERN_INFO "packing %u %u buffers into %u width\n",
 	       n, w, w_res);
 
+<<<<<<< HEAD
 	/* calculate dimensions, band, offs, and alignment in slots */
 	/* reserve an area */
 	ai = area_new_m(ALIGN(w_res + offs, max(band, align)), h,
+=======
+	/* calculate dimensions, band, and alignment in slots */
+	/* reserve an area */
+	ai = area_new_m(ALIGN(w_res, max(band, align)), h,
+>>>>>>> android-omap-tuna-jb
 			max(band, align), tcm[fmt], gi);
 	if (!ai)
 		return -ENOMEM;
 
 	/* lay out blocks in the reserved area */
+<<<<<<< HEAD
 	for (n = 0, x = offs; x < w_res; x += e, n++) {
+=======
+	for (n = 0, x = 0; x < w_res; x += e, n++) {
+>>>>>>> android-omap-tuna-jb
 		/* reserve a block struct */
 		mi = kmalloc(sizeof(*mi), GFP_KERNEL);
 		if (!mi)
@@ -980,7 +1113,11 @@ static void unlock_n_free(struct mem_info *mi, bool free)
  *
  * allocated blocks, and unreferenced blocks.  Any blocks/areas still referenced
  * will move to the orphaned lists to avoid issues if a new process is created
+<<<<<<< HEAD
  * with the same sid.
+=======
+ * with the same pid.
+>>>>>>> android-omap-tuna-jb
  *
  * (must have mutex)
  */
@@ -1116,15 +1253,25 @@ static void fill_block_info(struct mem_info *i, struct tiler_block_info *blk)
  *  ==========================================================================
  */
 static struct mem_info *alloc_area(enum tiler_fmt fmt, u32 width, u32 height,
+<<<<<<< HEAD
 				   struct gid_info *gi, u16 align, u16 offs)
 {
 	u16 x, y, band, remainder = 0;
+=======
+				   struct gid_info *gi)
+{
+	u16 x, y, band, align;
+>>>>>>> android-omap-tuna-jb
 	struct mem_info *mi = NULL;
 	const struct tiler_geom *g = tiler.geom(fmt);
 
 	/* calculate dimensions, band, and alignment in slots */
+<<<<<<< HEAD
 	if (__analize_area(fmt, width, height, &x, &y, &band, &align, &offs,
 				&remainder))
+=======
+	if (__analize_area(fmt, width, height, &x, &y, &band, &align))
+>>>>>>> android-omap-tuna-jb
 		return NULL;
 
 	if (fmt == TILFMT_PAGE)	{
@@ -1148,7 +1295,11 @@ static struct mem_info *alloc_area(enum tiler_fmt fmt, u32 width, u32 height,
 		mi->parent = gi;
 		list_add(&mi->by_area, &gi->onedim);
 	} else {
+<<<<<<< HEAD
 		mi = get_2d_area(x, y, align, offs, band, gi, tcm[fmt]);
+=======
+		mi = get_2d_area(x, y, align, band, gi, tcm[fmt]);
+>>>>>>> android-omap-tuna-jb
 		if (!mi)
 			return NULL;
 
@@ -1162,32 +1313,52 @@ static struct mem_info *alloc_area(enum tiler_fmt fmt, u32 width, u32 height,
 	mutex_unlock(&mtx);
 
 	mi->blk.phys = tiler.addr(fmt,
+<<<<<<< HEAD
 		mi->area.p0.x * g->slot_w,
 		mi->area.p0.y * g->slot_h) + remainder;
+=======
+		mi->area.p0.x * g->slot_w, mi->area.p0.y * g->slot_h);
+>>>>>>> android-omap-tuna-jb
 	return mi;
 }
 
 static struct mem_info *alloc_block_area(enum tiler_fmt fmt, u32 width,
 		u32 height, u32 key, u32 gid,
+<<<<<<< HEAD
 		struct security_info *si, u16 align, u16 offs)
+=======
+		struct process_info *pi)
+>>>>>>> android-omap-tuna-jb
 {
 	struct mem_info *mi = NULL;
 	struct gid_info *gi = NULL;
 
 	/* validate parameters */
+<<<<<<< HEAD
 	if (!si || align > PAGE_SIZE || offs >= (align ? : PAGE_SIZE))
+=======
+	if (!pi)
+>>>>>>> android-omap-tuna-jb
 		return ERR_PTR(-EINVAL);
 
 	/* get group context */
 	mutex_lock(&mtx);
+<<<<<<< HEAD
 	gi = _m_get_gi(si, gid);
+=======
+	gi = _m_get_gi(pi, gid);
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&mtx);
 
 	if (!gi)
 		return ERR_PTR(-ENOMEM);
 
 	/* reserve area in tiler container */
+<<<<<<< HEAD
 	mi = alloc_area(fmt, width, height, gi, align, offs);
+=======
+	mi = alloc_area(fmt, width, height, gi);
+>>>>>>> android-omap-tuna-jb
 	if (!mi) {
 		mutex_lock(&mtx);
 		gi->refs--;
@@ -1268,7 +1439,11 @@ static struct tiler_pa_info *get_new_pa(struct tmm *tmm, u32 num_pg)
 }
 
 static s32 alloc_block(enum tiler_fmt fmt, u32 width, u32 height,
+<<<<<<< HEAD
 		u32 key, u32 gid, struct security_info *si,
+=======
+		u32 key, u32 gid, struct process_info *pi,
+>>>>>>> android-omap-tuna-jb
 		struct mem_info **info)
 {
 	struct mem_info *mi;
@@ -1278,7 +1453,11 @@ static s32 alloc_block(enum tiler_fmt fmt, u32 width, u32 height,
 	*info = NULL;
 
 	/* allocate tiler container area */
+<<<<<<< HEAD
 	mi = alloc_block_area(fmt, width, height, key, gid, si, PAGE_SIZE, 0);
+=======
+	mi = alloc_block_area(fmt, width, height, key, gid, pi);
+>>>>>>> android-omap-tuna-jb
 	if (IS_ERR_OR_NULL(mi))
 		return mi ? -ENOMEM : PTR_ERR(mi);
 
@@ -1408,7 +1587,11 @@ EXPORT_SYMBOL(user_block_to_pa);
 
 /* allocate area from container and pin memory */
 static s32 pin_any_block(enum tiler_fmt fmt, u32 width, u32 height,
+<<<<<<< HEAD
 		     u32 key, u32 gid, struct security_info *si,
+=======
+		     u32 key, u32 gid, struct process_info *pi,
+>>>>>>> android-omap-tuna-jb
 		     struct mem_info **info, struct tiler_pa_info *pa)
 {
 	s32 res = -EPERM;
@@ -1421,7 +1604,11 @@ static s32 pin_any_block(enum tiler_fmt fmt, u32 width, u32 height,
 		goto done;
 
 	/* get allocation area */
+<<<<<<< HEAD
 	mi = alloc_block_area(fmt, width, height, key, gid, si, PAGE_SIZE, 0);
+=======
+	mi = alloc_block_area(fmt, width, height, key, gid, pi);
+>>>>>>> android-omap-tuna-jb
 	if (IS_ERR_OR_NULL(mi)) {
 		res = mi ? PTR_ERR(mi) : -ENOMEM;
 		goto done;
@@ -1444,7 +1631,11 @@ done:
 }
 
 static s32 pin_block(enum tiler_fmt fmt, u32 width, u32 height,
+<<<<<<< HEAD
 		     u32 key, u32 gid, struct security_info *si,
+=======
+		     u32 key, u32 gid, struct process_info *pi,
+>>>>>>> android-omap-tuna-jb
 		     struct mem_info **info, u32 usr_addr)
 {
 	struct tiler_pa_info *pa = NULL;
@@ -1458,7 +1649,11 @@ static s32 pin_block(enum tiler_fmt fmt, u32 width, u32 height,
 	if (IS_ERR_OR_NULL(pa))
 		return pa ? PTR_ERR(pa) : -ENOMEM;
 
+<<<<<<< HEAD
 	return pin_any_block(fmt, width, height, key, gid, si, info, pa);
+=======
+	return pin_any_block(fmt, width, height, key, gid, pi, info, pa);
+>>>>>>> android-omap-tuna-jb
 }
 
 s32 tiler_pin_block(tiler_blk_handle block, u32 *addr_array, u32 nents)
@@ -1535,6 +1730,10 @@ static struct platform_driver tiler_driver_ldm = {
 
 static s32 __init tiler_init(void)
 {
+<<<<<<< HEAD
+=======
+	dev_t dev  = 0;
+>>>>>>> android-omap-tuna-jb
 	s32 r = -1;
 	struct device *device = NULL;
 	struct tcm_pt div_pt;
@@ -1610,6 +1809,7 @@ static s32 __init tiler_init(void)
 	tiler.nv12_packed = tcm[TILFMT_8BIT] == tcm[TILFMT_16BIT];
 #endif
 
+<<<<<<< HEAD
 	if (!sita || !tmm_pat) {
 		r = -ENOMEM;
 		goto error;
@@ -1617,6 +1817,10 @@ static s32 __init tiler_init(void)
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 	tiler_device = kmalloc(sizeof(*tiler_device), GFP_KERNEL);
 	if (!tiler_device) {
+=======
+	tiler_device = kmalloc(sizeof(*tiler_device), GFP_KERNEL);
+	if (!tiler_device || !sita || !tmm_pat) {
+>>>>>>> android-omap-tuna-jb
 		r = -ENOMEM;
 		goto error;
 	}
@@ -1637,7 +1841,10 @@ static s32 __init tiler_init(void)
 	r = cdev_add(&tiler_device->cdev, dev, 1);
 	if (r)
 		printk(KERN_ERR "cdev_add():failed\n");
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 	tilerdev_class = class_create(THIS_MODULE, "tiler");
 
@@ -1673,9 +1880,13 @@ static s32 __init tiler_init(void)
 error:
 	/* TODO: error handling for device registration */
 	if (r) {
+<<<<<<< HEAD
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 		kfree(tiler_device);
 #endif
+=======
+		kfree(tiler_device);
+>>>>>>> android-omap-tuna-jb
 		tcm_deinit(sita);
 		tmm_deinit(tmm_pat);
 		dma_free_coherent(NULL, tiler.width * tiler.height *
@@ -1721,11 +1932,17 @@ static void __exit tiler_exit(void)
 
 	mutex_destroy(&mtx);
 	platform_driver_unregister(&tiler_driver_ldm);
+<<<<<<< HEAD
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 	cdev_del(&tiler_device->cdev);
 	kfree(tiler_device);
 #endif
 	device_destroy(tilerdev_class, dev);
+=======
+	cdev_del(&tiler_device->cdev);
+	kfree(tiler_device);
+	device_destroy(tilerdev_class, MKDEV(tiler_major, tiler_minor));
+>>>>>>> android-omap-tuna-jb
 	class_destroy(tilerdev_class);
 }
 
@@ -1734,8 +1951,12 @@ tiler_blk_handle tiler_map_1d_block(struct tiler_pa_info *pa)
 	struct mem_info *mi = NULL;
 	struct tiler_pa_info *pa_tmp = kmemdup(pa, sizeof(*pa), GFP_KERNEL);
 	s32 res = pin_any_block(TILFMT_PAGE, pa->num_pg << PAGE_SHIFT, 1, 0, 0,
+<<<<<<< HEAD
 					__get_si(0, true, SECURE_BY_PID), &mi,
 					pa_tmp);
+=======
+						__get_pi(0, true), &mi, pa_tmp);
+>>>>>>> android-omap-tuna-jb
 	return res ? ERR_PTR(res) : mi;
 }
 EXPORT_SYMBOL(tiler_map_1d_block);
@@ -1758,8 +1979,12 @@ tiler_blk_handle tiler_alloc_block_area(enum tiler_fmt fmt, u32 width,
 	if (!tilerdev_class)
 		return NULL;
 
+<<<<<<< HEAD
 	mi = alloc_block_area(fmt, width, height, 0, 0,
 				__get_si(0, true, SECURE_BY_PID), PAGE_SIZE, 0);
+=======
+	mi = alloc_block_area(fmt, width, height, 0, 0, __get_pi(0, true));
+>>>>>>> android-omap-tuna-jb
 
 	if (IS_ERR_OR_NULL(mi))
 		goto done;
@@ -1772,6 +1997,7 @@ done:
 }
 EXPORT_SYMBOL(tiler_alloc_block_area);
 
+<<<<<<< HEAD
 tiler_blk_handle tiler_alloc_block_area_aligned(enum tiler_fmt fmt, u32 width,
 			u32 height, u32 *ssptr, u32 *virt_array, u32 align,
 			u32 offset, u32 token)
@@ -1797,6 +2023,8 @@ done:
 }
 EXPORT_SYMBOL(tiler_alloc_block_area_aligned);
 
+=======
+>>>>>>> android-omap-tuna-jb
 void tiler_unpin_block(tiler_blk_handle block)
 {
 	mutex_lock(&mtx);
@@ -1808,14 +2036,22 @@ EXPORT_SYMBOL(tiler_unpin_block);
 s32 tiler_memsize(enum tiler_fmt fmt, u32 width, u32 height, u32 *alloc_pages,
 		  u32 *virt_pages)
 {
+<<<<<<< HEAD
 	u16 x, y, band, align = PAGE_SIZE, offs = 0, remainder = 0;
+=======
+	u16 x, y, band, align;
+>>>>>>> android-omap-tuna-jb
 	int res;
 	struct tiler_block_t blk;
 
 	*alloc_pages = *virt_pages = 0;
 
+<<<<<<< HEAD
 	res = tiler.analize(fmt, width, height, &x, &y, &band, &align, &offs,
 				&remainder);
+=======
+	res = tiler.analize(fmt, width, height, &x, &y, &align, &band);
+>>>>>>> android-omap-tuna-jb
 
 	if (!res) {
 		blk.height = height;
@@ -1826,7 +2062,10 @@ s32 tiler_memsize(enum tiler_fmt fmt, u32 width, u32 height, u32 *alloc_pages,
 	}
 
 	return res;
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb
 }
 EXPORT_SYMBOL(tiler_memsize);
 

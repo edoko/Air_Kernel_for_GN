@@ -866,6 +866,10 @@ cciss_scsi_detect(ctlr_info_t *h)
 	sh->can_queue = cciss_tape_cmds;
 	sh->sg_tablesize = h->maxsgentries;
 	sh->max_cmd_len = MAX_COMMAND_SIZE;
+<<<<<<< HEAD
+=======
+	sh->max_sectors = h->cciss_max_sectors;
+>>>>>>> android-omap-tuna-jb
 
 	((struct cciss_scsi_adapter_data_t *) 
 		h->scsi_ctlr)->scsi_host = sh;
@@ -1410,7 +1414,11 @@ static void cciss_scatter_gather(ctlr_info_t *h, CommandList_struct *c,
 	/* track how many SG entries we are using */
 	if (request_nsgs > h->maxSG)
 		h->maxSG = request_nsgs;
+<<<<<<< HEAD
 	c->Header.SGTotal = (__u8) request_nsgs + chained;
+=======
+	c->Header.SGTotal = (u16) request_nsgs + chained;
+>>>>>>> android-omap-tuna-jb
 	if (request_nsgs > h->max_cmd_sgentries)
 		c->Header.SGList = h->max_cmd_sgentries;
 	else

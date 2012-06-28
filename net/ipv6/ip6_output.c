@@ -100,6 +100,11 @@ static int ip6_finish_output2(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	struct net_device *dev = dst->dev;
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh;
+	int res;
+>>>>>>> android-omap-tuna-jb
 
 	skb->protocol = htons(ETH_P_IPV6);
 	skb->dev = dev;
@@ -134,10 +139,29 @@ static int ip6_finish_output2(struct sk_buff *skb)
 				skb->len);
 	}
 
+<<<<<<< HEAD
 	if (dst->hh)
 		return neigh_hh_output(dst->hh, skb);
 	else if (dst->neighbour)
 		return dst->neighbour->output(skb);
+=======
+	rcu_read_lock();
+	if (dst->hh) {
+		res = neigh_hh_output(dst->hh, skb);
+
+		rcu_read_unlock();
+		return res;
+	} else {
+		neigh = dst_get_neighbour(dst);
+		if (neigh) {
+			res = neigh->output(skb);
+
+			rcu_read_unlock();
+			return res;
+		}
+		rcu_read_unlock();
+	}
+>>>>>>> android-omap-tuna-jb
 
 	IP6_INC_STATS_BH(dev_net(dst->dev),
 			 ip6_dst_idev(dst), IPSTATS_MIB_OUTNOROUTES);
@@ -385,6 +409,10 @@ int ip6_forward(struct sk_buff *skb)
 	struct ipv6hdr *hdr = ipv6_hdr(skb);
 	struct inet6_skb_parm *opt = IP6CB(skb);
 	struct net *net = dev_net(dst->dev);
+<<<<<<< HEAD
+=======
+	struct neighbour *n;
+>>>>>>> android-omap-tuna-jb
 	u32 mtu;
 
 	if (net->ipv6.devconf_all->forwarding == 0)
@@ -459,11 +487,18 @@ int ip6_forward(struct sk_buff *skb)
 	   send redirects to source routed frames.
 	   We don't send redirects to frames decapsulated from IPsec.
 	 */
+<<<<<<< HEAD
 	if (skb->dev == dst->dev && dst->neighbour && opt->srcrt == 0 &&
 	    !skb_sec_path(skb)) {
 		struct in6_addr *target = NULL;
 		struct rt6_info *rt;
 		struct neighbour *n = dst->neighbour;
+=======
+	n = dst_get_neighbour(dst);
+	if (skb->dev == dst->dev && n && opt->srcrt == 0 && !skb_sec_path(skb)) {
+		struct in6_addr *target = NULL;
+		struct rt6_info *rt;
+>>>>>>> android-omap-tuna-jb
 
 		/*
 		 *	incoming and outgoing devices are the same
@@ -949,8 +984,16 @@ out:
 static int ip6_dst_lookup_tail(struct sock *sk,
 			       struct dst_entry **dst, struct flowi6 *fl6)
 {
+<<<<<<< HEAD
 	int err;
 	struct net *net = sock_net(sk);
+=======
+	struct net *net = sock_net(sk);
+#ifdef CONFIG_IPV6_OPTIMISTIC_DAD
+	struct neighbour *n;
+#endif
+	int err;
+>>>>>>> android-omap-tuna-jb
 
 	if (*dst == NULL)
 		*dst = ip6_route_output(net, sk, fl6);
@@ -976,11 +1019,21 @@ static int ip6_dst_lookup_tail(struct sock *sk,
 	 * dst entry and replace it instead with the
 	 * dst entry of the nexthop router
 	 */
+<<<<<<< HEAD
 	if ((*dst)->neighbour && !((*dst)->neighbour->nud_state & NUD_VALID)) {
+=======
+	rcu_read_lock();
+	n = dst_get_neighbour(*dst);
+	if (n && !(n->nud_state & NUD_VALID)) {
+>>>>>>> android-omap-tuna-jb
 		struct inet6_ifaddr *ifp;
 		struct flowi6 fl_gw6;
 		int redirect;
 
+<<<<<<< HEAD
+=======
+		rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 		ifp = ipv6_get_ifaddr(net, &fl6->saddr,
 				      (*dst)->dev, 1);
 
@@ -1000,6 +1053,11 @@ static int ip6_dst_lookup_tail(struct sock *sk,
 			if ((err = (*dst)->error))
 				goto out_err_release;
 		}
+<<<<<<< HEAD
+=======
+	} else {
+		rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 	}
 #endif
 

@@ -45,7 +45,11 @@ static ssize_t timeout_write(struct file *file, char const __user *buf,
 		return -EINVAL;
 
 	retval = oprofilefs_ulong_from_user(&val, buf, count);
+<<<<<<< HEAD
 	if (retval)
+=======
+	if (retval <= 0)
+>>>>>>> android-omap-tuna-jb
 		return retval;
 
 	retval = oprofile_set_timeout(val);
@@ -84,7 +88,11 @@ static ssize_t depth_write(struct file *file, char const __user *buf, size_t cou
 		return -EINVAL;
 
 	retval = oprofilefs_ulong_from_user(&val, buf, count);
+<<<<<<< HEAD
 	if (retval)
+=======
+	if (retval <= 0)
+>>>>>>> android-omap-tuna-jb
 		return retval;
 
 	retval = oprofile_set_ulong(&oprofile_backtrace_depth, val);
@@ -141,9 +149,16 @@ static ssize_t enable_write(struct file *file, char const __user *buf, size_t co
 		return -EINVAL;
 
 	retval = oprofilefs_ulong_from_user(&val, buf, count);
+<<<<<<< HEAD
 	if (retval)
 		return retval;
 
+=======
+	if (retval <= 0)
+		return retval;
+
+	retval = 0;
+>>>>>>> android-omap-tuna-jb
 	if (val)
 		retval = oprofile_start();
 	else

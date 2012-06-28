@@ -56,7 +56,10 @@
 #include "f_rndis.c"
 #include "rndis.c"
 #include "u_ether.c"
+<<<<<<< HEAD
 #include "f_dm.c"
+=======
+>>>>>>> android-omap-tuna-jb
 
 MODULE_AUTHOR("Mike Lockwood");
 MODULE_DESCRIPTION("Android Composite USB Driver");
@@ -69,9 +72,12 @@ static const char longname[] = "Gadget Android";
 #define VENDOR_ID		0x18D1
 #define PRODUCT_ID		0x0001
 
+<<<<<<< HEAD
 /* DM_PORT NUM : /dev/ttyGS* port number */
 #define DM_PORT_NUM            1
 
+=======
+>>>>>>> android-omap-tuna-jb
 struct android_usb_function {
 	char *name;
 	void *config;
@@ -807,6 +813,7 @@ static struct android_usb_function audio_source_function = {
 	.attributes	= audio_source_function_attributes,
 };
 
+<<<<<<< HEAD
 static int dm_function_bind_config(struct android_usb_function *f,
 					struct usb_configuration *c)
 {
@@ -818,6 +825,8 @@ static struct android_usb_function dm_function = {
 	.bind_config    = dm_function_bind_config,
 };
 
+=======
+>>>>>>> android-omap-tuna-jb
 static struct android_usb_function *supported_functions[] = {
 	&adb_function,
 	&acm_function,
@@ -1098,10 +1107,14 @@ field ## _store(struct device *dev, struct device_attribute *attr,	\
 		const char *buf, size_t size)				\
 {									\
 	if (size >= sizeof(buffer)) return -EINVAL;			\
+<<<<<<< HEAD
 	if (sscanf(buf, "%s", buffer) == 1) {				\
 		return size;						\
 	}								\
 	return -1;							\
+=======
+	return strlcpy(buffer, buf, sizeof(buffer));			\
+>>>>>>> android-omap-tuna-jb
 }									\
 static DEVICE_ATTR(field, S_IRUGO | S_IWUSR, field ## _show, field ## _store);
 

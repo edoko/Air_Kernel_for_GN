@@ -605,7 +605,12 @@ static int tcp_v6_md5_do_add(struct sock *sk, const struct in6_addr *peer,
 			}
 			sk_nocaps_add(sk, NETIF_F_GSO_MASK);
 		}
+<<<<<<< HEAD
 		if (tcp_alloc_md5sig_pool(sk) == NULL) {
+=======
+		if (tp->md5sig_info->entries6 == 0 &&
+			tcp_alloc_md5sig_pool(sk) == NULL) {
+>>>>>>> android-omap-tuna-jb
 			kfree(newkey);
 			return -ENOMEM;
 		}
@@ -614,8 +619,14 @@ static int tcp_v6_md5_do_add(struct sock *sk, const struct in6_addr *peer,
 				       (tp->md5sig_info->entries6 + 1)), GFP_ATOMIC);
 
 			if (!keys) {
+<<<<<<< HEAD
 				tcp_free_md5sig_pool();
 				kfree(newkey);
+=======
+				kfree(newkey);
+				if (tp->md5sig_info->entries6 == 0)
+					tcp_free_md5sig_pool();
+>>>>>>> android-omap-tuna-jb
 				return -ENOMEM;
 			}
 
@@ -661,6 +672,10 @@ static int tcp_v6_md5_do_del(struct sock *sk, const struct in6_addr *peer)
 				kfree(tp->md5sig_info->keys6);
 				tp->md5sig_info->keys6 = NULL;
 				tp->md5sig_info->alloced6 = 0;
+<<<<<<< HEAD
+=======
+				tcp_free_md5sig_pool();
+>>>>>>> android-omap-tuna-jb
 			} else {
 				/* shrink the database */
 				if (tp->md5sig_info->entries6 != i)
@@ -669,7 +684,10 @@ static int tcp_v6_md5_do_del(struct sock *sk, const struct in6_addr *peer)
 						(tp->md5sig_info->entries6 - i)
 						* sizeof (tp->md5sig_info->keys6[0]));
 			}
+<<<<<<< HEAD
 			tcp_free_md5sig_pool();
+=======
+>>>>>>> android-omap-tuna-jb
 			return 0;
 		}
 	}
@@ -1094,7 +1112,11 @@ static void tcp_v6_send_reset(struct sock *sk, struct sk_buff *skb)
 
 #ifdef CONFIG_TCP_MD5SIG
 	if (sk)
+<<<<<<< HEAD
 		key = tcp_v6_md5_do_lookup(sk, &ipv6_hdr(skb)->daddr);
+=======
+		key = tcp_v6_md5_do_lookup(sk, &ipv6_hdr(skb)->saddr);
+>>>>>>> android-omap-tuna-jb
 #endif
 
 	if (th->ack)
@@ -1407,6 +1429,11 @@ static struct sock * tcp_v6_syn_recv_sock(struct sock *sk, struct sk_buff *skb,
 		newtp->af_specific = &tcp_sock_ipv6_mapped_specific;
 #endif
 
+<<<<<<< HEAD
+=======
+		newnp->ipv6_ac_list = NULL;
+		newnp->ipv6_fl_list = NULL;
+>>>>>>> android-omap-tuna-jb
 		newnp->pktoptions  = NULL;
 		newnp->opt	   = NULL;
 		newnp->mcast_oif   = inet6_iif(skb);
@@ -1471,6 +1498,10 @@ static struct sock * tcp_v6_syn_recv_sock(struct sock *sk, struct sk_buff *skb,
 	   First: no IPv4 options.
 	 */
 	newinet->inet_opt = NULL;
+<<<<<<< HEAD
+=======
+	newnp->ipv6_ac_list = NULL;
+>>>>>>> android-omap-tuna-jb
 	newnp->ipv6_fl_list = NULL;
 
 	/* Clone RX bits */
@@ -1509,6 +1540,13 @@ static struct sock * tcp_v6_syn_recv_sock(struct sock *sk, struct sk_buff *skb,
 	tcp_mtup_init(newsk);
 	tcp_sync_mss(newsk, dst_mtu(dst));
 	newtp->advmss = dst_metric_advmss(dst);
+<<<<<<< HEAD
+=======
+	if (tcp_sk(sk)->rx_opt.user_mss &&
+	    tcp_sk(sk)->rx_opt.user_mss < newtp->advmss)
+		newtp->advmss = tcp_sk(sk)->rx_opt.user_mss;
+
+>>>>>>> android-omap-tuna-jb
 	tcp_initialize_rcv_mss(newsk);
 
 	newinet->inet_daddr = newinet->inet_saddr = LOOPBACK4_IPV6;

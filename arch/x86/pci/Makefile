@@ -18,8 +18,14 @@ obj-$(CONFIG_X86_NUMAQ)		+= numaq_32.o
 obj-$(CONFIG_X86_MRST)		+= mrst.o
 
 obj-y				+= common.o early.o
+<<<<<<< HEAD
 obj-y				+= amd_bus.o bus_numa.o
 
+=======
+obj-y				+= bus_numa.o
+
+obj-$(CONFIG_AMD_NB)		+= amd_bus.o
+>>>>>>> android-omap-tuna-jb
 obj-$(CONFIG_PCI_CNB20LE_QUIRK)	+= broadcom_bus.o
 
 ifeq ($(CONFIG_PCI_DEBUG),y)

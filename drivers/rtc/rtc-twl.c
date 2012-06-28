@@ -201,6 +201,7 @@ static int mask_rtc_irq_bit(unsigned char bit)
 	return ret;
 }
 
+<<<<<<< HEAD
 static void twl_rtc_alarm_verify(void)
 {
 	unsigned char rtc_data[sizeof(twl6030_rtc_reg_map) + 1] = { 0 };
@@ -298,6 +299,8 @@ static void twl_rtc_alarm_verify(void)
 	return;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int twl_rtc_alarm_irq_enable(struct device *dev, unsigned enabled)
 {
 	int ret;
@@ -306,9 +309,12 @@ static int twl_rtc_alarm_irq_enable(struct device *dev, unsigned enabled)
 		ret = set_rtc_irq_bit(BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
 	else
 		ret = mask_rtc_irq_bit(BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+<<<<<<< HEAD
 	if (ret)
 		dev_err(dev, "%s(): enabled=%d ret=%d\n", __func__, enabled,
 			ret);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	return ret;
 }
@@ -395,6 +401,7 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
 void twl_print_alarm(char *msg, struct rtc_wkalrm *alm)
 {
 	pr_info("%s%d-%02d-%02d %02d:%02d:%02d %s\n", msg,
@@ -407,6 +414,8 @@ void twl_print_alarm(char *msg, struct rtc_wkalrm *alm)
 		alm->enabled ? "on" : "off"
 		);
 }
+=======
+>>>>>>> android-omap-tuna-jb
 /*
  * Gets current TWL RTC alarm time.
  */
@@ -434,7 +443,10 @@ static int twl_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
 	if (rtc_irq_bits & BIT_RTC_INTERRUPTS_REG_IT_ALARM_M)
 		alm->enabled = 1;
 
+<<<<<<< HEAD
 	twl_print_alarm("twl_rtc_read_alarm(): ", alm);
+=======
+>>>>>>> android-omap-tuna-jb
 	return ret;
 }
 
@@ -443,7 +455,10 @@ static int twl_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
 	unsigned char alarm_data[ALL_TIME_REGS + 1];
 	int ret;
 
+<<<<<<< HEAD
 	twl_print_alarm("twl_rtc_set_alarm(): ", alm);
+=======
+>>>>>>> android-omap-tuna-jb
 	ret = twl_rtc_alarm_irq_enable(dev, 0);
 	if (ret)
 		goto out;
@@ -643,11 +658,14 @@ static void twl_rtc_shutdown(struct platform_device *pdev)
 	/* mask timer interrupts, but leave alarm interrupts on to enable
 	   power-on when alarm is triggered */
 	mask_rtc_irq_bit(BIT_RTC_INTERRUPTS_REG_IT_TIMER_M);
+<<<<<<< HEAD
 #ifdef CONFIG_ANDROID
 	/* mask alarm interrupts as well so that we don't get powered on
 	   when alarm is triggered on android */
 	mask_rtc_irq_bit(BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 #ifdef CONFIG_PM
@@ -664,8 +682,11 @@ static int twl_rtc_suspend(struct platform_device *pdev, pm_message_t state)
 
 static int twl_rtc_resume(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	if (rtc_irq_bits & BIT_RTC_INTERRUPTS_REG_IT_ALARM_M)
 		twl_rtc_alarm_verify();
+=======
+>>>>>>> android-omap-tuna-jb
 	set_rtc_irq_bit(irqstat);
 	return 0;
 }

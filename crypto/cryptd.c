@@ -945,7 +945,11 @@ static void __exit cryptd_exit(void)
 	crypto_unregister_template(&cryptd_tmpl);
 }
 
+<<<<<<< HEAD
 module_init(cryptd_init);
+=======
+subsys_initcall(cryptd_init);
+>>>>>>> android-omap-tuna-jb
 module_exit(cryptd_exit);
 
 MODULE_LICENSE("GPL");

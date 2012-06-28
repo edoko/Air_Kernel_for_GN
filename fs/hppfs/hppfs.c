@@ -16,6 +16,10 @@
 #include <linux/statfs.h>
 #include <linux/types.h>
 #include <linux/pid_namespace.h>
+<<<<<<< HEAD
+=======
+#include <linux/namei.h>
+>>>>>>> android-omap-tuna-jb
 #include <asm/uaccess.h>
 #include "os.h"
 

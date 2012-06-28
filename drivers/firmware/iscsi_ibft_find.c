@@ -45,6 +45,7 @@ EXPORT_SYMBOL_GPL(ibft_addr);
 static const struct {
 	char *sign;
 } ibft_signs[] = {
+<<<<<<< HEAD
 #ifdef CONFIG_ACPI
 	/*
 	 * One spec says "IBFT", the other says "iBFT". We have to check
@@ -52,6 +53,8 @@ static const struct {
 	 */
 	{ ACPI_SIG_IBFT },
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 	{ "iBFT" },
 	{ "BIFT" },	/* Broadcom iSCSI Offload */
 };
@@ -62,6 +65,7 @@ static const struct {
 #define VGA_MEM 0xA0000 /* VGA buffer */
 #define VGA_SIZE 0x20000 /* 128kB */
 
+<<<<<<< HEAD
 #ifdef CONFIG_ACPI
 static int __init acpi_find_ibft(struct acpi_table_header *header)
 {
@@ -70,6 +74,8 @@ static int __init acpi_find_ibft(struct acpi_table_header *header)
 }
 #endif /* CONFIG_ACPI */
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int __init find_ibft_in_mem(void)
 {
 	unsigned long pos;
@@ -94,6 +100,10 @@ static int __init find_ibft_in_mem(void)
 				 * the table cannot be valid. */
 				if (pos + len <= (IBFT_END-1)) {
 					ibft_addr = (struct acpi_table_ibft *)virt;
+<<<<<<< HEAD
+=======
+					pr_info("iBFT found at 0x%lx.\n", pos);
+>>>>>>> android-omap-tuna-jb
 					goto done;
 				}
 			}
@@ -108,6 +118,7 @@ done:
  */
 unsigned long __init find_ibft_region(unsigned long *sizep)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_ACPI
 	int i;
 #endif
@@ -122,6 +133,14 @@ unsigned long __init find_ibft_region(unsigned long *sizep)
 	 * only use ACPI for this */
 
 	if (!ibft_addr && !efi_enabled)
+=======
+	ibft_addr = NULL;
+
+	/* iBFT 1.03 section 1.4.3.1 mandates that UEFI machines will
+	 * only use ACPI for this */
+
+	if (!efi_enabled)
+>>>>>>> android-omap-tuna-jb
 		find_ibft_in_mem();
 
 	if (ibft_addr) {

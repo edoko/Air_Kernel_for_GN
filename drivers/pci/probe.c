@@ -657,6 +657,14 @@ int __devinit pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
 	dev_dbg(&dev->dev, "scanning [bus %02x-%02x] behind bridge, pass %d\n",
 		secondary, subordinate, pass);
 
+<<<<<<< HEAD
+=======
+	if (!primary && (primary != bus->number) && secondary && subordinate) {
+		dev_warn(&dev->dev, "Primary bus is hard wired to 0\n");
+		primary = bus->number;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	/* Check if setup is sensible at all */
 	if (!pass &&
 	    (primary != bus->number || secondary <= bus->number)) {

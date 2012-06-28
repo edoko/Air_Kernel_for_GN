@@ -277,6 +277,15 @@ static int __init mtd_stresstest_init(void)
 	       (unsigned long long)mtd->size, mtd->erasesize,
 	       pgsize, ebcnt, pgcnt, mtd->oobsize);
 
+<<<<<<< HEAD
+=======
+	if (ebcnt < 2) {
+		printk(PRINT_PREF "error: need at least 2 eraseblocks\n");
+		err = -ENOSPC;
+		goto out_put_mtd;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	/* Read or write up 2 eraseblocks at a time */
 	bufsize = mtd->erasesize * 2;
 
@@ -315,6 +324,10 @@ out:
 	kfree(bbt);
 	vfree(writebuf);
 	vfree(readbuf);
+<<<<<<< HEAD
+=======
+out_put_mtd:
+>>>>>>> android-omap-tuna-jb
 	put_mtd_device(mtd);
 	if (err)
 		printk(PRINT_PREF "error %d occurred\n", err);

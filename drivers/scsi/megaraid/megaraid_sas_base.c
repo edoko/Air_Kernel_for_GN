@@ -1906,7 +1906,10 @@ static int megasas_generic_reset(struct scsi_cmnd *scmd)
 static enum
 blk_eh_timer_return megasas_reset_timer(struct scsi_cmnd *scmd)
 {
+<<<<<<< HEAD
 	struct megasas_cmd *cmd = (struct megasas_cmd *)scmd->SCp.ptr;
+=======
+>>>>>>> android-omap-tuna-jb
 	struct megasas_instance *instance;
 	unsigned long flags;
 
@@ -1915,7 +1918,11 @@ blk_eh_timer_return megasas_reset_timer(struct scsi_cmnd *scmd)
 		return BLK_EH_NOT_HANDLED;
 	}
 
+<<<<<<< HEAD
 	instance = cmd->instance;
+=======
+	instance = (struct megasas_instance *)scmd->device->host->hostdata;
+>>>>>>> android-omap-tuna-jb
 	if (!(instance->flag & MEGASAS_FW_BUSY)) {
 		/* FW is busy, throttle IO */
 		spin_lock_irqsave(instance->host->host_lock, flags);

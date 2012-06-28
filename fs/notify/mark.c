@@ -135,9 +135,12 @@ void fsnotify_destroy_mark(struct fsnotify_mark *mark)
 
 	mark->flags &= ~FSNOTIFY_MARK_FLAG_ALIVE;
 
+<<<<<<< HEAD
 	/* 1 from caller and 1 for being on i_list/g_list */
 	BUG_ON(atomic_read(&mark->refcnt) < 2);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	spin_lock(&group->mark_lock);
 
 	if (mark->flags & FSNOTIFY_MARK_FLAG_INODE) {
@@ -182,6 +185,14 @@ void fsnotify_destroy_mark(struct fsnotify_mark *mark)
 		iput(inode);
 
 	/*
+<<<<<<< HEAD
+=======
+	 * We don't necessarily have a ref on mark from caller so the above iput
+	 * may have already destroyed it.  Don't touch from now on.
+	 */
+
+	/*
+>>>>>>> android-omap-tuna-jb
 	 * it's possible that this group tried to destroy itself, but this
 	 * this mark was simultaneously being freed by inode.  If that's the
 	 * case, we finish freeing the group here.

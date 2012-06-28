@@ -29,8 +29,13 @@ extern unsigned int sig_xstate_size;
 extern void fpu_init(void);
 extern void mxcsr_feature_mask_init(void);
 extern int init_fpu(struct task_struct *child);
+<<<<<<< HEAD
 extern asmlinkage void math_state_restore(void);
 extern void __math_state_restore(void);
+=======
+extern void __math_state_restore(struct task_struct *);
+extern void math_state_restore(void);
+>>>>>>> android-omap-tuna-jb
 extern int dump_fpu(struct pt_regs *, struct user_i387_struct *);
 
 extern user_regset_active_fn fpregs_active, xfpregs_active;
@@ -212,6 +217,7 @@ static inline void fpu_fxsave(struct fpu *fpu)
 
 #endif	/* CONFIG_X86_64 */
 
+<<<<<<< HEAD
 /* We need a safe address that is cheap to find and that is already
    in L1 during context switch. The best choices are unfortunately
    different for UP and SMP */
@@ -225,6 +231,13 @@ static inline void fpu_fxsave(struct fpu *fpu)
  * These must be called with preempt disabled
  */
 static inline void fpu_save_init(struct fpu *fpu)
+=======
+/*
+ * These must be called with preempt disabled. Returns
+ * 'true' if the FPU state is still intact.
+ */
+static inline int fpu_save_init(struct fpu *fpu)
+>>>>>>> android-omap-tuna-jb
 {
 	if (use_xsave()) {
 		fpu_xsave(fpu);
@@ -233,12 +246,17 @@ static inline void fpu_save_init(struct fpu *fpu)
 		 * xsave header may indicate the init state of the FP.
 		 */
 		if (!(fpu->state->xsave.xsave_hdr.xstate_bv & XSTATE_FP))
+<<<<<<< HEAD
 			return;
+=======
+			return 1;
+>>>>>>> android-omap-tuna-jb
 	} else if (use_fxsr()) {
 		fpu_fxsave(fpu);
 	} else {
 		asm volatile("fnsave %[fx]; fwait"
 			     : [fx] "=m" (fpu->state->fsave));
+<<<<<<< HEAD
 		return;
 	}
 
@@ -260,6 +278,29 @@ static inline void __save_init_fpu(struct task_struct *tsk)
 {
 	fpu_save_init(&tsk->thread.fpu);
 	task_thread_info(tsk)->status &= ~TS_USEDFPU;
+=======
+		return 0;
+	}
+
+	/*
+	 * If exceptions are pending, we need to clear them so
+	 * that we don't randomly get exceptions later.
+	 *
+	 * FIXME! Is this perhaps only true for the old-style
+	 * irq13 case? Maybe we could leave the x87 state
+	 * intact otherwise?
+	 */
+	if (unlikely(fpu->state->fxsave.swd & X87_FSW_ES)) {
+		asm volatile("fnclex");
+		return 0;
+	}
+	return 1;
+}
+
+static inline int __save_init_fpu(struct task_struct *tsk)
+{
+	return fpu_save_init(&tsk->thread.fpu);
+>>>>>>> android-omap-tuna-jb
 }
 
 static inline int fpu_fxrstor_checking(struct fpu *fpu)
@@ -281,6 +322,7 @@ static inline int restore_fpu_checking(struct task_struct *tsk)
 }
 
 /*
+<<<<<<< HEAD
  * Signal frame handlers...
  */
 extern int save_i387_xstate(void __user *buf);
@@ -298,10 +340,130 @@ static inline void __unlazy_fpu(struct task_struct *tsk)
 static inline void __clear_fpu(struct task_struct *tsk)
 {
 	if (task_thread_info(tsk)->status & TS_USEDFPU) {
+=======
+ * Software FPU state helpers. Careful: these need to
+ * be preemption protection *and* they need to be
+ * properly paired with the CR0.TS changes!
+ */
+static inline int __thread_has_fpu(struct task_struct *tsk)
+{
+	return tsk->thread.has_fpu;
+}
+
+/* Must be paired with an 'stts' after! */
+static inline void __thread_clear_has_fpu(struct task_struct *tsk)
+{
+	tsk->thread.has_fpu = 0;
+}
+
+/* Must be paired with a 'clts' before! */
+static inline void __thread_set_has_fpu(struct task_struct *tsk)
+{
+	tsk->thread.has_fpu = 1;
+}
+
+/*
+ * Encapsulate the CR0.TS handling together with the
+ * software flag.
+ *
+ * These generally need preemption protection to work,
+ * do try to avoid using these on their own.
+ */
+static inline void __thread_fpu_end(struct task_struct *tsk)
+{
+	__thread_clear_has_fpu(tsk);
+	stts();
+}
+
+static inline void __thread_fpu_begin(struct task_struct *tsk)
+{
+	clts();
+	__thread_set_has_fpu(tsk);
+}
+
+/*
+ * FPU state switching for scheduling.
+ *
+ * This is a two-stage process:
+ *
+ *  - switch_fpu_prepare() saves the old state and
+ *    sets the new state of the CR0.TS bit. This is
+ *    done within the context of the old process.
+ *
+ *  - switch_fpu_finish() restores the new state as
+ *    necessary.
+ */
+typedef struct { int preload; } fpu_switch_t;
+
+/*
+ * FIXME! We could do a totally lazy restore, but we need to
+ * add a per-cpu "this was the task that last touched the FPU
+ * on this CPU" variable, and the task needs to have a "I last
+ * touched the FPU on this CPU" and check them.
+ *
+ * We don't do that yet, so "fpu_lazy_restore()" always returns
+ * false, but some day..
+ */
+#define fpu_lazy_restore(tsk) (0)
+#define fpu_lazy_state_intact(tsk) do { } while (0)
+
+static inline fpu_switch_t switch_fpu_prepare(struct task_struct *old, struct task_struct *new)
+{
+	fpu_switch_t fpu;
+
+	fpu.preload = tsk_used_math(new) && new->fpu_counter > 5;
+	if (__thread_has_fpu(old)) {
+		if (__save_init_fpu(old))
+			fpu_lazy_state_intact(old);
+		__thread_clear_has_fpu(old);
+		old->fpu_counter++;
+
+		/* Don't change CR0.TS if we just switch! */
+		if (fpu.preload) {
+			__thread_set_has_fpu(new);
+			prefetch(new->thread.fpu.state);
+		} else
+			stts();
+	} else {
+		old->fpu_counter = 0;
+		if (fpu.preload) {
+			if (fpu_lazy_restore(new))
+				fpu.preload = 0;
+			else
+				prefetch(new->thread.fpu.state);
+			__thread_fpu_begin(new);
+		}
+	}
+	return fpu;
+}
+
+/*
+ * By the time this gets called, we've already cleared CR0.TS and
+ * given the process the FPU if we are going to preload the FPU
+ * state - all we need to do is to conditionally restore the register
+ * state itself.
+ */
+static inline void switch_fpu_finish(struct task_struct *new, fpu_switch_t fpu)
+{
+	if (fpu.preload)
+		__math_state_restore(new);
+}
+
+/*
+ * Signal frame handlers...
+ */
+extern int save_i387_xstate(void __user *buf);
+extern int restore_i387_xstate(void __user *buf);
+
+static inline void __clear_fpu(struct task_struct *tsk)
+{
+	if (__thread_has_fpu(tsk)) {
+>>>>>>> android-omap-tuna-jb
 		/* Ignore delayed exceptions from user space */
 		asm volatile("1: fwait\n"
 			     "2:\n"
 			     _ASM_EXTABLE(1b, 2b));
+<<<<<<< HEAD
 		task_thread_info(tsk)->status &= ~TS_USEDFPU;
 		stts();
 	}
@@ -314,6 +476,66 @@ static inline void kernel_fpu_begin(void)
 	if (me->status & TS_USEDFPU)
 		__save_init_fpu(me->task);
 	else
+=======
+		__thread_fpu_end(tsk);
+	}
+}
+
+/*
+ * Were we in an interrupt that interrupted kernel mode?
+ *
+ * We can do a kernel_fpu_begin/end() pair *ONLY* if that
+ * pair does nothing at all: the thread must not have fpu (so
+ * that we don't try to save the FPU state), and TS must
+ * be set (so that the clts/stts pair does nothing that is
+ * visible in the interrupted kernel thread).
+ */
+static inline bool interrupted_kernel_fpu_idle(void)
+{
+	return !__thread_has_fpu(current) &&
+		(read_cr0() & X86_CR0_TS);
+}
+
+/*
+ * Were we in user mode (or vm86 mode) when we were
+ * interrupted?
+ *
+ * Doing kernel_fpu_begin/end() is ok if we are running
+ * in an interrupt context from user mode - we'll just
+ * save the FPU state as required.
+ */
+static inline bool interrupted_user_mode(void)
+{
+	struct pt_regs *regs = get_irq_regs();
+	return regs && user_mode_vm(regs);
+}
+
+/*
+ * Can we use the FPU in kernel mode with the
+ * whole "kernel_fpu_begin/end()" sequence?
+ *
+ * It's always ok in process context (ie "not interrupt")
+ * but it is sometimes ok even from an irq.
+ */
+static inline bool irq_fpu_usable(void)
+{
+	return !in_interrupt() ||
+		interrupted_user_mode() ||
+		interrupted_kernel_fpu_idle();
+}
+
+static inline void kernel_fpu_begin(void)
+{
+	struct task_struct *me = current;
+
+	WARN_ON_ONCE(!irq_fpu_usable());
+	preempt_disable();
+	if (__thread_has_fpu(me)) {
+		__save_init_fpu(me);
+		__thread_clear_has_fpu(me);
+		/* We do 'stts()' in kernel_fpu_end() */
+	} else
+>>>>>>> android-omap-tuna-jb
 		clts();
 }
 
@@ -323,6 +545,7 @@ static inline void kernel_fpu_end(void)
 	preempt_enable();
 }
 
+<<<<<<< HEAD
 static inline bool irq_fpu_usable(void)
 {
 	struct pt_regs *regs;
@@ -331,6 +554,8 @@ static inline bool irq_fpu_usable(void)
 		user_mode(regs) || (read_cr0() & X86_CR0_TS);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 /*
  * Some instructions like VIA's padlock instructions generate a spurious
  * DNA fault but don't modify SSE registers. And these instructions
@@ -363,20 +588,77 @@ static inline void irq_ts_restore(int TS_state)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * The question "does this thread have fpu access?"
+ * is slightly racy, since preemption could come in
+ * and revoke it immediately after the test.
+ *
+ * However, even in that very unlikely scenario,
+ * we can just assume we have FPU access - typically
+ * to save the FP state - we'll just take a #NM
+ * fault and get the FPU access back.
+ *
+ * The actual user_fpu_begin/end() functions
+ * need to be preemption-safe, though.
+ *
+ * NOTE! user_fpu_end() must be used only after you
+ * have saved the FP state, and user_fpu_begin() must
+ * be used only immediately before restoring it.
+ * These functions do not do any save/restore on
+ * their own.
+ */
+static inline int user_has_fpu(void)
+{
+	return __thread_has_fpu(current);
+}
+
+static inline void user_fpu_end(void)
+{
+	preempt_disable();
+	__thread_fpu_end(current);
+	preempt_enable();
+}
+
+static inline void user_fpu_begin(void)
+{
+	preempt_disable();
+	if (!user_has_fpu())
+		__thread_fpu_begin(current);
+	preempt_enable();
+}
+
+/*
+>>>>>>> android-omap-tuna-jb
  * These disable preemption on their own and are safe
  */
 static inline void save_init_fpu(struct task_struct *tsk)
 {
+<<<<<<< HEAD
 	preempt_disable();
 	__save_init_fpu(tsk);
 	stts();
+=======
+	WARN_ON_ONCE(!__thread_has_fpu(tsk));
+	preempt_disable();
+	__save_init_fpu(tsk);
+	__thread_fpu_end(tsk);
+>>>>>>> android-omap-tuna-jb
 	preempt_enable();
 }
 
 static inline void unlazy_fpu(struct task_struct *tsk)
 {
 	preempt_disable();
+<<<<<<< HEAD
 	__unlazy_fpu(tsk);
+=======
+	if (__thread_has_fpu(tsk)) {
+		__save_init_fpu(tsk);
+		__thread_fpu_end(tsk);
+	} else
+		tsk->fpu_counter = 0;
+>>>>>>> android-omap-tuna-jb
 	preempt_enable();
 }
 

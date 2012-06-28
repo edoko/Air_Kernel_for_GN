@@ -288,7 +288,13 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVAllocSyncInfoKM(IMG_HANDLE					hDevCookie,
 												IMG_HANDLE					hDevMemContext,
 												PVRSRV_KERNEL_SYNC_INFO	**ppsKernelSyncInfo);
 IMG_IMPORT
+<<<<<<< HEAD
 PVRSRV_ERROR IMG_CALLCONV PVRSRVFreeSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernelSyncInfo);
+=======
+IMG_VOID IMG_CALLCONV PVRSRVAcquireSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernelSyncInfo);
+IMG_IMPORT
+IMG_VOID IMG_CALLCONV PVRSRVReleaseSyncInfoKM(PVRSRV_KERNEL_SYNC_INFO	*psKernelSyncInfo);
+>>>>>>> android-omap-tuna-jb
 
 IMG_IMPORT
 #if defined (SUPPORT_SID_INTERFACE)

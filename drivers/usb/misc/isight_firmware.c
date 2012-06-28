@@ -55,8 +55,14 @@ static int isight_firmware_load(struct usb_interface *intf,
 
 	ptr = firmware->data;
 
+<<<<<<< HEAD
 	if (usb_control_msg
 	    (dev, usb_sndctrlpipe(dev, 0), 0xa0, 0x40, 0xe600, 0, "\1", 1,
+=======
+	buf[0] = 0x01;
+	if (usb_control_msg
+	    (dev, usb_sndctrlpipe(dev, 0), 0xa0, 0x40, 0xe600, 0, buf, 1,
+>>>>>>> android-omap-tuna-jb
 	     300) != 1) {
 		printk(KERN_ERR
 		       "Failed to initialise isight firmware loader\n");
@@ -100,8 +106,14 @@ static int isight_firmware_load(struct usb_interface *intf,
 		}
 	}
 
+<<<<<<< HEAD
 	if (usb_control_msg
 	    (dev, usb_sndctrlpipe(dev, 0), 0xa0, 0x40, 0xe600, 0, "\0", 1,
+=======
+	buf[0] = 0x00;
+	if (usb_control_msg
+	    (dev, usb_sndctrlpipe(dev, 0), 0xa0, 0x40, 0xe600, 0, buf, 1,
+>>>>>>> android-omap-tuna-jb
 	     300) != 1) {
 		printk(KERN_ERR "isight firmware loading completion failed\n");
 		ret = -ENODEV;

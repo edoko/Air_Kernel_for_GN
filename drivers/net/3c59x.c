@@ -1842,7 +1842,11 @@ vortex_timer(unsigned long data)
 		ok = 1;
 	}
 
+<<<<<<< HEAD
 	if (!netif_carrier_ok(dev))
+=======
+	if (dev->flags & IFF_SLAVE || !netif_carrier_ok(dev))
+>>>>>>> android-omap-tuna-jb
 		next_tick = 5*HZ;
 
 	if (vp->medialock)

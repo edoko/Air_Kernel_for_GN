@@ -289,6 +289,7 @@ static int mcasp_compute_clock_dividers(long fclk_rate, int tgt_sample_rate,
 	BUG_ON(!out_div_lo);
 	BUG_ON(!out_div_hi);
 
+<<<<<<< HEAD
 	/* Start by making sure the fclk is divisible by 128 (the number of
 	 * clocks present in a single S/PDIF frame.
 	 */
@@ -303,6 +304,14 @@ static int mcasp_compute_clock_dividers(long fclk_rate, int tgt_sample_rate,
 		return -EINVAL;
 
 	sample_rate = fclk_rate / divisor;
+=======
+	/* A single S/PDIF frame requires 128 clocks */
+	divisor = DIV_ROUND_CLOSEST(fclk_rate, tgt_sample_rate << 7);
+	if (!divisor)
+		return -EINVAL;
+
+	sample_rate = (fclk_rate >> 7) / divisor;
+>>>>>>> android-omap-tuna-jb
 
 	/* ppm calculation in two steps to avoid overflow */
 	ppm = abs(tgt_sample_rate - sample_rate);

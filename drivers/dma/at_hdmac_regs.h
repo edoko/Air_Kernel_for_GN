@@ -319,6 +319,7 @@ static void atc_dump_lli(struct at_dma_chan *atchan, struct at_lli *lli)
 }
 
 
+<<<<<<< HEAD
 static void atc_setup_irq(struct at_dma_chan *atchan, int on)
 {
 	struct at_dma	*atdma = to_at_dma(atchan->chan_common.device);
@@ -327,12 +328,22 @@ static void atc_setup_irq(struct at_dma_chan *atchan, int on)
 	/* enable interrupts on buffer transfer completion & error */
 	ebci =    AT_DMA_BTC(atchan->chan_common.chan_id)
 		| AT_DMA_ERR(atchan->chan_common.chan_id);
+=======
+static void atc_setup_irq(struct at_dma *atdma, int chan_id, int on)
+{
+	u32 ebci;
+
+	/* enable interrupts on buffer transfer completion & error */
+	ebci =    AT_DMA_BTC(chan_id)
+		| AT_DMA_ERR(chan_id);
+>>>>>>> android-omap-tuna-jb
 	if (on)
 		dma_writel(atdma, EBCIER, ebci);
 	else
 		dma_writel(atdma, EBCIDR, ebci);
 }
 
+<<<<<<< HEAD
 static inline void atc_enable_irq(struct at_dma_chan *atchan)
 {
 	atc_setup_irq(atchan, 1);
@@ -341,6 +352,16 @@ static inline void atc_enable_irq(struct at_dma_chan *atchan)
 static inline void atc_disable_irq(struct at_dma_chan *atchan)
 {
 	atc_setup_irq(atchan, 0);
+=======
+static void atc_enable_chan_irq(struct at_dma *atdma, int chan_id)
+{
+	atc_setup_irq(atdma, chan_id, 1);
+}
+
+static void atc_disable_chan_irq(struct at_dma *atdma, int chan_id)
+{
+	atc_setup_irq(atdma, chan_id, 0);
+>>>>>>> android-omap-tuna-jb
 }
 
 

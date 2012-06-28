@@ -205,6 +205,7 @@ int tomoyo_mount_permission(char *dev_name, struct path *path, char *type,
 	if (flags & MS_REMOUNT) {
 		type = TOMOYO_MOUNT_REMOUNT_KEYWORD;
 		flags &= ~MS_REMOUNT;
+<<<<<<< HEAD
 	}
 	if (flags & MS_MOVE) {
 		type = TOMOYO_MOUNT_MOVE_KEYWORD;
@@ -229,6 +230,34 @@ int tomoyo_mount_permission(char *dev_name, struct path *path, char *type,
 	if (flags & MS_SHARED) {
 		type = TOMOYO_MOUNT_MAKE_SHARED_KEYWORD;
 		flags &= ~MS_SHARED;
+=======
+	} else if (flags & MS_BIND) {
+		type = TOMOYO_MOUNT_BIND_KEYWORD;
+		flags &= ~MS_BIND;
+	} else if (flags & MS_SHARED) {
+		if (flags & (MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
+			return -EINVAL;
+		type = TOMOYO_MOUNT_MAKE_SHARED_KEYWORD;
+		flags &= ~MS_SHARED;
+	} else if (flags & MS_PRIVATE) {
+		if (flags & (MS_SHARED | MS_SLAVE | MS_UNBINDABLE))
+			return -EINVAL;
+		type = TOMOYO_MOUNT_MAKE_PRIVATE_KEYWORD;
+		flags &= ~MS_PRIVATE;
+	} else if (flags & MS_SLAVE) {
+		if (flags & (MS_SHARED | MS_PRIVATE | MS_UNBINDABLE))
+			return -EINVAL;
+		type = TOMOYO_MOUNT_MAKE_SLAVE_KEYWORD;
+		flags &= ~MS_SLAVE;
+	} else if (flags & MS_UNBINDABLE) {
+		if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE))
+			return -EINVAL;
+		type = TOMOYO_MOUNT_MAKE_UNBINDABLE_KEYWORD;
+		flags &= ~MS_UNBINDABLE;
+	} else if (flags & MS_MOVE) {
+		type = TOMOYO_MOUNT_MOVE_KEYWORD;
+		flags &= ~MS_MOVE;
+>>>>>>> android-omap-tuna-jb
 	}
 	if (!type)
 		type = "<NULL>";

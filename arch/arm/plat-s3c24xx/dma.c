@@ -1249,7 +1249,11 @@ static void s3c2410_dma_resume(void)
 	struct s3c2410_dma_chan *cp = s3c2410_chans + dma_channels - 1;
 	int channel;
 
+<<<<<<< HEAD
 	for (channel = dma_channels - 1; channel >= 0; cp++, channel--)
+=======
+	for (channel = dma_channels - 1; channel >= 0; cp--, channel--)
+>>>>>>> android-omap-tuna-jb
 		s3c2410_dma_resume_chan(cp);
 }
 

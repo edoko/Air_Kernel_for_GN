@@ -484,9 +484,15 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
 				hrtimer_get_expires(&ts->sched_timer), 0))
 				break;
 		}
+<<<<<<< HEAD
 		/* Update jiffies and reread time */
 		tick_do_update_jiffies64(now);
 		now = ktime_get();
+=======
+		/* Reread time and update jiffies */
+		now = ktime_get();
+		tick_do_update_jiffies64(now);
+>>>>>>> android-omap-tuna-jb
 	}
 }
 

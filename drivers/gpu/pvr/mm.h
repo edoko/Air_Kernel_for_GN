@@ -48,6 +48,11 @@
 
 #define	ADDR_TO_PAGE_OFFSET(addr) (((unsigned long)(addr)) & (PAGE_SIZE - 1))
 
+<<<<<<< HEAD
+=======
+#define	PAGES_TO_BYTES(pages) ((pages) << PAGE_SHIFT)
+
+>>>>>>> android-omap-tuna-jb
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,10))
 #define	REMAP_PFN_RANGE(vma, addr, pfn, size, prot) remap_pfn_range(vma, addr, pfn, size, prot)
 #else
@@ -78,13 +83,25 @@ static inline IMG_UINT32 VMallocToPhys(IMG_VOID *pCpuVAddr)
 
 typedef enum {
     LINUX_MEM_AREA_IOREMAP,
+<<<<<<< HEAD
 	LINUX_MEM_AREA_EXTERNAL_KV,
+=======
+    LINUX_MEM_AREA_EXTERNAL_KV,
+>>>>>>> android-omap-tuna-jb
     LINUX_MEM_AREA_IO,
     LINUX_MEM_AREA_VMALLOC,
     LINUX_MEM_AREA_ALLOC_PAGES,
     LINUX_MEM_AREA_SUB_ALLOC,
+<<<<<<< HEAD
     LINUX_MEM_AREA_TYPE_COUNT,
     LINUX_MEM_AREA_ION,
+=======
+    LINUX_MEM_AREA_ION,
+#if defined(PVR_LINUX_MEM_AREA_USE_VMAP)
+    LINUX_MEM_AREA_VMAP,
+#endif
+    LINUX_MEM_AREA_TYPE_COUNT
+>>>>>>> android-omap-tuna-jb
 }LINUX_MEM_AREA_TYPE;
 
 typedef struct _LinuxMemArea LinuxMemArea;
@@ -120,18 +137,33 @@ struct _LinuxMemArea {
         {
             
             IMG_VOID *pvVmallocAddress;
+<<<<<<< HEAD
+=======
+#if defined(PVR_LINUX_MEM_AREA_USE_VMAP)
+            struct page **ppsPageList;
+	    IMG_HANDLE hBlockPageList;
+#endif
+>>>>>>> android-omap-tuna-jb
         }sVmalloc;
         struct _sPageList
         {
             
+<<<<<<< HEAD
             struct page **pvPageList;
+=======
+            struct page **ppsPageList;
+>>>>>>> android-omap-tuna-jb
 	    IMG_HANDLE hBlockPageList;
         }sPageList;
         struct _sIONTilerAlloc
         {
             
             IMG_CPU_PHYADDR *pCPUPhysAddrs;
+<<<<<<< HEAD
             struct ion_handle *psIONHandle;
+=======
+            struct ion_handle *psIONHandle[2];
+>>>>>>> android-omap-tuna-jb
         }sIONTilerAlloc;
         struct _sSubAlloc
         {

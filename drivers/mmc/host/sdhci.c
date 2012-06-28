@@ -1340,8 +1340,12 @@ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		if ((ios->timing == MMC_TIMING_UHS_SDR50) ||
 		    (ios->timing == MMC_TIMING_UHS_SDR104) ||
 		    (ios->timing == MMC_TIMING_UHS_DDR50) ||
+<<<<<<< HEAD
 		    (ios->timing == MMC_TIMING_UHS_SDR25) ||
 		    (ios->timing == MMC_TIMING_UHS_SDR12))
+=======
+		    (ios->timing == MMC_TIMING_UHS_SDR25))
+>>>>>>> android-omap-tuna-jb
 			ctrl |= SDHCI_CTRL_HISPD;
 
 		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
@@ -2227,9 +2231,14 @@ int sdhci_suspend_host(struct sdhci_host *host, pm_message_t state)
 	/* Disable tuning since we are suspending */
 	if (host->version >= SDHCI_SPEC_300 && host->tuning_count &&
 	    host->tuning_mode == SDHCI_TUNING_MODE_1) {
+<<<<<<< HEAD
 		host->flags &= ~SDHCI_NEEDS_RETUNING;
 		mod_timer(&host->tuning_timer, jiffies +
 			host->tuning_count * HZ);
+=======
+		del_timer_sync(&host->tuning_timer);
+		host->flags &= ~SDHCI_NEEDS_RETUNING;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	ret = mmc_suspend_host(host->mmc);

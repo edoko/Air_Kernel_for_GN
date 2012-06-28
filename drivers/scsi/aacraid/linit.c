@@ -38,6 +38,10 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/pci.h>
+<<<<<<< HEAD
+=======
+#include <linux/pci-aspm.h>
+>>>>>>> android-omap-tuna-jb
 #include <linux/slab.h>
 #include <linux/mutex.h>
 #include <linux/spinlock.h>
@@ -1108,6 +1112,12 @@ static int __devinit aac_probe_one(struct pci_dev *pdev,
 		unique_id++;
 	}
 
+<<<<<<< HEAD
+=======
+	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+			       PCIE_LINK_STATE_CLKPM);
+
+>>>>>>> android-omap-tuna-jb
 	error = pci_enable_device(pdev);
 	if (error)
 		goto out;

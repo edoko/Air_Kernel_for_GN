@@ -410,7 +410,11 @@ EXPORT_SYMBOL(__insert_inode_hash);
  *
  *	Remove an inode from the superblock.
  */
+<<<<<<< HEAD
 void __remove_inode_hash(struct inode *inode)
+=======
+void remove_inode_hash(struct inode *inode)
+>>>>>>> android-omap-tuna-jb
 {
 	spin_lock(&inode_hash_lock);
 	spin_lock(&inode->i_lock);
@@ -418,7 +422,11 @@ void __remove_inode_hash(struct inode *inode)
 	spin_unlock(&inode->i_lock);
 	spin_unlock(&inode_hash_lock);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__remove_inode_hash);
+=======
+EXPORT_SYMBOL(remove_inode_hash);
+>>>>>>> android-omap-tuna-jb
 
 void end_writeback(struct inode *inode)
 {

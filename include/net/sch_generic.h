@@ -219,9 +219,22 @@ struct tcf_proto {
 
 struct qdisc_skb_cb {
 	unsigned int		pkt_len;
+<<<<<<< HEAD
 	long			data[];
 };
 
+=======
+	unsigned char		data[24];
+};
+
+static inline void qdisc_cb_private_validate(const struct sk_buff *skb, int sz)
+{
+	struct qdisc_skb_cb *qcb;
+	BUILD_BUG_ON(sizeof(skb->cb) < sizeof(unsigned int) + sz);
+	BUILD_BUG_ON(sizeof(qcb->data) < sz);
+}
+
+>>>>>>> android-omap-tuna-jb
 static inline int qdisc_qlen(struct Qdisc *q)
 {
 	return q->q.qlen;

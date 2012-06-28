@@ -564,8 +564,12 @@ void musb_g_tx(struct musb *musb, u8 epnum)
 			&& (request->actual == request->length))
 #if defined(CONFIG_USB_INVENTRA_DMA) || defined(CONFIG_USB_UX500_DMA)
 			|| (is_dma && (!dma->desired_mode ||
+<<<<<<< HEAD
 				(request->actual &
 					(musb_ep->packet_sz - 1))))
+=======
+				(request->actual % musb_ep->packet_sz)))
+>>>>>>> android-omap-tuna-jb
 #endif
 		) {
 			/*
@@ -577,12 +581,35 @@ void musb_g_tx(struct musb *musb, u8 epnum)
 
 			dev_dbg(musb->controller, "sending zero pkt\n");
 			musb_writew(epio, MUSB_TXCSR, MUSB_TXCSR_MODE
+<<<<<<< HEAD
 					| MUSB_TXCSR_TXPKTRDY);
 			request->zero = 0;
+=======
+					| MUSB_TXCSR_TXPKTRDY
+					| (csr & MUSB_TXCSR_P_ISO));
+			request->zero = 0;
+			/*
+			 * Return from here with the expectation of the endpoint
+			 * interrupt for further action.
+			 */
+			return;
+>>>>>>> android-omap-tuna-jb
 		}
 
 		if (request->actual == request->length) {
 			musb_g_giveback(musb_ep, request, 0);
+<<<<<<< HEAD
+=======
+			/*
+			 * In the giveback function the MUSB lock is
+			 * released and acquired after sometime. During
+			 * this time period the INDEX register could get
+			 * changed by the gadget_queue function especially
+			 * on SMP systems. Reselect the INDEX to be sure
+			 * we are reading/modifying the right registers
+			 */
+			musb_ep_select(mbase, epnum);
+>>>>>>> android-omap-tuna-jb
 			req = musb_ep->desc ? next_request(musb_ep) : NULL;
 			if (!req) {
 				dev_dbg(musb->controller, "%s idle now\n",
@@ -990,6 +1017,18 @@ void musb_g_rx(struct musb *musb, u8 epnum)
 		}
 #endif
 		musb_g_giveback(musb_ep, request, 0);
+<<<<<<< HEAD
+=======
+		/*
+		 * In the giveback function the MUSB lock is
+		 * released and acquired after sometime. During
+		 * this time period the INDEX register could get
+		 * changed by the gadget_queue function especially
+		 * on SMP systems. Reselect the INDEX to be sure
+		 * we are reading/modifying the right registers
+		 */
+		musb_ep_select(mbase, epnum);
+>>>>>>> android-omap-tuna-jb
 
 		req = next_request(musb_ep);
 		if (!req)

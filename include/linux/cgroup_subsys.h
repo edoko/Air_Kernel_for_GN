@@ -64,6 +64,7 @@ SUBSYS(perf)
 #endif
 
 /* */
+<<<<<<< HEAD
 
 #ifdef CONFIG_CGROUP_BFQIO
 SUBSYS(bfqio)
@@ -74,3 +75,5 @@ SUBSYS(bfqio)
 #ifdef CONFIG_CGROUP_TIMER_SLACK
 SUBSYS(timer_slack)
 #endif
+=======
+>>>>>>> android-omap-tuna-jb

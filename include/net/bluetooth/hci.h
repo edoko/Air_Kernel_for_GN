@@ -84,6 +84,10 @@ enum {
 	HCI_SERVICE_CACHE,
 	HCI_LINK_KEYS,
 	HCI_DEBUG_KEYS,
+<<<<<<< HEAD
+=======
+	HCI_UNREGISTER,
+>>>>>>> android-omap-tuna-jb
 
 	HCI_RESET,
 };

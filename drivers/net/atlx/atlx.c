@@ -193,7 +193,11 @@ static void atlx_tx_timeout(struct net_device *netdev)
 {
 	struct atlx_adapter *adapter = netdev_priv(netdev);
 	/* Do the reset outside of interrupt context */
+<<<<<<< HEAD
 	schedule_work(&adapter->tx_timeout_task);
+=======
+	schedule_work(&adapter->reset_dev_task);
+>>>>>>> android-omap-tuna-jb
 }
 
 /*

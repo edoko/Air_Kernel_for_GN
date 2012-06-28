@@ -185,7 +185,10 @@ unsigned long __rounddown_pow_of_two(unsigned long n)
 #define rounddown_pow_of_two(n)			\
 (						\
 	__builtin_constant_p(n) ? (		\
+<<<<<<< HEAD
 		(n == 1) ? 0 :			\
+=======
+>>>>>>> android-omap-tuna-jb
 		(1UL << ilog2(n))) :		\
 	__rounddown_pow_of_two(n)		\
  )

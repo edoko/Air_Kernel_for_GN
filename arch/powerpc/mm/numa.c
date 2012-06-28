@@ -1214,11 +1214,19 @@ int hot_add_node_scn_to_nid(unsigned long scn_addr)
 			break;
 		}
 
+<<<<<<< HEAD
 		of_node_put(memory);
+=======
+>>>>>>> android-omap-tuna-jb
 		if (nid >= 0)
 			break;
 	}
 
+<<<<<<< HEAD
+=======
+	of_node_put(memory);
+
+>>>>>>> android-omap-tuna-jb
 	return nid;
 }
 

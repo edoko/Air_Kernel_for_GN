@@ -76,7 +76,11 @@ static void __iomem *__acpi_ioremap_fast(phys_addr_t paddr,
 {
 	struct acpi_iomap *map;
 
+<<<<<<< HEAD
 	map = __acpi_find_iomap(paddr, size);
+=======
+	map = __acpi_find_iomap(paddr, size/8);
+>>>>>>> android-omap-tuna-jb
 	if (map)
 		return map->vaddr + (paddr - map->paddr);
 	else

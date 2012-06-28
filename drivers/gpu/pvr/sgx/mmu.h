@@ -147,6 +147,11 @@ IMG_VOID MMU_GetPDPhysAddr(MMU_CONTEXT *pMMUContext, IMG_DEV_PHYADDR *psDevPAddr
 #endif
 
 
+<<<<<<< HEAD
+=======
+IMG_VOID MMU_CheckFaultAddr(PVRSRV_SGXDEV_INFO *psDevInfo, IMG_UINT32 ui32PDDevPAddr, IMG_UINT32 ui32RegVal);
+
+>>>>>>> android-omap-tuna-jb
 #if defined(PDUMP)
 IMG_UINT32 MMU_GetPDumpContextID(IMG_HANDLE hDevMemContext);
 #endif 

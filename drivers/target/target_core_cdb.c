@@ -84,6 +84,21 @@ target_emulate_inquiry_std(struct se_cmd *cmd)
 	buf[2] = dev->transport->get_device_rev(dev);
 
 	/*
+<<<<<<< HEAD
+=======
+	 * NORMACA and HISUP = 0, RESPONSE DATA FORMAT = 2
+	 *
+	 * SPC4 says:
+	 *   A RESPONSE DATA FORMAT field set to 2h indicates that the
+	 *   standard INQUIRY data is in the format defined in this
+	 *   standard. Response data format values less than 2h are
+	 *   obsolete. Response data format values greater than 2h are
+	 *   reserved.
+	 */
+	buf[3] = 2;
+
+	/*
+>>>>>>> android-omap-tuna-jb
 	 * Enable SCCS and TPGS fields for Emulated ALUA
 	 */
 	if (T10_ALUA(dev->se_sub_dev)->alua_type == SPC3_ALUA_EMULATED)
@@ -94,7 +109,11 @@ target_emulate_inquiry_std(struct se_cmd *cmd)
 		return 0;
 	}
 
+<<<<<<< HEAD
 	buf[7] = 0x32; /* Sync=1 and CmdQue=1 */
+=======
+	buf[7] = 0x2; /* CmdQue=1 */
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Do not include vendor, product, reversion info in INQUIRY

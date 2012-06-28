@@ -42,7 +42,11 @@
 #define DRVNAME	"coretemp"
 
 #define BASE_SYSFS_ATTR_NO	2	/* Sysfs Base attr no for coretemp */
+<<<<<<< HEAD
 #define NUM_REAL_CORES		16	/* Number of Real cores per cpu */
+=======
+#define NUM_REAL_CORES		32	/* Number of Real cores per cpu */
+>>>>>>> android-omap-tuna-jb
 #define CORETEMP_NAME_LENGTH	17	/* String Length of attrs */
 #define MAX_ATTRS		5	/* Maximum no of per-core attrs */
 #define MAX_CORE_DATA		(NUM_REAL_CORES + BASE_SYSFS_ATTR_NO)
@@ -50,14 +54,23 @@
 #ifdef CONFIG_SMP
 #define TO_PHYS_ID(cpu)		cpu_data(cpu).phys_proc_id
 #define TO_CORE_ID(cpu)		cpu_data(cpu).cpu_core_id
+<<<<<<< HEAD
 #define TO_ATTR_NO(cpu)		(TO_CORE_ID(cpu) + BASE_SYSFS_ATTR_NO)
+=======
+>>>>>>> android-omap-tuna-jb
 #define for_each_sibling(i, cpu)	for_each_cpu(i, cpu_sibling_mask(cpu))
 #else
 #define TO_PHYS_ID(cpu)		(cpu)
 #define TO_CORE_ID(cpu)		(cpu)
+<<<<<<< HEAD
 #define TO_ATTR_NO(cpu)		(cpu)
 #define for_each_sibling(i, cpu)	for (i = 0; false; )
 #endif
+=======
+#define for_each_sibling(i, cpu)	for (i = 0; false; )
+#endif
+#define TO_ATTR_NO(cpu)		(TO_CORE_ID(cpu) + BASE_SYSFS_ATTR_NO)
+>>>>>>> android-omap-tuna-jb
 
 /*
  * Per-Core Temperature Data
@@ -540,6 +553,11 @@ static void coretemp_add_core(unsigned int cpu, int pkg_flag)
 		return;
 
 	pdata = platform_get_drvdata(pdev);
+<<<<<<< HEAD
+=======
+	if (!pdata)
+		return;
+>>>>>>> android-omap-tuna-jb
 
 	err = create_core_data(pdata, pdev, cpu, pkg_flag);
 	if (err)
@@ -746,9 +764,21 @@ static void __cpuinit put_core_offline(unsigned int cpu)
 		return;
 
 	pdata = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 
 	indx = TO_ATTR_NO(cpu);
 
+=======
+	if (!pdata)
+		return;
+
+	indx = TO_ATTR_NO(cpu);
+
+	/* The core id is too big, just return */
+	if (indx > MAX_CORE_DATA - 1)
+		return;
+
+>>>>>>> android-omap-tuna-jb
 	if (pdata->core_data[indx] && pdata->core_data[indx]->cpu == cpu)
 		coretemp_remove_core(pdata, &pdev->dev, indx);
 

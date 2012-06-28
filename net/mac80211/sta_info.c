@@ -334,6 +334,10 @@ static int sta_info_finish_insert(struct sta_info *sta, bool async)
 	ieee80211_sta_debugfs_add(sta);
 	rate_control_add_sta_debugfs(sta);
 
+<<<<<<< HEAD
+=======
+	memset(&sinfo, 0, sizeof(sinfo));
+>>>>>>> android-omap-tuna-jb
 	sinfo.filled = 0;
 	sinfo.generation = local->sta_generation;
 	cfg80211_new_sta(sdata->dev, sta->sta.addr, &sinfo, GFP_KERNEL);

@@ -215,7 +215,13 @@ static int addr4_resolve(struct sockaddr_in *src_in,
 
 	neigh = neigh_lookup(&arp_tbl, &rt->rt_gateway, rt->dst.dev);
 	if (!neigh || !(neigh->nud_state & NUD_VALID)) {
+<<<<<<< HEAD
 		neigh_event_send(rt->dst.neighbour, NULL);
+=======
+		rcu_read_lock();
+		neigh_event_send(dst_get_neighbour(&rt->dst), NULL);
+		rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 		ret = -ENODATA;
 		if (neigh)
 			goto release;
@@ -273,6 +279,7 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
 		goto put;
 	}
 
+<<<<<<< HEAD
 	neigh = dst->neighbour;
 	if (!neigh || !(neigh->nud_state & NUD_VALID)) {
 		neigh_event_send(dst->neighbour, NULL);
@@ -281,6 +288,18 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
 	}
 
 	ret = rdma_copy_addr(addr, dst->dev, neigh->ha);
+=======
+	rcu_read_lock();
+	neigh = dst_get_neighbour(dst);
+	if (!neigh || !(neigh->nud_state & NUD_VALID)) {
+		if (neigh)
+			neigh_event_send(neigh, NULL);
+		ret = -ENODATA;
+	} else {
+		ret = rdma_copy_addr(addr, dst->dev, neigh->ha);
+	}
+	rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 put:
 	dst_release(dst);
 	return ret;

@@ -341,6 +341,11 @@ static int ext4_valid_extent(struct inode *inode, struct ext4_extent *ext)
 	ext4_fsblk_t block = ext4_ext_pblock(ext);
 	int len = ext4_ext_get_actual_len(ext);
 
+<<<<<<< HEAD
+=======
+	if (len == 0)
+		return 0;
+>>>>>>> android-omap-tuna-jb
 	return ext4_data_block_valid(EXT4_SB(inode->i_sb), block, len);
 }
 
@@ -776,6 +781,7 @@ static int ext4_ext_insert_index(handle_t *handle, struct inode *inode,
 				 logical, le32_to_cpu(curp->p_idx->ei_block));
 		return -EIO;
 	}
+<<<<<<< HEAD
 	if (logical > le32_to_cpu(curp->p_idx->ei_block)) {
 		/* insert after */
 		ext_debug("insert new index %d after: %llu\n", logical, ptr);
@@ -793,6 +799,43 @@ static int ext4_ext_insert_index(handle_t *handle, struct inode *inode,
 				"move %d indices from 0x%p to 0x%p\n",
 				logical, len, ix, ix + 1);
 		memmove(ix + 1, ix, len * sizeof(struct ext4_extent_idx));
+=======
+	len = EXT_MAX_INDEX(curp->p_hdr) - curp->p_idx;
+	if (logical > le32_to_cpu(curp->p_idx->ei_block)) {
+		/* insert after */
+		if (curp->p_idx != EXT_LAST_INDEX(curp->p_hdr)) {
+			len = (len - 1) * sizeof(struct ext4_extent_idx);
+			len = len < 0 ? 0 : len;
+			ext_debug("insert new index %d after: %llu. "
+					"move %d from 0x%p to 0x%p\n",
+					logical, ptr, len,
+					(curp->p_idx + 1), (curp->p_idx + 2));
+			memmove(curp->p_idx + 2, curp->p_idx + 1, len);
+		}
+		ix = curp->p_idx + 1;
+	} else {
+		/* insert before */
+		len = len * sizeof(struct ext4_extent_idx);
+		len = len < 0 ? 0 : len;
+		ext_debug("insert new index %d before: %llu. "
+				"move %d from 0x%p to 0x%p\n",
+				logical, ptr, len,
+				curp->p_idx, (curp->p_idx + 1));
+		memmove(curp->p_idx + 1, curp->p_idx, len);
+		ix = curp->p_idx;
+	}
+
+	ix->ei_block = cpu_to_le32(logical);
+	ext4_idx_store_pblock(ix, ptr);
+	le16_add_cpu(&curp->p_hdr->eh_entries, 1);
+
+	if (unlikely(le16_to_cpu(curp->p_hdr->eh_entries)
+			     > le16_to_cpu(curp->p_hdr->eh_max))) {
+		EXT4_ERROR_INODE(inode,
+				 "logical %d == ei_block %d!",
+				 logical, le32_to_cpu(curp->p_idx->ei_block));
+		return -EIO;
+>>>>>>> android-omap-tuna-jb
 	}
 	if (unlikely(ix > EXT_LAST_INDEX(curp->p_hdr))) {
 		EXT4_ERROR_INODE(inode, "ix > EXT_LAST_INDEX!");
@@ -1793,6 +1836,7 @@ has_space:
 				ext4_ext_pblock(newext),
 				ext4_ext_is_uninitialized(newext),
 				ext4_ext_get_actual_len(newext));
+<<<<<<< HEAD
 			nearex = EXT_FIRST_EXTENT(eh);
 		} else {
 			if (le32_to_cpu(newext->ee_block)
@@ -1800,10 +1844,23 @@ has_space:
 			/* Insert after */
 			ext_debug("insert %d:%llu:[%d]%d %s before: "
 					"nearest 0x%p\n"
+=======
+		path[depth].p_ext = EXT_FIRST_EXTENT(eh);
+	} else if (le32_to_cpu(newext->ee_block)
+			   > le32_to_cpu(nearex->ee_block)) {
+/*		BUG_ON(newext->ee_block == nearex->ee_block); */
+		if (nearex != EXT_LAST_EXTENT(eh)) {
+			len = EXT_MAX_EXTENT(eh) - nearex;
+			len = (len - 1) * sizeof(struct ext4_extent);
+			len = len < 0 ? 0 : len;
+			ext_debug("insert %d:%llu:[%d]%d after: nearest 0x%p, "
+					"move %d from 0x%p to 0x%p\n",
+>>>>>>> android-omap-tuna-jb
 					le32_to_cpu(newext->ee_block),
 					ext4_ext_pblock(newext),
 					ext4_ext_is_uninitialized(newext),
 					ext4_ext_get_actual_len(newext),
+<<<<<<< HEAD
 					nearex);
 			nearex++;
 		} else {
@@ -1833,6 +1890,29 @@ has_space:
 
 	le16_add_cpu(&eh->eh_entries, 1);
 	path[depth].p_ext = nearex;
+=======
+					nearex, len, nearex + 1, nearex + 2);
+			memmove(nearex + 2, nearex + 1, len);
+		}
+		path[depth].p_ext = nearex + 1;
+	} else {
+		BUG_ON(newext->ee_block == nearex->ee_block);
+		len = (EXT_MAX_EXTENT(eh) - nearex) * sizeof(struct ext4_extent);
+		len = len < 0 ? 0 : len;
+		ext_debug("insert %d:%llu:[%d]%d before: nearest 0x%p, "
+				"move %d from 0x%p to 0x%p\n",
+				le32_to_cpu(newext->ee_block),
+				ext4_ext_pblock(newext),
+				ext4_ext_is_uninitialized(newext),
+				ext4_ext_get_actual_len(newext),
+				nearex, len, nearex + 1, nearex + 2);
+		memmove(nearex + 1, nearex, len);
+		path[depth].p_ext = nearex;
+	}
+
+	le16_add_cpu(&eh->eh_entries, 1);
+	nearex = path[depth].p_ext;
+>>>>>>> android-omap-tuna-jb
 	nearex->ee_block = newext->ee_block;
 	ext4_ext_store_pblock(nearex, ext4_ext_pblock(newext));
 	nearex->ee_len = newext->ee_len;
@@ -2831,7 +2911,11 @@ static int ext4_split_extent_at(handle_t *handle,
 		if (err)
 			goto fix_extent_len;
 		/* update the extent length and mark as initialized */
+<<<<<<< HEAD
 		ex->ee_len = cpu_to_le32(ee_len);
+=======
+		ex->ee_len = cpu_to_le16(ee_len);
+>>>>>>> android-omap-tuna-jb
 		ext4_ext_try_to_merge(inode, path, ex);
 		err = ext4_ext_dirty(handle, inode, path + depth);
 		goto out;
@@ -2925,6 +3009,7 @@ out:
  *   a> There is no split required: Entire extent should be initialized
  *   b> Splits in two extents: Write is happening at either end of the extent
  *   c> Splits in three extents: Somone is writing in middle of the extent
+<<<<<<< HEAD
  *
  * Pre-conditions:
  *  - The extent pointed to by 'path' is uninitialized.
@@ -2935,13 +3020,18 @@ out:
  *  - the returned value is the number of blocks beyond map->l_lblk
  *    that are allocated and initialized.
  *    It is guaranteed to be >= map->m_len.
+=======
+>>>>>>> android-omap-tuna-jb
  */
 static int ext4_ext_convert_to_initialized(handle_t *handle,
 					   struct inode *inode,
 					   struct ext4_map_blocks *map,
 					   struct ext4_ext_path *path)
 {
+<<<<<<< HEAD
 	struct ext4_extent_header *eh;
+=======
+>>>>>>> android-omap-tuna-jb
 	struct ext4_map_blocks split_map;
 	struct ext4_extent zero_ex;
 	struct ext4_extent *ex;
@@ -2960,12 +3050,16 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
 		eof_block = map->m_lblk + map->m_len;
 
 	depth = ext_depth(inode);
+<<<<<<< HEAD
 	eh = path[depth].p_hdr;
+=======
+>>>>>>> android-omap-tuna-jb
 	ex = path[depth].p_ext;
 	ee_block = le32_to_cpu(ex->ee_block);
 	ee_len = ext4_ext_get_actual_len(ex);
 	allocated = ee_len - (map->m_lblk - ee_block);
 
+<<<<<<< HEAD
 	trace_ext4_ext_convert_to_initialized_enter(inode, map, ex);
 
 	/* Pre-conditions */
@@ -3047,6 +3141,8 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
 		}
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	WARN_ON(map->m_lblk < ee_block);
 	/*
 	 * It is safe to convert extent to initialized via explicit

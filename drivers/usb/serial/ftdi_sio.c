@@ -156,6 +156,10 @@ static struct ftdi_sio_quirk ftdi_8u2232c_quirk = {
  * /sys/bus/usb/ftdi_sio/new_id, then send patch/report!
  */
 static struct usb_device_id id_table_combined [] = {
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_ZEITCONTROL_TAGTRACE_MIFARE_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_VID, FTDI_CTI_MINI_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_CTI_NANO_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_AMC232_PID) },
@@ -186,6 +190,10 @@ static struct usb_device_id id_table_combined [] = {
 		.driver_info = (kernel_ulong_t)&ftdi_8u2232c_quirk },
 	{ USB_DEVICE(FTDI_VID, FTDI_4232H_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_232H_PID) },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_FTX_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_VID, FTDI_MICRO_CHAMELEON_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_RELAIS_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_OPENDCC_PID) },
@@ -206,6 +214,11 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_XF_640_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_XF_642_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_DSS20_PID) },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_URBAN_0_PID) },
+	{ USB_DEVICE(FTDI_VID, FTDI_URBAN_1_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_NF_RIC_VID, FTDI_NF_RIC_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_VNHCPCUSB_D_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_MTXORB_0_PID) },
@@ -532,6 +545,13 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803_6_PID) },
 	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803_7_PID) },
 	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803_8_PID) },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803R_1_PID) },
+	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803R_2_PID) },
+	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803R_3_PID) },
+	{ USB_DEVICE(SEALEVEL_VID, SEALEVEL_2803R_4_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(IDTECH_VID, IDTECH_IDT1221U_PID) },
 	{ USB_DEVICE(OCT_VID, OCT_US101_PID) },
 	{ USB_DEVICE(OCT_VID, OCT_DK201_PID) },
@@ -732,6 +752,10 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(TML_VID, TML_USB_SERIAL_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_ELSTER_UNICOM_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_PROPOX_JTAGCABLEII_PID) },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_PROPOX_ISPCABLEIII_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(OLIMEX_VID, OLIMEX_ARM_USB_OCD_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(OLIMEX_VID, OLIMEX_ARM_USB_OCD_H_PID),
@@ -744,6 +768,11 @@ static struct usb_device_id id_table_combined [] = {
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(FTDI_VID, LMI_LM3S_EVAL_BOARD_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, LMI_LM3S_ICDI_BOARD_PID),
+		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_VID, FTDI_TURTELIZER_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(RATOC_VENDOR_ID, RATOC_PRODUCT_ID_USB60F) },
@@ -790,6 +819,10 @@ static struct usb_device_id id_table_combined [] = {
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(ADI_VID, ADI_GNICEPLUS_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(MICROCHIP_VID, MICROCHIP_USB_BOARD_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(JETI_VID, JETI_SPC1201_PID) },
 	{ USB_DEVICE(MARVELL_VID, MARVELL_SHEEVAPLUG_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
@@ -798,6 +831,11 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(BAYER_VID, BAYER_CONTOUR_CABLE_PID) },
 	{ USB_DEVICE(FTDI_VID, MARVELL_OPENRD_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, TI_XDS100V2_PID),
+		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_VID, HAMEG_HO820_PID) },
 	{ USB_DEVICE(FTDI_VID, HAMEG_HO720_PID) },
 	{ USB_DEVICE(FTDI_VID, HAMEG_HO730_PID) },
@@ -829,11 +867,22 @@ static struct usb_device_id id_table_combined [] = {
 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_LOGBOOKML_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_LS_LOGBOOK_PID) },
 	{ USB_DEVICE(FTDI_VID, FTDI_SCIENCESCOPE_HS_LOGBOOK_PID) },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_CINTERION_MC55I_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(FTDI_VID, FTDI_DOTEC_PID) },
 	{ USB_DEVICE(QIHARDWARE_VID, MILKYMISTONE_JTAGSERIAL_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
 	{ USB_DEVICE(ST_VID, ST_STMCLT1030_PID),
 		.driver_info = (kernel_ulong_t)&ftdi_stmclite_quirk },
+<<<<<<< HEAD
+=======
+	{ USB_DEVICE(FTDI_VID, FTDI_RF_R106) },
+	{ USB_DEVICE(FTDI_VID, FTDI_DISTORTEC_JTAG_LOCK_PICK_PID),
+		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+	{ USB_DEVICE(FTDI_VID, FTDI_LUMEL_PD12_PID) },
+>>>>>>> android-omap-tuna-jb
 	{ },					/* Optional parameter entry */
 	{ }					/* Terminating entry */
 };
@@ -856,7 +905,12 @@ static const char *ftdi_chip_name[] = {
 	[FT232RL] = "FT232RL",
 	[FT2232H] = "FT2232H",
 	[FT4232H] = "FT4232H",
+<<<<<<< HEAD
 	[FT232H]  = "FT232H"
+=======
+	[FT232H]  = "FT232H",
+	[FTX]     = "FT-X"
+>>>>>>> android-omap-tuna-jb
 };
 
 
@@ -1154,7 +1208,12 @@ static __u32 get_ftdi_divisor(struct tty_struct *tty,
 		break;
 	case FT232BM: /* FT232BM chip */
 	case FT2232C: /* FT2232C chip */
+<<<<<<< HEAD
 	case FT232RL:
+=======
+	case FT232RL: /* FT232RL chip */
+	case FTX:     /* FT-X series */
+>>>>>>> android-omap-tuna-jb
 		if (baud <= 3000000) {
 			__u16 product_id = le16_to_cpu(
 				port->serial->dev->descriptor.idProduct);
@@ -1320,8 +1379,12 @@ static int set_serial_info(struct tty_struct *tty,
 		goto check_and_exit;
 	}
 
+<<<<<<< HEAD
 	if ((new_serial.baud_base != priv->baud_base) &&
 	    (new_serial.baud_base < 9600)) {
+=======
+	if (new_serial.baud_base != priv->baud_base) {
+>>>>>>> android-omap-tuna-jb
 		mutex_unlock(&priv->cfg_lock);
 		return -EINVAL;
 	}
@@ -1441,10 +1504,21 @@ static void ftdi_determine_type(struct usb_serial_port *port)
 	} else if (version < 0x900) {
 		/* Assume it's an FT232RL */
 		priv->chip_type = FT232RL;
+<<<<<<< HEAD
 	} else {
 		/* Assume it's an FT232H */
 		priv->chip_type = FT232H;
 	}
+=======
+	} else if (version < 0x1000) {
+		/* Assume it's an FT232H */
+		priv->chip_type = FT232H;
+	} else {
+		/* Assume it's an FT-X series device */
+		priv->chip_type = FTX;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	dev_info(&udev->dev, "Detected %s\n", ftdi_chip_name[priv->chip_type]);
 }
 
@@ -1572,7 +1646,12 @@ static int create_sysfs_attrs(struct usb_serial_port *port)
 		     priv->chip_type == FT232RL ||
 		     priv->chip_type == FT2232H ||
 		     priv->chip_type == FT4232H ||
+<<<<<<< HEAD
 		     priv->chip_type == FT232H)) {
+=======
+		     priv->chip_type == FT232H ||
+		     priv->chip_type == FTX)) {
+>>>>>>> android-omap-tuna-jb
 			retval = device_create_file(&port->dev,
 						    &dev_attr_latency_timer);
 		}
@@ -1594,7 +1673,12 @@ static void remove_sysfs_attrs(struct usb_serial_port *port)
 		    priv->chip_type == FT232RL ||
 		    priv->chip_type == FT2232H ||
 		    priv->chip_type == FT4232H ||
+<<<<<<< HEAD
                     priv->chip_type == FT232H) {
+=======
+		    priv->chip_type == FT232H ||
+		    priv->chip_type == FTX) {
+>>>>>>> android-omap-tuna-jb
 			device_remove_file(&port->dev, &dev_attr_latency_timer);
 		}
 	}
@@ -1745,7 +1829,12 @@ static int ftdi_8u2232c_probe(struct usb_serial *serial)
 
 	dbg("%s", __func__);
 
+<<<<<<< HEAD
 	if (strcmp(udev->manufacturer, "CALAO Systems") == 0)
+=======
+	if ((udev->manufacturer && !strcmp(udev->manufacturer, "CALAO Systems")) ||
+	    (udev->product && !strcmp(udev->product, "BeagleBone/XDS100")))
+>>>>>>> android-omap-tuna-jb
 		return ftdi_jtag_probe(serial);
 
 	return 0;
@@ -1810,6 +1899,10 @@ static int ftdi_sio_port_remove(struct usb_serial_port *port)
 
 static int ftdi_open(struct tty_struct *tty, struct usb_serial_port *port)
 {
+<<<<<<< HEAD
+=======
+	struct ktermios dummy;
+>>>>>>> android-omap-tuna-jb
 	struct usb_device *dev = port->serial->dev;
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
 	int result;
@@ -1828,8 +1921,15 @@ static int ftdi_open(struct tty_struct *tty, struct usb_serial_port *port)
 	   This is same behaviour as serial.c/rs_open() - Kuba */
 
 	/* ftdi_set_termios  will send usb control messages */
+<<<<<<< HEAD
 	if (tty)
 		ftdi_set_termios(tty, port, tty->termios);
+=======
+	if (tty) {
+		memset(&dummy, 0, sizeof(dummy));
+		ftdi_set_termios(tty, port, &dummy);
+	}
+>>>>>>> android-omap-tuna-jb
 
 	/* Start reading from the device */
 	result = usb_serial_generic_open(tty, port);
@@ -2075,13 +2175,28 @@ static void ftdi_set_termios(struct tty_struct *tty,
 
 	cflag = termios->c_cflag;
 
+<<<<<<< HEAD
 	/* FIXME -For this cut I don't care if the line is really changing or
 	   not  - so just do the change regardless  - should be able to
 	   compare old_termios and tty->termios */
+=======
+	if (old_termios->c_cflag == termios->c_cflag
+	    && old_termios->c_ispeed == termios->c_ispeed
+	    && old_termios->c_ospeed == termios->c_ospeed)
+		goto no_c_cflag_changes;
+
+>>>>>>> android-omap-tuna-jb
 	/* NOTE These routines can get interrupted by
 	   ftdi_sio_read_bulk_callback  - need to examine what this means -
 	   don't see any problems yet */
 
+<<<<<<< HEAD
+=======
+	if ((old_termios->c_cflag & (CSIZE|PARODD|PARENB|CMSPAR|CSTOPB)) ==
+	    (termios->c_cflag & (CSIZE|PARODD|PARENB|CMSPAR|CSTOPB)))
+		goto no_data_parity_stop_changes;
+
+>>>>>>> android-omap-tuna-jb
 	/* Set number of data bits, parity, stop bits */
 
 	urb_value = 0;
@@ -2122,6 +2237,10 @@ static void ftdi_set_termios(struct tty_struct *tty,
 	}
 
 	/* Now do the baudrate */
+<<<<<<< HEAD
+=======
+no_data_parity_stop_changes:
+>>>>>>> android-omap-tuna-jb
 	if ((cflag & CBAUD) == B0) {
 		/* Disable flow control */
 		if (usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
@@ -2149,6 +2268,10 @@ static void ftdi_set_termios(struct tty_struct *tty,
 
 	/* Set flow control */
 	/* Note device also supports DTR/CD (ugh) and Xon/Xoff in hardware */
+<<<<<<< HEAD
+=======
+no_c_cflag_changes:
+>>>>>>> android-omap-tuna-jb
 	if (cflag & CRTSCTS) {
 		dbg("%s Setting to CRTSCTS flow control", __func__);
 		if (usb_control_msg(dev,
@@ -2239,6 +2362,10 @@ static int ftdi_tiocmget(struct tty_struct *tty)
 	case FT2232H:
 	case FT4232H:
 	case FT232H:
+<<<<<<< HEAD
+=======
+	case FTX:
+>>>>>>> android-omap-tuna-jb
 		len = 2;
 		break;
 	default:

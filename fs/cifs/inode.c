@@ -562,7 +562,20 @@ int cifs_get_file_info(struct file *filp)
 
 	xid = GetXid();
 	rc = CIFSSMBQFileInfo(xid, tcon, cfile->netfid, &find_data);
+<<<<<<< HEAD
 	if (rc == -EOPNOTSUPP || rc == -EINVAL) {
+=======
+	switch (rc) {
+	case 0:
+		cifs_all_info_to_fattr(&fattr, &find_data, cifs_sb, false);
+		break;
+	case -EREMOTE:
+		cifs_create_dfs_fattr(&fattr, inode->i_sb);
+		rc = 0;
+		break;
+	case -EOPNOTSUPP:
+	case -EINVAL:
+>>>>>>> android-omap-tuna-jb
 		/*
 		 * FIXME: legacy server -- fall back to path-based call?
 		 * for now, just skip revalidating and mark inode for
@@ -570,18 +583,27 @@ int cifs_get_file_info(struct file *filp)
 		 */
 		rc = 0;
 		CIFS_I(inode)->time = 0;
+<<<<<<< HEAD
 		goto cgfi_exit;
 	} else if (rc == -EREMOTE) {
 		cifs_create_dfs_fattr(&fattr, inode->i_sb);
 		rc = 0;
 	} else if (rc)
 		goto cgfi_exit;
+=======
+	default:
+		goto cgfi_exit;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * don't bother with SFU junk here -- just mark inode as needing
 	 * revalidation.
 	 */
+<<<<<<< HEAD
 	cifs_all_info_to_fattr(&fattr, &find_data, cifs_sb, false);
+=======
+>>>>>>> android-omap-tuna-jb
 	fattr.cf_uniqueid = CIFS_I(inode)->uniqueid;
 	fattr.cf_flags |= CIFS_FATTR_NEED_REVAL;
 	cifs_fattr_to_inode(inode, &fattr);

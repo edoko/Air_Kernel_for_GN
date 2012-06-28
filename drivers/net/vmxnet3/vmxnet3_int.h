@@ -69,10 +69,17 @@
 /*
  * Version numbers
  */
+<<<<<<< HEAD
 #define VMXNET3_DRIVER_VERSION_STRING   "1.1.18.0-k"
 
 /* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
 #define VMXNET3_DRIVER_VERSION_NUM      0x01011200
+=======
+#define VMXNET3_DRIVER_VERSION_STRING   "1.1.29.0-k"
+
+/* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+#define VMXNET3_DRIVER_VERSION_NUM      0x01011D00
+>>>>>>> android-omap-tuna-jb
 
 #if defined(CONFIG_PCI_MSI)
 	/* RSS only makes sense if MSI-X is supported. */

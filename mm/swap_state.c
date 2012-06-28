@@ -28,7 +28,11 @@
  */
 static const struct address_space_operations swap_aops = {
 	.writepage	= swap_writepage,
+<<<<<<< HEAD
 	.set_page_dirty	= __set_page_dirty_nobuffers,
+=======
+	.set_page_dirty	= __set_page_dirty_no_writeback,
+>>>>>>> android-omap-tuna-jb
 	.migratepage	= migrate_page,
 };
 

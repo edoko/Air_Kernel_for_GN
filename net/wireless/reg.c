@@ -57,8 +57,22 @@
 #define REG_DBG_PRINT(args...)
 #endif
 
+<<<<<<< HEAD
 /* Receipt of information from last regulatory request */
 static struct regulatory_request *last_request;
+=======
+static struct regulatory_request core_request_world = {
+	.initiator = NL80211_REGDOM_SET_BY_CORE,
+	.alpha2[0] = '0',
+	.alpha2[1] = '0',
+	.intersect = false,
+	.processed = true,
+	.country_ie_env = ENVIRON_ANY,
+};
+
+/* Receipt of information from last regulatory request */
+static struct regulatory_request *last_request = &core_request_world;
+>>>>>>> android-omap-tuna-jb
 
 /* To trigger userspace events */
 static struct platform_device *reg_pdev;
@@ -150,7 +164,11 @@ static char user_alpha2[2];
 module_param(ieee80211_regdom, charp, 0444);
 MODULE_PARM_DESC(ieee80211_regdom, "IEEE 802.11 regulatory domain code");
 
+<<<<<<< HEAD
 static void reset_regdomains(void)
+=======
+static void reset_regdomains(bool full_reset)
+>>>>>>> android-omap-tuna-jb
 {
 	/* avoid freeing static information or freeing something twice */
 	if (cfg80211_regdomain == cfg80211_world_regdom)
@@ -165,6 +183,16 @@ static void reset_regdomains(void)
 
 	cfg80211_world_regdom = &world_regdom;
 	cfg80211_regdomain = NULL;
+<<<<<<< HEAD
+=======
+
+	if (!full_reset)
+		return;
+
+	if (last_request != &core_request_world)
+		kfree(last_request);
+	last_request = &core_request_world;
+>>>>>>> android-omap-tuna-jb
 }
 
 /*
@@ -175,7 +203,11 @@ static void update_world_regdomain(const struct ieee80211_regdomain *rd)
 {
 	BUG_ON(!last_request);
 
+<<<<<<< HEAD
 	reset_regdomains();
+=======
+	reset_regdomains(false);
+>>>>>>> android-omap-tuna-jb
 
 	cfg80211_world_regdom = rd;
 	cfg80211_regdomain = rd;
@@ -1396,7 +1428,12 @@ static int __regulatory_hint(struct wiphy *wiphy,
 	}
 
 new_request:
+<<<<<<< HEAD
 	kfree(last_request);
+=======
+	if (last_request != &core_request_world)
+		kfree(last_request);
+>>>>>>> android-omap-tuna-jb
 
 	last_request = pending_request;
 	last_request->intersect = intersect;
@@ -1566,9 +1603,12 @@ static int regulatory_hint_core(const char *alpha2)
 {
 	struct regulatory_request *request;
 
+<<<<<<< HEAD
 	kfree(last_request);
 	last_request = NULL;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	request = kzalloc(sizeof(struct regulatory_request),
 			  GFP_KERNEL);
 	if (!request)
@@ -1759,6 +1799,10 @@ static void restore_alpha2(char *alpha2, bool reset_user)
 static void restore_regulatory_settings(bool reset_user)
 {
 	char alpha2[2];
+<<<<<<< HEAD
+=======
+	char world_alpha2[2];
+>>>>>>> android-omap-tuna-jb
 	struct reg_beacon *reg_beacon, *btmp;
 	struct regulatory_request *reg_request, *tmp;
 	LIST_HEAD(tmp_reg_req_list);
@@ -1766,7 +1810,11 @@ static void restore_regulatory_settings(bool reset_user)
 	mutex_lock(&cfg80211_mutex);
 	mutex_lock(&reg_mutex);
 
+<<<<<<< HEAD
 	reset_regdomains();
+=======
+	reset_regdomains(true);
+>>>>>>> android-omap-tuna-jb
 	restore_alpha2(alpha2, reset_user);
 
 	/*
@@ -1809,11 +1857,20 @@ static void restore_regulatory_settings(bool reset_user)
 
 	/* First restore to the basic regulatory settings */
 	cfg80211_regdomain = cfg80211_world_regdom;
+<<<<<<< HEAD
+=======
+	world_alpha2[0] = cfg80211_regdomain->alpha2[0];
+	world_alpha2[1] = cfg80211_regdomain->alpha2[1];
+>>>>>>> android-omap-tuna-jb
 
 	mutex_unlock(&reg_mutex);
 	mutex_unlock(&cfg80211_mutex);
 
+<<<<<<< HEAD
 	regulatory_hint_core(cfg80211_regdomain->alpha2);
+=======
+	regulatory_hint_core(world_alpha2);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * This restores the ieee80211_regdom module parameter
@@ -2026,12 +2083,25 @@ static int __set_regdom(const struct ieee80211_regdomain *rd)
 	}
 
 	request_wiphy = wiphy_idx_to_wiphy(last_request->wiphy_idx);
+<<<<<<< HEAD
+=======
+	if (!request_wiphy &&
+	    (last_request->initiator == NL80211_REGDOM_SET_BY_DRIVER ||
+	     last_request->initiator == NL80211_REGDOM_SET_BY_COUNTRY_IE)) {
+		schedule_delayed_work(&reg_timeout, 0);
+		return -ENODEV;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	if (!last_request->intersect) {
 		int r;
 
 		if (last_request->initiator != NL80211_REGDOM_SET_BY_DRIVER) {
+<<<<<<< HEAD
 			reset_regdomains();
+=======
+			reset_regdomains(false);
+>>>>>>> android-omap-tuna-jb
 			cfg80211_regdomain = rd;
 			return 0;
 		}
@@ -2052,7 +2122,11 @@ static int __set_regdom(const struct ieee80211_regdomain *rd)
 		if (r)
 			return r;
 
+<<<<<<< HEAD
 		reset_regdomains();
+=======
+		reset_regdomains(false);
+>>>>>>> android-omap-tuna-jb
 		cfg80211_regdomain = rd;
 		return 0;
 	}
@@ -2077,7 +2151,11 @@ static int __set_regdom(const struct ieee80211_regdomain *rd)
 
 		rd = NULL;
 
+<<<<<<< HEAD
 		reset_regdomains();
+=======
+		reset_regdomains(false);
+>>>>>>> android-omap-tuna-jb
 		cfg80211_regdomain = intersected_rd;
 
 		return 0;
@@ -2097,7 +2175,11 @@ static int __set_regdom(const struct ieee80211_regdomain *rd)
 	kfree(rd);
 	rd = NULL;
 
+<<<<<<< HEAD
 	reset_regdomains();
+=======
+	reset_regdomains(false);
+>>>>>>> android-omap-tuna-jb
 	cfg80211_regdomain = intersected_rd;
 
 	return 0;
@@ -2250,9 +2332,15 @@ void /* __init_or_exit */ regulatory_exit(void)
 	mutex_lock(&cfg80211_mutex);
 	mutex_lock(&reg_mutex);
 
+<<<<<<< HEAD
 	reset_regdomains();
 
 	kfree(last_request);
+=======
+	reset_regdomains(true);
+
+	dev_set_uevent_suppress(&reg_pdev->dev, true);
+>>>>>>> android-omap-tuna-jb
 
 	platform_device_unregister(reg_pdev);
 

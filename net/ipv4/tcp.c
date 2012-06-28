@@ -864,7 +864,11 @@ wait_for_memory:
 	}
 
 out:
+<<<<<<< HEAD
 	if (copied)
+=======
+	if (copied && !(flags & MSG_SENDPAGE_NOTLAST))
+>>>>>>> android-omap-tuna-jb
 		tcp_push(sk, flags, mss_now, tp->nonagle);
 	return copied;
 

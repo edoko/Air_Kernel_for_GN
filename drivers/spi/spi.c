@@ -318,7 +318,11 @@ struct spi_device *spi_alloc_device(struct spi_master *master)
 	}
 
 	spi->master = master;
+<<<<<<< HEAD
 	spi->dev.parent = dev;
+=======
+	spi->dev.parent = &master->dev;
+>>>>>>> android-omap-tuna-jb
 	spi->dev.bus = &spi_bus_type;
 	spi->dev.release = spidev_release;
 	device_initialize(&spi->dev);

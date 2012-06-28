@@ -86,6 +86,11 @@ static struct usb_device_id rtl871x_usb_id_tbl[] = {
 	{USB_DEVICE(0x0DF6, 0x0045)},
 	{USB_DEVICE(0x0DF6, 0x0059)}, /* 11n mode disable */
 	{USB_DEVICE(0x0DF6, 0x004B)},
+<<<<<<< HEAD
+=======
+	{USB_DEVICE(0x0DF6, 0x005B)},
+	{USB_DEVICE(0x0DF6, 0x005D)},
+>>>>>>> android-omap-tuna-jb
 	{USB_DEVICE(0x0DF6, 0x0063)},
 	/* Sweex */
 	{USB_DEVICE(0x177F, 0x0154)},

@@ -1463,7 +1463,10 @@ compat_kdfontop_ioctl(struct compat_console_font_op __user *fontop,
 	if (!perm && op->op != KD_FONT_OP_GET)
 		return -EPERM;
 	op->data = compat_ptr(((struct compat_console_font_op *)op)->data);
+<<<<<<< HEAD
 	op->flags |= KD_FONT_FLAG_OLD;
+=======
+>>>>>>> android-omap-tuna-jb
 	i = con_font_op(vc, op);
 	if (i)
 		return i;

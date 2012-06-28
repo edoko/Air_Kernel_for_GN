@@ -42,6 +42,10 @@
 #include <linux/reboot.h>
 #include <linux/topology.h>
 #include <linux/ftrace.h>
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+>>>>>>> android-omap-tuna-jb
 
 #include <asm/ipl.h>
 #include <asm/uaccess.h>

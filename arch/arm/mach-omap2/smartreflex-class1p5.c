@@ -284,6 +284,7 @@ done_calib:
 			u_volt_margin -= u_volt_current;
 		} else {
 			u_volt_margin = volt_data->volt_margin;
+<<<<<<< HEAD
 
 		}
 		/* Add margin IF we are lower than nominal */
@@ -296,6 +297,11 @@ done_calib:
 				volt_data->volt_margin, volt_data->volt_nominal,
 				u_volt_current);
 		}
+=======
+		}
+
+		u_volt_safe += u_volt_margin;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (u_volt_safe > volt_data->volt_nominal) {
@@ -426,6 +432,7 @@ static int sr_class1p5_enable(struct voltagedomain *voltdm,
 	if (volt_data->volt_calibrated)
 		return 0;
 
+<<<<<<< HEAD
 	/* Calibrate High frequency. Thanks to Imoseyon */
 	if (volt_data->volt_nominal >= 1300000) {
 		volt_data->volt_calibrated = volt_data->volt_nominal;
@@ -434,6 +441,8 @@ static int sr_class1p5_enable(struct voltagedomain *voltdm,
 		return 0;
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	work_data = (struct sr_class1p5_work_data *)voltdm_cdata;
 	if (IS_ERR_OR_NULL(work_data)) {
 		pr_err("%s: bad work data??\n", __func__);

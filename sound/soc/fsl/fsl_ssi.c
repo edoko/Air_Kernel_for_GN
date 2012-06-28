@@ -698,6 +698,10 @@ static int __devinit fsl_ssi_probe(struct platform_device *pdev)
 
 	/* Initialize the the device_attribute structure */
 	dev_attr = &ssi_private->dev_attr;
+<<<<<<< HEAD
+=======
+	sysfs_attr_init(&dev_attr->attr);
+>>>>>>> android-omap-tuna-jb
 	dev_attr->attr.name = "statistics";
 	dev_attr->attr.mode = S_IRUGO;
 	dev_attr->show = fsl_sysfs_ssi_show;

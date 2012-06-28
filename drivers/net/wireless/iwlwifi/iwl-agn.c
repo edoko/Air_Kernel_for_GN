@@ -797,7 +797,11 @@ static void iwl_irq_tasklet(struct iwl_priv *priv)
 		handled |= CSR_INT_BIT_FH_TX;
 		/* Wake up uCode load routine, now that load is complete */
 		priv->ucode_write_complete = 1;
+<<<<<<< HEAD
 		wake_up_interruptible(&priv->wait_command_queue);
+=======
+		wake_up(&priv->wait_command_queue);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (inta & ~handled) {
@@ -2872,6 +2876,7 @@ static void iwlagn_mac_channel_switch(struct ieee80211_hw *hw,
 
 			/* Configure HT40 channels */
 			ctx->ht.enabled = conf_is_ht(conf);
+<<<<<<< HEAD
 			if (ctx->ht.enabled) {
 				if (conf_is_ht40_minus(conf)) {
 					ctx->ht.extension_chan_offset =
@@ -2887,6 +2892,11 @@ static void iwlagn_mac_channel_switch(struct ieee80211_hw *hw,
 					ctx->ht.is_40mhz = false;
 				}
 			} else
+=======
+			if (ctx->ht.enabled)
+				iwlagn_config_ht40(conf, ctx);
+			else
+>>>>>>> android-omap-tuna-jb
 				ctx->ht.is_40mhz = false;
 
 			if ((le16_to_cpu(ctx->staging.channel) != ch))

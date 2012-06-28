@@ -1583,6 +1583,12 @@ static int isp1760_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
 	int retval = 0;
 
 	spin_lock_irqsave(&priv->lock, spinflags);
+<<<<<<< HEAD
+=======
+	retval = usb_hcd_check_unlink_urb(hcd, urb, status);
+	if (retval)
+		goto out;
+>>>>>>> android-omap-tuna-jb
 
 	qh = urb->ep->hcpriv;
 	if (!qh) {

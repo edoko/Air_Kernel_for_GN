@@ -1349,6 +1349,7 @@ static inline struct xfrm_dst *xfrm_alloc_dst(struct net *net, int family)
 		BUG();
 	}
 	xdst = dst_alloc(dst_ops, NULL, 0, 0, 0);
+<<<<<<< HEAD
 	memset(&xdst->u.rt6.rt6i_table, 0, sizeof(*xdst) - sizeof(struct dst_entry));
 	xfrm_policy_put_afinfo(afinfo);
 
@@ -1357,6 +1358,18 @@ static inline struct xfrm_dst *xfrm_alloc_dst(struct net *net, int family)
 	else
 		xdst = ERR_PTR(-ENOBUFS);
 
+=======
+
+	if (likely(xdst)) {
+		memset(&xdst->u.rt6.rt6i_table, 0,
+			sizeof(*xdst) - sizeof(struct dst_entry));
+		xdst->flo.ops = &xfrm_bundle_fc_ops;
+	} else
+		xdst = ERR_PTR(-ENOBUFS);
+
+	xfrm_policy_put_afinfo(afinfo);
+
+>>>>>>> android-omap-tuna-jb
 	return xdst;
 }
 
@@ -1497,7 +1510,11 @@ static struct dst_entry *xfrm_bundle_create(struct xfrm_policy *policy,
 		goto free_dst;
 
 	/* Copy neighbour for reachability confirmation */
+<<<<<<< HEAD
 	dst0->neighbour = neigh_clone(dst->neighbour);
+=======
+	dst_set_neighbour(dst0, neigh_clone(dst_get_neighbour(dst)));
+>>>>>>> android-omap-tuna-jb
 
 	xfrm_init_path((struct xfrm_dst *)dst0, dst, nfheader_len);
 	xfrm_init_pmtu(dst_prev);

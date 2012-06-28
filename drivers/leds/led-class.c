@@ -267,6 +267,11 @@ void led_blink_set(struct led_classdev *led_cdev,
 		   unsigned long *delay_on,
 		   unsigned long *delay_off)
 {
+<<<<<<< HEAD
+=======
+	del_timer_sync(&led_cdev->blink_timer);
+
+>>>>>>> android-omap-tuna-jb
 	if (led_cdev->blink_set &&
 	    !led_cdev->blink_set(led_cdev, delay_on, delay_off))
 		return;

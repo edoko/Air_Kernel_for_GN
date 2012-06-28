@@ -109,7 +109,11 @@ ieee80211_rx_h_michael_mic_verify(struct ieee80211_rx_data *rx)
 		if (status->flag & RX_FLAG_MMIC_ERROR)
 			goto mic_fail;
 
+<<<<<<< HEAD
 		if (!(status->flag & RX_FLAG_IV_STRIPPED))
+=======
+		if (!(status->flag & RX_FLAG_IV_STRIPPED) && rx->key)
+>>>>>>> android-omap-tuna-jb
 			goto update_iv;
 
 		return RX_CONTINUE;

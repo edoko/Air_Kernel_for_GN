@@ -863,7 +863,11 @@ int intel_init_ring_buffer(struct drm_device *dev,
 	 * of the buffer.
 	 */
 	ring->effective_size = ring->size;
+<<<<<<< HEAD
 	if (IS_I830(ring->dev))
+=======
+	if (IS_I830(ring->dev) || IS_845G(ring->dev))
+>>>>>>> android-omap-tuna-jb
 		ring->effective_size -= 128;
 
 	return 0;

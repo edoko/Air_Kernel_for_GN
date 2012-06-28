@@ -34,9 +34,12 @@
 #include <linux/uaccess.h>
 #include <linux/gp2a.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCH_WAKE
 #include <linux/touch_wake.h>
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 /* Note about power vs enable/disable:
  *  The chip has two functions, proximity and ambient light sensing.
@@ -351,6 +354,7 @@ irqreturn_t gp2a_irq_handler(int irq, void *data)
 
 	gp2a_dbgmsg("gp2a: proximity val=%d\n", val);
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCH_WAKE
 	if (!val)
 	    {
@@ -358,6 +362,8 @@ irqreturn_t gp2a_irq_handler(int irq, void *data)
 	    }
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* 0 is close, 1 is far */
 	input_report_abs(ip->proximity_input_dev, ABS_DISTANCE, val);
 	input_sync(ip->proximity_input_dev);

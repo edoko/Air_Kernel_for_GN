@@ -418,7 +418,11 @@ struct phy_driver {
 
 	/*
 	 * Requests a Tx timestamp for 'skb'. The phy driver promises
+<<<<<<< HEAD
 	 * to deliver it to the socket's error queue as soon as a
+=======
+	 * to deliver it using skb_complete_tx_timestamp() as soon as a
+>>>>>>> android-omap-tuna-jb
 	 * timestamp becomes available. One of the PTP_CLASS_ values
 	 * is passed in 'type'.
 	 */

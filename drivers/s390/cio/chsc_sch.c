@@ -8,6 +8,10 @@
  */
 
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+>>>>>>> android-omap-tuna-jb
 #include <linux/device.h>
 #include <linux/module.h>
 #include <linux/uaccess.h>

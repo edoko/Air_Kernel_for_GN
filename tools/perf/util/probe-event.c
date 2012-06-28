@@ -1869,8 +1869,15 @@ static int __del_trace_probe_event(int fd, struct str_node *ent)
 
 	pr_debug("Writing event: %s\n", buf);
 	ret = write(fd, buf, strlen(buf));
+<<<<<<< HEAD
 	if (ret < 0)
 		goto error;
+=======
+	if (ret < 0) {
+		ret = -errno;
+		goto error;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	printf("Remove event: %s\n", ent->s);
 	return 0;

@@ -215,7 +215,11 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
 
 	mutex_lock(&dev->lock);
 
+<<<<<<< HEAD
 	if (dev->open++)
+=======
+	if (dev->open)
+>>>>>>> android-omap-tuna-jb
 		goto unlock;
 
 	kref_get(&dev->ref);
@@ -235,6 +239,10 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
 		goto error_release;
 
 unlock:
+<<<<<<< HEAD
+=======
+	dev->open++;
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&dev->lock);
 	blktrans_dev_put(dev);
 	return ret;

@@ -100,6 +100,7 @@ static int offb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
 			  u_int transp, struct fb_info *info)
 {
 	struct offb_par *par = (struct offb_par *) info->par;
+<<<<<<< HEAD
 	int i, depth;
 	u32 *pal = info->pseudo_palette;
 
@@ -130,6 +131,34 @@ static int offb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
 		}
 	}
 
+=======
+
+	if (info->fix.visual == FB_VISUAL_TRUECOLOR) {
+		u32 *pal = info->pseudo_palette;
+		u32 cr = red >> (16 - info->var.red.length);
+		u32 cg = green >> (16 - info->var.green.length);
+		u32 cb = blue >> (16 - info->var.blue.length);
+		u32 value;
+
+		if (regno >= 16)
+			return -EINVAL;
+
+		value = (cr << info->var.red.offset) |
+			(cg << info->var.green.offset) |
+			(cb << info->var.blue.offset);
+		if (info->var.transp.length > 0) {
+			u32 mask = (1 << info->var.transp.length) - 1;
+			mask <<= info->var.transp.offset;
+			value |= mask;
+		}
+		pal[regno] = value;
+		return 0;
+	}
+
+	if (regno > 255)
+		return -EINVAL;
+
+>>>>>>> android-omap-tuna-jb
 	red >>= 8;
 	green >>= 8;
 	blue >>= 8;
@@ -381,7 +410,11 @@ static void __init offb_init_fb(const char *name, const char *full_name,
 				int pitch, unsigned long address,
 				int foreign_endian, struct device_node *dp)
 {
+<<<<<<< HEAD
 	unsigned long res_size = pitch * height * (depth + 7) / 8;
+=======
+	unsigned long res_size = pitch * height;
+>>>>>>> android-omap-tuna-jb
 	struct offb_par *par = &default_par;
 	unsigned long res_start = address;
 	struct fb_fix_screeninfo *fix;

@@ -905,6 +905,13 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
 	if (!sym->st_shndx || get_secindex(info, sym) >= info->num_sections)
 		return;
 
+<<<<<<< HEAD
+=======
+	/* We're looking for an object */
+	if (ELF_ST_TYPE(sym->st_info) != STT_OBJECT)
+		return;
+
+>>>>>>> android-omap-tuna-jb
 	/* Handle all-NULL symbols allocated into .bss */
 	if (info->sechdrs[get_secindex(info, sym)].sh_type & SHT_NOBITS) {
 		zeros = calloc(1, sym->st_size);

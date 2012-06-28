@@ -39,7 +39,10 @@
 		#define FIX_HW_BRN_28889
 	#else
 	#if SGX_CORE_REV == 111
+<<<<<<< HEAD
 		#define FIX_HW_BRN_28889
+=======
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == SGX_CORE_REV_HEAD
 		
@@ -267,7 +270,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
  		#define FIX_HW_BRN_31780
@@ -277,6 +284,10 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == 122
 		#define FIX_HW_BRN_29954
@@ -287,7 +298,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
 		#define FIX_HW_BRN_31780
@@ -298,6 +313,10 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 1221
@@ -306,7 +325,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31542
 		#define FIX_HW_BRN_31671		
@@ -317,6 +340,10 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 140
@@ -327,7 +354,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
  		#define FIX_HW_BRN_31780
@@ -338,6 +369,10 @@
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 1401
@@ -347,7 +382,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
 		#define FIX_HW_BRN_31542
@@ -358,30 +397,50 @@
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 141
 		#define FIX_HW_BRN_29954
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31671 
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 142
 		#define FIX_HW_BRN_29954
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31671 
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 211
@@ -390,7 +449,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
  		#define FIX_HW_BRN_31780
@@ -401,6 +464,10 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 2111
@@ -410,7 +477,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
 			#define FIX_HW_BRN_31425
+=======
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31620
  		#define FIX_HW_BRN_31780
@@ -421,12 +492,21 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 213
 		#define FIX_HW_BRN_31272
+<<<<<<< HEAD
 		#if defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_31425
+=======
+ 		#if defined(SGX_FEATURE_MP)
+			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
 		#endif
 		#define FIX_HW_BRN_31671 
  		#define FIX_HW_BRN_31780
@@ -435,12 +515,20 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 			
 	#else
 	#if SGX_CORE_REV == 216
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == 302
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
@@ -486,14 +574,22 @@
 
 	#if SGX_CORE_REV == 100
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
  			#define FIX_HW_BRN_31425
+=======
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
 	#else
 	#if SGX_CORE_REV == 102
 		#define FIX_HW_BRN_29954
 		#define FIX_HW_BRN_31272
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
  			#define FIX_HW_BRN_31425
+=======
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
  		#define FIX_HW_BRN_31780
 		#define FIX_HW_BRN_32085 
@@ -501,12 +597,22 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#if defined(SGX_FEATURE_MP)
+			#define FIX_HW_BRN_36513 
+		#endif
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == 103
 		#define FIX_HW_BRN_29954
 		#define FIX_HW_BRN_31272
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
  			#define FIX_HW_BRN_31425
+=======
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
  		#define FIX_HW_BRN_31780
 		#define FIX_HW_BRN_32085 
@@ -514,6 +620,10 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == 104
 		#define FIX_HW_BRN_29954
@@ -522,7 +632,11 @@
 		#define FIX_HW_BRN_31272
 		#define FIX_HW_BRN_31278
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
  			#define FIX_HW_BRN_31425
+=======
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
 		#define FIX_HW_BRN_31542 
  		#define FIX_HW_BRN_31620
@@ -534,29 +648,48 @@
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
 	#else	
 	#if SGX_CORE_REV == 105
  		#if defined(SGX_FEATURE_MP)
  			#define FIX_HW_BRN_31425
+=======
+		#define FIX_HW_BRN_36513 
+	#else	
+	#if SGX_CORE_REV == 105
+ 		#if defined(SGX_FEATURE_MP)
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33920
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == 106
 		#define FIX_HW_BRN_31272
  		#define FIX_HW_BRN_31780
+<<<<<<< HEAD
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+=======
+>>>>>>> android-omap-tuna-jb
 		#define FIX_HW_BRN_33920
 	#else
 	#if SGX_CORE_REV == 110
 		#define FIX_HW_BRN_31272
  		#if defined(SGX_FEATURE_MP)
+<<<<<<< HEAD
  			#define FIX_HW_BRN_31425
+=======
+ 			#define FIX_HW_BRN_31559
+>>>>>>> android-omap-tuna-jb
  		#endif
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
@@ -569,31 +702,51 @@
 		#define FIX_HW_BRN_33920
 	#else
 	#if SGX_CORE_REV == 114
+<<<<<<< HEAD
  		#if defined(SGX_FEATURE_MP)
  			#define FIX_HW_BRN_31425
  		#endif
+=======
+>>>>>>> android-omap-tuna-jb
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
 	#else
 	#if SGX_CORE_REV == 115
+<<<<<<< HEAD
  		#if defined(SGX_FEATURE_MP)
  			#define FIX_HW_BRN_31425
  		#endif
+=======
+>>>>>>> android-omap-tuna-jb
  		#define FIX_HW_BRN_31780
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
 	#else
 	#if SGX_CORE_REV == 116
  		#if defined(SGX_FEATURE_MP)
  			#define FIX_HW_BRN_31425
  		#endif
+=======
+		#if defined(SGX_FEATURE_MP)
+			#if SGX_FEATURE_MP_CORE_COUNT > 1
+				#define FIX_HW_BRN_36513 
+			#endif
+		#endif
+	#else
+	#if SGX_CORE_REV == 116
+>>>>>>> android-omap-tuna-jb
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
 		#define FIX_HW_BRN_33809
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 	#else
 	#if SGX_CORE_REV == SGX_CORE_REV_HEAD
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
@@ -677,6 +830,10 @@
 		#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING) && defined(SGX_FEATURE_MP)
 			#define FIX_HW_BRN_33657
 		#endif
+<<<<<<< HEAD
+=======
+		#define FIX_HW_BRN_36513 
+>>>>>>> android-omap-tuna-jb
 		
 	#else	
 	#if SGX_CORE_REV == SGX_CORE_REV_HEAD

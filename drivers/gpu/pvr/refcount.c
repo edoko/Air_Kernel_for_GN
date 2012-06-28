@@ -1,7 +1,34 @@
+<<<<<<< HEAD
 /*************************************************************************/ /*!
 @Title          Services reference count debugging
 @Copyright      Copyright (c) Imagination Technologies Ltd. All Rights Reserved
 @License        Strictly Confidential.
+=======
+/**********************************************************************
+ *
+ * Copyright (C) Imagination Technologies Ltd. All rights reserved.
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU General Public License,
+ * version 2, as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope it will be useful but, except 
+ * as otherwise stated in writing, without any warranty; without even the 
+ * implied warranty of merchantability or fitness for a particular purpose. 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+ * 
+ * The full GNU General Public License is included in this distribution in
+ * the file called "COPYING".
+ *
+ * Contact Information:
+ * Imagination Technologies Ltd. <gpl-support@imgtec.com>
+ * Home Park Estate, Kings Langley, Herts, WD4 8LZ, UK 
+ *
+>>>>>>> android-omap-tuna-jb
 */ /**************************************************************************/
 
 #if defined(PVRSRV_REFCOUNT_DEBUG)
@@ -26,10 +53,18 @@ static DEFINE_MUTEX(gsCCBLock);
 #define PVRSRV_REFCOUNT_CCB_DEBUG_MEMINFO	(1U << 1)
 #define PVRSRV_REFCOUNT_CCB_DEBUG_BM_BUF	(1U << 2)
 #define PVRSRV_REFCOUNT_CCB_DEBUG_BM_BUF2	(1U << 3)
+<<<<<<< HEAD
 
 #if defined(__linux__)
 #define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP		(1U << 4)
 #define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP2		(1U << 5)
+=======
+#define PVRSRV_REFCOUNT_CCB_DEBUG_BM_XPROC	(1U << 4)
+
+#if defined(__linux__)
+#define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP		(1U << 16)
+#define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP2		(1U << 17)
+>>>>>>> android-omap-tuna-jb
 #else
 #define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP		0
 #define PVRSRV_REFCOUNT_CCB_DEBUG_MMAP2		0
@@ -95,6 +130,11 @@ void PVRSRVKernelSyncInfoIncRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 								 PVRSRV_KERNEL_SYNC_INFO *psKernelSyncInfo,
 								 PVRSRV_KERNEL_MEM_INFO *psKernelMemInfo)
 {
+<<<<<<< HEAD
+=======
+	IMG_UINT32 ui32RefValue = OSAtomicRead(psKernelSyncInfo->pvRefCount);
+
+>>>>>>> android-omap-tuna-jb
 	if(!(guiDebugMask & PVRSRV_REFCOUNT_CCB_DEBUG_SYNCINFO))
 		goto skip;
 
@@ -111,8 +151,13 @@ void PVRSRVKernelSyncInfoIncRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 			 psKernelMemInfo,
 			 NULL,
 			 (psKernelMemInfo) ? psKernelMemInfo->sMemBlk.hOSMemHandle : NULL,
+<<<<<<< HEAD
 			 psKernelSyncInfo->ui32RefCount,
 			 psKernelSyncInfo->ui32RefCount + 1,
+=======
+			 ui32RefValue,
+			 ui32RefValue + 1,
+>>>>>>> android-omap-tuna-jb
 			 (psKernelMemInfo) ? psKernelMemInfo->uAllocSize : 0);
 	gsRefCountCCB[giOffset].pcMesg[PVRSRV_REFCOUNT_CCB_MESG_MAX - 1] = 0;
 	giOffset = (giOffset + 1) % PVRSRV_REFCOUNT_CCB_MAX;
@@ -120,7 +165,11 @@ void PVRSRVKernelSyncInfoIncRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 	PVRSRV_UNLOCK_CCB();
 
 skip:
+<<<<<<< HEAD
 	psKernelSyncInfo->ui32RefCount++;
+=======
+	PVRSRVAcquireSyncInfoKM(psKernelSyncInfo);
+>>>>>>> android-omap-tuna-jb
 }
 
 IMG_INTERNAL
@@ -128,6 +177,11 @@ void PVRSRVKernelSyncInfoDecRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 								 PVRSRV_KERNEL_SYNC_INFO *psKernelSyncInfo,
 								 PVRSRV_KERNEL_MEM_INFO *psKernelMemInfo)
 {
+<<<<<<< HEAD
+=======
+	IMG_UINT32 ui32RefValue = OSAtomicRead(psKernelSyncInfo->pvRefCount);
+
+>>>>>>> android-omap-tuna-jb
 	if(!(guiDebugMask & PVRSRV_REFCOUNT_CCB_DEBUG_SYNCINFO))
 		goto skip;
 
@@ -144,8 +198,13 @@ void PVRSRVKernelSyncInfoDecRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 			 psKernelMemInfo,
 			 (psKernelMemInfo) ? psKernelMemInfo->sMemBlk.hOSMemHandle : NULL,
 			 NULL,
+<<<<<<< HEAD
 			 psKernelSyncInfo->ui32RefCount,
 			 psKernelSyncInfo->ui32RefCount - 1,
+=======
+			 ui32RefValue,
+			 ui32RefValue - 1,
+>>>>>>> android-omap-tuna-jb
 			 (psKernelMemInfo) ? psKernelMemInfo->uAllocSize : 0);
 	gsRefCountCCB[giOffset].pcMesg[PVRSRV_REFCOUNT_CCB_MESG_MAX - 1] = 0;
 	giOffset = (giOffset + 1) % PVRSRV_REFCOUNT_CCB_MAX;
@@ -153,7 +212,11 @@ void PVRSRVKernelSyncInfoDecRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
 	PVRSRV_UNLOCK_CCB();
 
 skip:
+<<<<<<< HEAD
 	psKernelSyncInfo->ui32RefCount--;
+=======
+	PVRSRVReleaseSyncInfoKM(psKernelSyncInfo);
+>>>>>>> android-omap-tuna-jb
 }
 
 IMG_INTERNAL
@@ -344,6 +407,71 @@ skip:
 	pBuf->ui32ExportCount--;
 }
 
+<<<<<<< HEAD
+=======
+IMG_INTERNAL
+void PVRSRVBMXProcIncRef2(const IMG_CHAR *pszFile, IMG_INT iLine, IMG_UINT32 ui32Index)
+{
+	if(!(guiDebugMask & PVRSRV_REFCOUNT_CCB_DEBUG_BM_XPROC))
+		goto skip;
+
+	PVRSRV_LOCK_CCB();
+
+	gsRefCountCCB[giOffset].pszFile = pszFile;
+	gsRefCountCCB[giOffset].iLine = iLine;
+	gsRefCountCCB[giOffset].ui32PID = OSGetCurrentProcessIDKM();
+	snprintf(gsRefCountCCB[giOffset].pcMesg,
+			 PVRSRV_REFCOUNT_CCB_MESG_MAX - 1,
+			 PVRSRV_REFCOUNT_CCB_FMT_STRING,
+			 "BM_XPROC",
+			 NULL,
+			 NULL,
+			 gXProcWorkaroundShareData[ui32Index].hOSMemHandle,
+			 (IMG_VOID *) ui32Index,
+			 gXProcWorkaroundShareData[ui32Index].ui32RefCount,
+			 gXProcWorkaroundShareData[ui32Index].ui32RefCount + 1,
+			 gXProcWorkaroundShareData[ui32Index].ui32Size);
+	gsRefCountCCB[giOffset].pcMesg[PVRSRV_REFCOUNT_CCB_MESG_MAX - 1] = 0;
+	giOffset = (giOffset + 1) % PVRSRV_REFCOUNT_CCB_MAX;
+
+	PVRSRV_UNLOCK_CCB();
+
+skip:
+	gXProcWorkaroundShareData[ui32Index].ui32RefCount++;
+}
+
+IMG_INTERNAL
+void PVRSRVBMXProcDecRef2(const IMG_CHAR *pszFile, IMG_INT iLine, IMG_UINT32 ui32Index)
+{
+	if(!(guiDebugMask & PVRSRV_REFCOUNT_CCB_DEBUG_BM_XPROC))
+		goto skip;
+
+	PVRSRV_LOCK_CCB();
+
+	gsRefCountCCB[giOffset].pszFile = pszFile;
+	gsRefCountCCB[giOffset].iLine = iLine;
+	gsRefCountCCB[giOffset].ui32PID = OSGetCurrentProcessIDKM();
+	snprintf(gsRefCountCCB[giOffset].pcMesg,
+			 PVRSRV_REFCOUNT_CCB_MESG_MAX - 1,
+			 PVRSRV_REFCOUNT_CCB_FMT_STRING,
+			 "BM_XPROC",
+			 NULL,
+			 NULL,
+			 gXProcWorkaroundShareData[ui32Index].hOSMemHandle,
+			 (IMG_VOID *) ui32Index,
+			 gXProcWorkaroundShareData[ui32Index].ui32RefCount,
+			 gXProcWorkaroundShareData[ui32Index].ui32RefCount - 1,
+			 gXProcWorkaroundShareData[ui32Index].ui32Size);
+	gsRefCountCCB[giOffset].pcMesg[PVRSRV_REFCOUNT_CCB_MESG_MAX - 1] = 0;
+	giOffset = (giOffset + 1) % PVRSRV_REFCOUNT_CCB_MAX;
+
+	PVRSRV_UNLOCK_CCB();
+
+skip:
+	gXProcWorkaroundShareData[ui32Index].ui32RefCount--;
+}
+
+>>>>>>> android-omap-tuna-jb
 #if defined(__linux__)
 
 /* mmap refcounting is Linux specific */

@@ -284,7 +284,11 @@ static int ads1015_probe(struct i2c_client *client,
 			continue;
 		err = device_create_file(&client->dev, &ads1015_in[k].dev_attr);
 		if (err)
+<<<<<<< HEAD
 			goto exit_free;
+=======
+			goto exit_remove;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	data->hwmon_dev = hwmon_device_register(&client->dev);
@@ -298,7 +302,10 @@ static int ads1015_probe(struct i2c_client *client,
 exit_remove:
 	for (k = 0; k < ADS1015_CHANNELS; ++k)
 		device_remove_file(&client->dev, &ads1015_in[k].dev_attr);
+<<<<<<< HEAD
 exit_free:
+=======
+>>>>>>> android-omap-tuna-jb
 	kfree(data);
 exit:
 	return err;

@@ -117,7 +117,10 @@ struct kiocb {
 
 	struct list_head	ki_list;	/* the aio core uses this
 						 * for cancellation */
+<<<<<<< HEAD
 	struct list_head	ki_batch;	/* batch allocation */
+=======
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * If the aio_resfd field of the userspace iocb is not zero,

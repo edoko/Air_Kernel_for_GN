@@ -108,7 +108,11 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 	"	lda	$31,3b-2b(%0)\n"
 	"	.previous\n"
 	:	"+r"(ret), "=&r"(prev), "=&r"(cmp)
+<<<<<<< HEAD
 	:	"r"(uaddr), "r"((long)oldval), "r"(newval)
+=======
+	:	"r"(uaddr), "r"((long)(int)oldval), "r"(newval)
+>>>>>>> android-omap-tuna-jb
 	:	"memory");
 
 	*uval = prev;

@@ -1475,7 +1475,11 @@ i915_gem_mmap_gtt(struct drm_file *file,
 
 	if (obj->base.size > dev_priv->mm.gtt_mappable_end) {
 		ret = -E2BIG;
+<<<<<<< HEAD
 		goto unlock;
+=======
+		goto out;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (obj->madv != I915_MADV_WILLNEED) {

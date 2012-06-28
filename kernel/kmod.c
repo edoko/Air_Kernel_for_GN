@@ -114,10 +114,19 @@ int __request_module(bool wait, const char *fmt, ...)
 	atomic_inc(&kmod_concurrent);
 	if (atomic_read(&kmod_concurrent) > max_modprobes) {
 		/* We may be blaming an innocent here, but unlikely */
+<<<<<<< HEAD
 		if (kmod_loop_msg++ < 5)
 			printk(KERN_ERR
 			       "request_module: runaway loop modprobe %s\n",
 			       module_name);
+=======
+		if (kmod_loop_msg < 5) {
+			printk(KERN_ERR
+			       "request_module: runaway loop modprobe %s\n",
+			       module_name);
+			kmod_loop_msg++;
+		}
+>>>>>>> android-omap-tuna-jb
 		atomic_dec(&kmod_concurrent);
 		return -ENOMEM;
 	}

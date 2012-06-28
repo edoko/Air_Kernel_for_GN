@@ -691,6 +691,12 @@ void usb_stor_invoke_transport(struct scsi_cmnd *srb, struct us_data *us)
 		int temp_result;
 		struct scsi_eh_save ses;
 		int sense_size = US_SENSE_SIZE;
+<<<<<<< HEAD
+=======
+		struct scsi_sense_hdr sshdr;
+		const u8 *scdd;
+		u8 fm_ili;
+>>>>>>> android-omap-tuna-jb
 
 		/* device supports and needs bigger sense buffer */
 		if (us->fflags & US_FL_SANE_SENSE)
@@ -774,6 +780,7 @@ Retry_Sense:
 			srb->sense_buffer[7] = (US_SENSE_SIZE - 8);
 		}
 
+<<<<<<< HEAD
 		US_DEBUGP("-- Result from auto-sense is %d\n", temp_result);
 		US_DEBUGP("-- code: 0x%x, key: 0x%x, ASC: 0x%x, ASCQ: 0x%x\n",
 			  srb->sense_buffer[0],
@@ -785,21 +792,44 @@ Retry_Sense:
 			  srb->sense_buffer[2] & 0xf,
 			  srb->sense_buffer[12], 
 			  srb->sense_buffer[13]);
+=======
+		scsi_normalize_sense(srb->sense_buffer, SCSI_SENSE_BUFFERSIZE,
+				     &sshdr);
+
+		US_DEBUGP("-- Result from auto-sense is %d\n", temp_result);
+		US_DEBUGP("-- code: 0x%x, key: 0x%x, ASC: 0x%x, ASCQ: 0x%x\n",
+			  sshdr.response_code, sshdr.sense_key,
+			  sshdr.asc, sshdr.ascq);
+#ifdef CONFIG_USB_STORAGE_DEBUG
+		usb_stor_show_sense(sshdr.sense_key, sshdr.asc, sshdr.ascq);
+>>>>>>> android-omap-tuna-jb
 #endif
 
 		/* set the result so the higher layers expect this data */
 		srb->result = SAM_STAT_CHECK_CONDITION;
 
+<<<<<<< HEAD
+=======
+		scdd = scsi_sense_desc_find(srb->sense_buffer,
+					    SCSI_SENSE_BUFFERSIZE, 4);
+		fm_ili = (scdd ? scdd[3] : srb->sense_buffer[2]) & 0xA0;
+
+>>>>>>> android-omap-tuna-jb
 		/* We often get empty sense data.  This could indicate that
 		 * everything worked or that there was an unspecified
 		 * problem.  We have to decide which.
 		 */
+<<<<<<< HEAD
 		if (	/* Filemark 0, ignore EOM, ILI 0, no sense */
 				(srb->sense_buffer[2] & 0xaf) == 0 &&
 			/* No ASC or ASCQ */
 				srb->sense_buffer[12] == 0 &&
 				srb->sense_buffer[13] == 0) {
 
+=======
+		if (sshdr.sense_key == 0 && sshdr.asc == 0 && sshdr.ascq == 0 &&
+		    fm_ili == 0) {
+>>>>>>> android-omap-tuna-jb
 			/* If things are really okay, then let's show that.
 			 * Zero out the sense buffer so the higher layers
 			 * won't realize we did an unsolicited auto-sense.
@@ -814,7 +844,14 @@ Retry_Sense:
 			 */
 			} else {
 				srb->result = DID_ERROR << 16;
+<<<<<<< HEAD
 				srb->sense_buffer[2] = HARDWARE_ERROR;
+=======
+				if ((sshdr.response_code & 0x72) == 0x72)
+					srb->sense_buffer[1] = HARDWARE_ERROR;
+				else
+					srb->sense_buffer[2] = HARDWARE_ERROR;
+>>>>>>> android-omap-tuna-jb
 			}
 		}
 	}

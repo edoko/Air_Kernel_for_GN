@@ -28,18 +28,30 @@
 	#define SGX_CORE_FRIENDLY_NAME							"SGX520"
 	#define SGX_CORE_ID										SGX_CORE_ID_520
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(28)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(1)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 #else
 #if defined(SGX530)
 	#define SGX_CORE_FRIENDLY_NAME							"SGX530"
 	#define SGX_CORE_ID										SGX_CORE_ID_530
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(28)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(2)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 #else
 #if defined(SGX531)
 	#define SGX_CORE_FRIENDLY_NAME							"SGX531"
 	#define SGX_CORE_ID										SGX_CORE_ID_531
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(28)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(2)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SGX_FEATURE_MULTI_EVENT_KICK
 #else
@@ -50,6 +62,10 @@
 	#define SGX_FEATURE_MULTIPLE_MEM_CONTEXTS
 	#define SGX_FEATURE_BIF_NUM_DIRLISTS					(16)
 	#define SGX_FEATURE_2D_HARDWARE
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(2)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SUPPORT_SGX_GENERAL_MAPPING_HEAP
 	#define SGX_FEATURE_EDM_VERTEX_PDSADDR_FULL_RANGE
@@ -58,6 +74,10 @@
 	#define SGX_CORE_FRIENDLY_NAME							"SGX540"
 	#define SGX_CORE_ID										SGX_CORE_ID_540
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(28)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(4)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SGX_FEATURE_MULTI_EVENT_KICK
 #else
@@ -69,6 +89,10 @@
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(32)
 	#define SGX_FEATURE_MULTIPLE_MEM_CONTEXTS
 	#define SGX_FEATURE_BIF_NUM_DIRLISTS					(8)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(4)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SGX_FEATURE_MONOLITHIC_UKERNEL
 	#define SGX_FEATURE_MULTI_EVENT_KICK
@@ -95,6 +119,10 @@
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(32)
 	#define SGX_FEATURE_MULTIPLE_MEM_CONTEXTS
 	#define SGX_FEATURE_BIF_NUM_DIRLISTS					(8)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(4)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SGX_FEATURE_MONOLITHIC_UKERNEL
 	#define SGX_FEATURE_MULTI_EVENT_KICK
@@ -103,8 +131,13 @@
 	#if defined(SUPPORT_SGX_LOW_LATENCY_SCHEDULING)
 		#if defined(SGX_FEATURE_MP)
 		#define SGX_FEATURE_MASTER_VDM_CONTEXT_SWITCH
+<<<<<<< HEAD
 		#endif
 		#define SGX_FEATURE_SLAVE_VDM_CONTEXT_SWITCH
+=======
+		#define SGX_FEATURE_SLAVE_VDM_CONTEXT_SWITCH
+		#endif
+>>>>>>> android-omap-tuna-jb
 		#define SGX_FEATURE_SW_ISP_CONTEXT_SWITCH
 	#endif
 #else
@@ -146,6 +179,10 @@
 	#define SGX_FEATURE_ADDRESS_SPACE_SIZE					(32)
 	#define SGX_FEATURE_MULTIPLE_MEM_CONTEXTS
 	#define SGX_FEATURE_BIF_NUM_DIRLISTS					(8)
+<<<<<<< HEAD
+=======
+	#define SGX_FEATURE_NUM_USE_PIPES						(8)
+>>>>>>> android-omap-tuna-jb
 	#define SGX_FEATURE_AUTOCLOCKGATING
 	#define SGX_FEATURE_MONOLITHIC_UKERNEL
 	#define SGX_FEATURE_MULTI_EVENT_KICK

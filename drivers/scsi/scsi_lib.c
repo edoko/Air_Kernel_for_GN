@@ -1407,6 +1407,11 @@ static void scsi_kill_request(struct request *req, struct request_queue *q)
 
 	blk_start_request(req);
 
+<<<<<<< HEAD
+=======
+	scmd_printk(KERN_INFO, cmd, "killing request\n");
+
+>>>>>>> android-omap-tuna-jb
 	sdev = cmd->device;
 	starget = scsi_target(sdev);
 	shost = sdev->host;
@@ -1488,7 +1493,10 @@ static void scsi_request_fn(struct request_queue *q)
 	struct request *req;
 
 	if (!sdev) {
+<<<<<<< HEAD
 		printk("scsi: killing requests for dead queue\n");
+=======
+>>>>>>> android-omap-tuna-jb
 		while ((req = blk_peek_request(q)) != NULL)
 			scsi_kill_request(req, q);
 		return;
@@ -1697,6 +1705,18 @@ struct request_queue *scsi_alloc_queue(struct scsi_device *sdev)
 
 void scsi_free_queue(struct request_queue *q)
 {
+<<<<<<< HEAD
+=======
+	unsigned long flags;
+
+	WARN_ON(q->queuedata);
+
+	/* cause scsi_request_fn() to kill all non-finished requests */
+	spin_lock_irqsave(q->queue_lock, flags);
+	q->request_fn(q);
+	spin_unlock_irqrestore(q->queue_lock, flags);
+
+>>>>>>> android-omap-tuna-jb
 	blk_cleanup_queue(q);
 }
 

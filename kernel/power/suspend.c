@@ -310,7 +310,11 @@ int enter_state(suspend_state_t state)
  */
 int pm_suspend(suspend_state_t state)
 {
+<<<<<<< HEAD
 	if (state > PM_SUSPEND_ON && state <= PM_SUSPEND_MAX)
+=======
+	if (state > PM_SUSPEND_ON && state < PM_SUSPEND_MAX)
+>>>>>>> android-omap-tuna-jb
 		return enter_state(state);
 	return -EINVAL;
 }

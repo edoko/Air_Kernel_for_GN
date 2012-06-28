@@ -73,6 +73,12 @@
 #define PCI_DEVICE_ID_ROHM_ML7223_mPHUB	0x8012 /* for Bus-m */
 #define PCI_DEVICE_ID_ROHM_ML7223_nPHUB	0x8002 /* for Bus-n */
 
+<<<<<<< HEAD
+=======
+/* Macros for ML7831 */
+#define PCI_DEVICE_ID_ROHM_ML7831_PHUB 0x8801
+
+>>>>>>> android-omap-tuna-jb
 /* SROM ACCESS Macro */
 #define PCH_WORD_ADDR_MASK (~((1 << 2) - 1))
 
@@ -90,6 +96,10 @@
 #define PCH_PHUB_INTPIN_REG_WPERMIT_REG3	0x002C
 #define PCH_PHUB_INT_REDUCE_CONTROL_REG_BASE	0x0040
 #define CLKCFG_REG_OFFSET			0x500
+<<<<<<< HEAD
+=======
+#define FUNCSEL_REG_OFFSET			0x508
+>>>>>>> android-omap-tuna-jb
 
 #define PCH_PHUB_OROM_SIZE 15360
 
@@ -108,11 +118,19 @@
  * @intpin_reg_wpermit_reg3:		INTPIN_REG_WPERMIT register 3 val
  * @int_reduce_control_reg:		INT_REDUCE_CONTROL registers val
  * @clkcfg_reg:				CLK CFG register val
+<<<<<<< HEAD
+=======
+ * @funcsel_reg:			Function select register value
+>>>>>>> android-omap-tuna-jb
  * @pch_phub_base_address:		Register base address
  * @pch_phub_extrom_base_address:	external rom base address
  * @pch_mac_start_address:		MAC address area start address
  * @pch_opt_rom_start_address:		Option ROM start address
  * @ioh_type:				Save IOH type
+<<<<<<< HEAD
+=======
+ * @pdev:				pointer to pci device struct
+>>>>>>> android-omap-tuna-jb
  */
 struct pch_phub_reg {
 	u32 phub_id_reg;
@@ -128,11 +146,19 @@ struct pch_phub_reg {
 	u32 intpin_reg_wpermit_reg3;
 	u32 int_reduce_control_reg[MAX_NUM_INT_REDUCE_CONTROL_REG];
 	u32 clkcfg_reg;
+<<<<<<< HEAD
+=======
+	u32 funcsel_reg;
+>>>>>>> android-omap-tuna-jb
 	void __iomem *pch_phub_base_address;
 	void __iomem *pch_phub_extrom_base_address;
 	u32 pch_mac_start_address;
 	u32 pch_opt_rom_start_address;
 	int ioh_type;
+<<<<<<< HEAD
+=======
+	struct pci_dev *pdev;
+>>>>>>> android-omap-tuna-jb
 };
 
 /* SROM SPEC for MAC address assignment offset */
@@ -211,6 +237,11 @@ static void pch_phub_save_reg_conf(struct pci_dev *pdev)
 			__func__, i, chip->int_reduce_control_reg[i]);
 	}
 	chip->clkcfg_reg = ioread32(p + CLKCFG_REG_OFFSET);
+<<<<<<< HEAD
+=======
+	if ((chip->ioh_type == 2) || (chip->ioh_type == 4))
+		chip->funcsel_reg = ioread32(p + FUNCSEL_REG_OFFSET);
+>>>>>>> android-omap-tuna-jb
 }
 
 /* pch_phub_restore_reg_conf - restore register configuration */
@@ -271,6 +302,11 @@ static void pch_phub_restore_reg_conf(struct pci_dev *pdev)
 	}
 
 	iowrite32(chip->clkcfg_reg, p + CLKCFG_REG_OFFSET);
+<<<<<<< HEAD
+=======
+	if ((chip->ioh_type == 2) || (chip->ioh_type == 4))
+		iowrite32(chip->funcsel_reg, p + FUNCSEL_REG_OFFSET);
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -464,7 +500,11 @@ static int pch_phub_write_gbe_mac_addr(struct pch_phub_reg *chip, u8 *data)
 	int retval;
 	int i;
 
+<<<<<<< HEAD
 	if (chip->ioh_type == 1) /* EG20T */
+=======
+	if ((chip->ioh_type == 1) || (chip->ioh_type == 5)) /* EG20T or ML7831*/
+>>>>>>> android-omap-tuna-jb
 		retval = pch_phub_gbe_serial_rom_conf(chip);
 	else	/* ML7223 */
 		retval = pch_phub_gbe_serial_rom_conf_mp(chip);
@@ -491,6 +531,10 @@ static ssize_t pch_phub_bin_read(struct file *filp, struct kobject *kobj,
 	unsigned int orom_size;
 	int ret;
 	int err;
+<<<<<<< HEAD
+=======
+	ssize_t rom_size;
+>>>>>>> android-omap-tuna-jb
 
 	struct pch_phub_reg *chip =
 		dev_get_drvdata(container_of(kobj, struct device, kobj));
@@ -502,6 +546,13 @@ static ssize_t pch_phub_bin_read(struct file *filp, struct kobject *kobj,
 	}
 
 	/* Get Rom signature */
+<<<<<<< HEAD
+=======
+	chip->pch_phub_extrom_base_address = pci_map_rom(chip->pdev, &rom_size);
+	if (!chip->pch_phub_extrom_base_address)
+		goto exrom_map_err;
+
+>>>>>>> android-omap-tuna-jb
 	pch_phub_read_serial_rom(chip, chip->pch_opt_rom_start_address,
 				(unsigned char *)&rom_signature);
 	rom_signature &= 0xff;
@@ -532,10 +583,19 @@ static ssize_t pch_phub_bin_read(struct file *filp, struct kobject *kobj,
 		goto return_err;
 	}
 return_ok:
+<<<<<<< HEAD
+=======
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&pch_phub_mutex);
 	return addr_offset;
 
 return_err:
+<<<<<<< HEAD
+=======
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+exrom_map_err:
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&pch_phub_mutex);
 return_err_nomutex:
 	return err;
@@ -548,6 +608,10 @@ static ssize_t pch_phub_bin_write(struct file *filp, struct kobject *kobj,
 	int err;
 	unsigned int addr_offset;
 	int ret;
+<<<<<<< HEAD
+=======
+	ssize_t rom_size;
+>>>>>>> android-omap-tuna-jb
 	struct pch_phub_reg *chip =
 		dev_get_drvdata(container_of(kobj, struct device, kobj));
 
@@ -564,6 +628,15 @@ static ssize_t pch_phub_bin_write(struct file *filp, struct kobject *kobj,
 		goto return_ok;
 	}
 
+<<<<<<< HEAD
+=======
+	chip->pch_phub_extrom_base_address = pci_map_rom(chip->pdev, &rom_size);
+	if (!chip->pch_phub_extrom_base_address) {
+		err = -ENOMEM;
+		goto exrom_map_err;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	for (addr_offset = 0; addr_offset < count; addr_offset++) {
 		if (PCH_PHUB_OROM_SIZE < off + addr_offset)
 			goto return_ok;
@@ -578,10 +651,20 @@ static ssize_t pch_phub_bin_write(struct file *filp, struct kobject *kobj,
 	}
 
 return_ok:
+<<<<<<< HEAD
+=======
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&pch_phub_mutex);
 	return addr_offset;
 
 return_err:
+<<<<<<< HEAD
+=======
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+
+exrom_map_err:
+>>>>>>> android-omap-tuna-jb
 	mutex_unlock(&pch_phub_mutex);
 	return err;
 }
@@ -591,8 +674,19 @@ static ssize_t show_pch_mac(struct device *dev, struct device_attribute *attr,
 {
 	u8 mac[8];
 	struct pch_phub_reg *chip = dev_get_drvdata(dev);
+<<<<<<< HEAD
 
 	pch_phub_read_gbe_mac_addr(chip, mac);
+=======
+	ssize_t rom_size;
+
+	chip->pch_phub_extrom_base_address = pci_map_rom(chip->pdev, &rom_size);
+	if (!chip->pch_phub_extrom_base_address)
+		return -ENOMEM;
+
+	pch_phub_read_gbe_mac_addr(chip, mac);
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+>>>>>>> android-omap-tuna-jb
 
 	return sprintf(buf, "%02x:%02x:%02x:%02x:%02x:%02x\n",
 				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
@@ -602,6 +696,10 @@ static ssize_t store_pch_mac(struct device *dev, struct device_attribute *attr,
 			     const char *buf, size_t count)
 {
 	u8 mac[6];
+<<<<<<< HEAD
+=======
+	ssize_t rom_size;
+>>>>>>> android-omap-tuna-jb
 	struct pch_phub_reg *chip = dev_get_drvdata(dev);
 
 	if (count != 18)
@@ -611,7 +709,16 @@ static ssize_t store_pch_mac(struct device *dev, struct device_attribute *attr,
 		(u32 *)&mac[0], (u32 *)&mac[1], (u32 *)&mac[2], (u32 *)&mac[3],
 		(u32 *)&mac[4], (u32 *)&mac[5]);
 
+<<<<<<< HEAD
 	pch_phub_write_gbe_mac_addr(chip, mac);
+=======
+	chip->pch_phub_extrom_base_address = pci_map_rom(chip->pdev, &rom_size);
+	if (!chip->pch_phub_extrom_base_address)
+		return -ENOMEM;
+
+	pch_phub_write_gbe_mac_addr(chip, mac);
+	pci_unmap_rom(chip->pdev, chip->pch_phub_extrom_base_address);
+>>>>>>> android-omap-tuna-jb
 
 	return count;
 }
@@ -634,7 +741,10 @@ static int __devinit pch_phub_probe(struct pci_dev *pdev,
 	int retval;
 
 	int ret;
+<<<<<<< HEAD
 	ssize_t rom_size;
+=======
+>>>>>>> android-omap-tuna-jb
 	struct pch_phub_reg *chip;
 
 	chip = kzalloc(sizeof(struct pch_phub_reg), GFP_KERNEL);
@@ -671,6 +781,7 @@ static int __devinit pch_phub_probe(struct pci_dev *pdev,
 		"in pch_phub_base_address variable is %p\n", __func__,
 		chip->pch_phub_base_address);
 
+<<<<<<< HEAD
 	if (id->driver_data != 3) {
 		chip->pch_phub_extrom_base_address =\
 						   pci_map_rom(pdev, &rom_size);
@@ -684,6 +795,9 @@ static int __devinit pch_phub_probe(struct pci_dev *pdev,
 			"pch_phub_extrom_base_address variable is %p\n",
 			__func__, chip->pch_phub_extrom_base_address);
 	}
+=======
+	chip->pdev = pdev; /* Save pci device struct */
+>>>>>>> android-omap-tuna-jb
 
 	if (id->driver_data == 1) { /* EG20T PCH */
 		retval = sysfs_create_file(&pdev->dev.kobj,
@@ -732,6 +846,11 @@ static int __devinit pch_phub_probe(struct pci_dev *pdev,
 		 * Device8(GbE)
 		 */
 		iowrite32(0x000a0000, chip->pch_phub_base_address + 0x14);
+<<<<<<< HEAD
+=======
+		/* set the interrupt delay value */
+		iowrite32(0x25, chip->pch_phub_base_address + 0x140);
+>>>>>>> android-omap-tuna-jb
 		chip->pch_opt_rom_start_address =\
 						 PCH_PHUB_ROM_START_ADDR_ML7223;
 		chip->pch_mac_start_address = PCH_PHUB_MAC_START_ADDR_ML7223;
@@ -749,11 +868,33 @@ static int __devinit pch_phub_probe(struct pci_dev *pdev,
 		 * Device6(SATA 2):f
 		 */
 		iowrite32(0x0000ffa0, chip->pch_phub_base_address + 0x14);
+<<<<<<< HEAD
 		/* set the interrupt delay value */
 		iowrite32(0x25, chip->pch_phub_base_address + 0x140);
 		chip->pch_opt_rom_start_address =\
 						 PCH_PHUB_ROM_START_ADDR_ML7223;
 		chip->pch_mac_start_address = PCH_PHUB_MAC_START_ADDR_ML7223;
+=======
+		chip->pch_opt_rom_start_address =\
+						 PCH_PHUB_ROM_START_ADDR_ML7223;
+		chip->pch_mac_start_address = PCH_PHUB_MAC_START_ADDR_ML7223;
+	} else if (id->driver_data == 5) { /* ML7831 */
+		retval = sysfs_create_file(&pdev->dev.kobj,
+					   &dev_attr_pch_mac.attr);
+		if (retval)
+			goto err_sysfs_create;
+
+		retval = sysfs_create_bin_file(&pdev->dev.kobj, &pch_bin_attr);
+		if (retval)
+			goto exit_bin_attr;
+
+		/* set the prefech value */
+		iowrite32(0x000affaa, chip->pch_phub_base_address + 0x14);
+		/* set the interrupt delay value */
+		iowrite32(0x25, chip->pch_phub_base_address + 0x44);
+		chip->pch_opt_rom_start_address = PCH_PHUB_ROM_START_ADDR_EG20T;
+		chip->pch_mac_start_address = PCH_PHUB_MAC_START_ADDR_EG20T;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	chip->ioh_type = id->driver_data;
@@ -764,8 +905,11 @@ exit_bin_attr:
 	sysfs_remove_file(&pdev->dev.kobj, &dev_attr_pch_mac.attr);
 
 err_sysfs_create:
+<<<<<<< HEAD
 	pci_unmap_rom(pdev, chip->pch_phub_extrom_base_address);
 err_pci_map:
+=======
+>>>>>>> android-omap-tuna-jb
 	pci_iounmap(pdev, chip->pch_phub_base_address);
 err_pci_iomap:
 	pci_release_regions(pdev);
@@ -783,7 +927,10 @@ static void __devexit pch_phub_remove(struct pci_dev *pdev)
 
 	sysfs_remove_file(&pdev->dev.kobj, &dev_attr_pch_mac.attr);
 	sysfs_remove_bin_file(&pdev->dev.kobj, &pch_bin_attr);
+<<<<<<< HEAD
 	pci_unmap_rom(pdev, chip->pch_phub_extrom_base_address);
+=======
+>>>>>>> android-omap-tuna-jb
 	pci_iounmap(pdev, chip->pch_phub_base_address);
 	pci_release_regions(pdev);
 	pci_disable_device(pdev);
@@ -838,6 +985,10 @@ static struct pci_device_id pch_phub_pcidev_id[] = {
 	{ PCI_VDEVICE(ROHM, PCI_DEVICE_ID_ROHM_ML7213_PHUB), 2,  },
 	{ PCI_VDEVICE(ROHM, PCI_DEVICE_ID_ROHM_ML7223_mPHUB), 3,  },
 	{ PCI_VDEVICE(ROHM, PCI_DEVICE_ID_ROHM_ML7223_nPHUB), 4,  },
+<<<<<<< HEAD
+=======
+	{ PCI_VDEVICE(ROHM, PCI_DEVICE_ID_ROHM_ML7831_PHUB), 5,  },
+>>>>>>> android-omap-tuna-jb
 	{ }
 };
 MODULE_DEVICE_TABLE(pci, pch_phub_pcidev_id);

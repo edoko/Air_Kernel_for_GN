@@ -425,7 +425,10 @@ struct omap_overlay_manager_info {
 
 	bool cpr_enable;
 	struct omap_dss_cpr_coefs cpr_coefs;
+<<<<<<< HEAD
 	u8 gamma;
+=======
+>>>>>>> android-omap-tuna-jb
 };
 
 struct omap_overlay_manager {
@@ -598,6 +601,14 @@ struct omap_dss_device {
 	int (*get_backlight)(struct omap_dss_device *dssdev);
 };
 
+<<<<<<< HEAD
+=======
+struct omap_dss_hdmi_data
+{
+	int hpd_gpio;
+};
+
+>>>>>>> android-omap-tuna-jb
 struct omap_dss_driver {
 	struct device_driver driver;
 

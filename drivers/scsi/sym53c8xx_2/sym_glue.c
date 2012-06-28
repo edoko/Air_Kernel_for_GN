@@ -839,6 +839,13 @@ static void sym53c8xx_slave_destroy(struct scsi_device *sdev)
 	struct sym_lcb *lp = sym_lp(tp, sdev->lun);
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	/* if slave_alloc returned before allocating a sym_lcb, return */
+	if (!lp)
+		return;
+
+>>>>>>> android-omap-tuna-jb
 	spin_lock_irqsave(np->s.host->host_lock, flags);
 
 	if (lp->busy_itlq || lp->busy_itl) {

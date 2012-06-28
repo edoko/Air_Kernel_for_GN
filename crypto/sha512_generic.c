@@ -21,8 +21,11 @@
 #include <linux/percpu.h>
 #include <asm/byteorder.h>
 
+<<<<<<< HEAD
 static DEFINE_PER_CPU(u64[80], msg_schedule);
 
+=======
+>>>>>>> android-omap-tuna-jb
 static inline u64 Ch(u64 x, u64 y, u64 z)
 {
         return z ^ (x & (y ^ z));
@@ -33,11 +36,14 @@ static inline u64 Maj(u64 x, u64 y, u64 z)
         return (x & y) | (z & (x | y));
 }
 
+<<<<<<< HEAD
 static inline u64 RORu64(u64 x, u64 y)
 {
         return (x >> y) | (x << (64 - y));
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static const u64 sha512_K[80] = {
         0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
         0xe9b5dba58189dbbcULL, 0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
@@ -68,10 +74,17 @@ static const u64 sha512_K[80] = {
         0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL,
 };
 
+<<<<<<< HEAD
 #define e0(x)       (RORu64(x,28) ^ RORu64(x,34) ^ RORu64(x,39))
 #define e1(x)       (RORu64(x,14) ^ RORu64(x,18) ^ RORu64(x,41))
 #define s0(x)       (RORu64(x, 1) ^ RORu64(x, 8) ^ (x >> 7))
 #define s1(x)       (RORu64(x,19) ^ RORu64(x,61) ^ (x >> 6))
+=======
+#define e0(x)       (ror64(x,28) ^ ror64(x,34) ^ ror64(x,39))
+#define e1(x)       (ror64(x,14) ^ ror64(x,18) ^ ror64(x,41))
+#define s0(x)       (ror64(x, 1) ^ ror64(x, 8) ^ (x >> 7))
+#define s1(x)       (ror64(x,19) ^ ror64(x,61) ^ (x >> 6))
+>>>>>>> android-omap-tuna-jb
 
 static inline void LOAD_OP(int I, u64 *W, const u8 *input)
 {
@@ -80,7 +93,11 @@ static inline void LOAD_OP(int I, u64 *W, const u8 *input)
 
 static inline void BLEND_OP(int I, u64 *W)
 {
+<<<<<<< HEAD
 	W[I] = s1(W[I-2]) + W[I-7] + s0(W[I-15]) + W[I-16];
+=======
+	W[I & 15] += s1(W[(I-2) & 15]) + W[(I-7) & 15] + s0(W[(I-15) & 15]);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void
@@ -89,6 +106,7 @@ sha512_transform(u64 *state, const u8 *input)
 	u64 a, b, c, d, e, f, g, h, t1, t2;
 
 	int i;
+<<<<<<< HEAD
 	u64 *W = get_cpu_var(msg_schedule);
 
 	/* load the input */
@@ -98,6 +116,9 @@ sha512_transform(u64 *state, const u8 *input)
         for (i = 16; i < 80; i++) {
                 BLEND_OP(i, W);
         }
+=======
+	u64 W[16];
+>>>>>>> android-omap-tuna-jb
 
 	/* load the state into our registers */
 	a=state[0];   b=state[1];   c=state[2];   d=state[3];
@@ -105,6 +126,7 @@ sha512_transform(u64 *state, const u8 *input)
 
 	/* now iterate */
 	for (i=0; i<80; i+=8) {
+<<<<<<< HEAD
 		t1 = h + e1(e) + Ch(e,f,g) + sha512_K[i  ] + W[i  ];
 		t2 = e0(a) + Maj(a,b,c);    d+=t1;    h=t1+t2;
 		t1 = g + e1(d) + Ch(d,e,f) + sha512_K[i+1] + W[i+1];
@@ -120,6 +142,37 @@ sha512_transform(u64 *state, const u8 *input)
 		t1 = b + e1(g) + Ch(g,h,a) + sha512_K[i+6] + W[i+6];
 		t2 = e0(c) + Maj(c,d,e);    f+=t1;    b=t1+t2;
 		t1 = a + e1(f) + Ch(f,g,h) + sha512_K[i+7] + W[i+7];
+=======
+		if (!(i & 8)) {
+			int j;
+
+			if (i < 16) {
+				/* load the input */
+				for (j = 0; j < 16; j++)
+					LOAD_OP(i + j, W, input);
+			} else {
+				for (j = 0; j < 16; j++) {
+					BLEND_OP(i + j, W);
+				}
+			}
+		}
+
+		t1 = h + e1(e) + Ch(e,f,g) + sha512_K[i  ] + W[(i & 15)];
+		t2 = e0(a) + Maj(a,b,c);    d+=t1;    h=t1+t2;
+		t1 = g + e1(d) + Ch(d,e,f) + sha512_K[i+1] + W[(i & 15) + 1];
+		t2 = e0(h) + Maj(h,a,b);    c+=t1;    g=t1+t2;
+		t1 = f + e1(c) + Ch(c,d,e) + sha512_K[i+2] + W[(i & 15) + 2];
+		t2 = e0(g) + Maj(g,h,a);    b+=t1;    f=t1+t2;
+		t1 = e + e1(b) + Ch(b,c,d) + sha512_K[i+3] + W[(i & 15) + 3];
+		t2 = e0(f) + Maj(f,g,h);    a+=t1;    e=t1+t2;
+		t1 = d + e1(a) + Ch(a,b,c) + sha512_K[i+4] + W[(i & 15) + 4];
+		t2 = e0(e) + Maj(e,f,g);    h+=t1;    d=t1+t2;
+		t1 = c + e1(h) + Ch(h,a,b) + sha512_K[i+5] + W[(i & 15) + 5];
+		t2 = e0(d) + Maj(d,e,f);    g+=t1;    c=t1+t2;
+		t1 = b + e1(g) + Ch(g,h,a) + sha512_K[i+6] + W[(i & 15) + 6];
+		t2 = e0(c) + Maj(c,d,e);    f+=t1;    b=t1+t2;
+		t1 = a + e1(f) + Ch(f,g,h) + sha512_K[i+7] + W[(i & 15) + 7];
+>>>>>>> android-omap-tuna-jb
 		t2 = e0(b) + Maj(b,c,d);    e+=t1;    a=t1+t2;
 	}
 
@@ -128,8 +181,11 @@ sha512_transform(u64 *state, const u8 *input)
 
 	/* erase our data */
 	a = b = c = d = e = f = g = h = t1 = t2 = 0;
+<<<<<<< HEAD
 	memset(W, 0, sizeof(__get_cpu_var(msg_schedule)));
 	put_cpu_var(msg_schedule);
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 static int
@@ -177,7 +233,11 @@ sha512_update(struct shash_desc *desc, const u8 *data, unsigned int len)
 	index = sctx->count[0] & 0x7f;
 
 	/* Update number of bytes */
+<<<<<<< HEAD
 	if (!(sctx->count[0] += len))
+=======
+	if ((sctx->count[0] += len) < len)
+>>>>>>> android-omap-tuna-jb
 		sctx->count[1]++;
 
         part_len = 128 - index;

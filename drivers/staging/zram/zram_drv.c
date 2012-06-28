@@ -37,10 +37,17 @@
 
 /* Globals */
 static int zram_major;
+<<<<<<< HEAD
 struct zram *zram_devices;
 
 /* Module params (documentation at end) */
 unsigned int zram_num_devices;
+=======
+struct zram *devices;
+
+/* Module params (documentation at end) */
+unsigned int num_devices;
+>>>>>>> android-omap-tuna-jb
 
 static void zram_stat_inc(u32 *v)
 {
@@ -177,6 +184,7 @@ out:
 	zram->table[index].offset = 0;
 }
 
+<<<<<<< HEAD
 static void handle_zero_page(struct bio_vec *bvec)
 {
 	struct page *page = bvec->bv_page;
@@ -184,11 +192,20 @@ static void handle_zero_page(struct bio_vec *bvec)
 
 	user_mem = kmap_atomic(page, KM_USER0);
 	memset(user_mem + bvec->bv_offset, 0, bvec->bv_len);
+=======
+static void handle_zero_page(struct page *page)
+{
+	void *user_mem;
+
+	user_mem = kmap_atomic(page, KM_USER0);
+	memset(user_mem, 0, PAGE_SIZE);
+>>>>>>> android-omap-tuna-jb
 	kunmap_atomic(user_mem, KM_USER0);
 
 	flush_dcache_page(page);
 }
 
+<<<<<<< HEAD
 static void handle_uncompressed_page(struct zram *zram, struct bio_vec *bvec,
 				     u32 index, int offset)
 {
@@ -201,10 +218,25 @@ static void handle_uncompressed_page(struct zram *zram, struct bio_vec *bvec,
 	memcpy(user_mem + bvec->bv_offset, cmem + offset, bvec->bv_len);
 	kunmap_atomic(cmem, KM_USER1);
 	kunmap_atomic(user_mem, KM_USER0);
+=======
+static void handle_uncompressed_page(struct zram *zram,
+				struct page *page, u32 index)
+{
+	unsigned char *user_mem, *cmem;
+
+	user_mem = kmap_atomic(page, KM_USER0);
+	cmem = kmap_atomic(zram->table[index].page, KM_USER1) +
+			zram->table[index].offset;
+
+	memcpy(user_mem, cmem, PAGE_SIZE);
+	kunmap_atomic(user_mem, KM_USER0);
+	kunmap_atomic(cmem, KM_USER1);
+>>>>>>> android-omap-tuna-jb
 
 	flush_dcache_page(page);
 }
 
+<<<<<<< HEAD
 static inline int is_partial_io(struct bio_vec *bvec)
 {
 	return bvec->bv_len != PAGE_SIZE;
@@ -526,6 +558,199 @@ static void __zram_make_request(struct zram *zram, struct bio *bio, int rw)
 				goto out;
 
 		update_position(&index, &offset, bvec);
+=======
+static void zram_read(struct zram *zram, struct bio *bio)
+{
+
+	int i;
+	u32 index;
+	struct bio_vec *bvec;
+
+	zram_stat64_inc(zram, &zram->stats.num_reads);
+	index = bio->bi_sector >> SECTORS_PER_PAGE_SHIFT;
+
+	bio_for_each_segment(bvec, bio, i) {
+		int ret;
+		size_t clen;
+		struct page *page;
+		struct zobj_header *zheader;
+		unsigned char *user_mem, *cmem;
+
+		page = bvec->bv_page;
+
+		if (zram_test_flag(zram, index, ZRAM_ZERO)) {
+			handle_zero_page(page);
+			index++;
+			continue;
+		}
+
+		/* Requested page is not present in compressed area */
+		if (unlikely(!zram->table[index].page)) {
+			pr_debug("Read before write: sector=%lu, size=%u",
+				(ulong)(bio->bi_sector), bio->bi_size);
+			handle_zero_page(page);
+			index++;
+			continue;
+		}
+
+		/* Page is stored uncompressed since it's incompressible */
+		if (unlikely(zram_test_flag(zram, index, ZRAM_UNCOMPRESSED))) {
+			handle_uncompressed_page(zram, page, index);
+			index++;
+			continue;
+		}
+
+		user_mem = kmap_atomic(page, KM_USER0);
+		clen = PAGE_SIZE;
+
+		cmem = kmap_atomic(zram->table[index].page, KM_USER1) +
+				zram->table[index].offset;
+
+		ret = lzo1x_decompress_safe(
+			cmem + sizeof(*zheader),
+			xv_get_object_size(cmem) - sizeof(*zheader),
+			user_mem, &clen);
+
+		kunmap_atomic(user_mem, KM_USER0);
+		kunmap_atomic(cmem, KM_USER1);
+
+		/* Should NEVER happen. Return bio error if it does. */
+		if (unlikely(ret != LZO_E_OK)) {
+			pr_err("Decompression failed! err=%d, page=%u\n",
+				ret, index);
+			zram_stat64_inc(zram, &zram->stats.failed_reads);
+			goto out;
+		}
+
+		flush_dcache_page(page);
+		index++;
+	}
+
+	set_bit(BIO_UPTODATE, &bio->bi_flags);
+	bio_endio(bio, 0);
+	return;
+
+out:
+	bio_io_error(bio);
+}
+
+static void zram_write(struct zram *zram, struct bio *bio)
+{
+	int i;
+	u32 index;
+	struct bio_vec *bvec;
+
+	zram_stat64_inc(zram, &zram->stats.num_writes);
+	index = bio->bi_sector >> SECTORS_PER_PAGE_SHIFT;
+
+	bio_for_each_segment(bvec, bio, i) {
+		int ret;
+		u32 offset;
+		size_t clen;
+		struct zobj_header *zheader;
+		struct page *page, *page_store;
+		unsigned char *user_mem, *cmem, *src;
+
+		page = bvec->bv_page;
+		src = zram->compress_buffer;
+
+		/*
+		 * System overwrites unused sectors. Free memory associated
+		 * with this sector now.
+		 */
+		if (zram->table[index].page ||
+				zram_test_flag(zram, index, ZRAM_ZERO))
+			zram_free_page(zram, index);
+
+		mutex_lock(&zram->lock);
+
+		user_mem = kmap_atomic(page, KM_USER0);
+		if (page_zero_filled(user_mem)) {
+			kunmap_atomic(user_mem, KM_USER0);
+			mutex_unlock(&zram->lock);
+			zram_stat_inc(&zram->stats.pages_zero);
+			zram_set_flag(zram, index, ZRAM_ZERO);
+			index++;
+			continue;
+		}
+
+		ret = lzo1x_1_compress(user_mem, PAGE_SIZE, src, &clen,
+					zram->compress_workmem);
+
+		kunmap_atomic(user_mem, KM_USER0);
+
+		if (unlikely(ret != LZO_E_OK)) {
+			mutex_unlock(&zram->lock);
+			pr_err("Compression failed! err=%d\n", ret);
+			zram_stat64_inc(zram, &zram->stats.failed_writes);
+			goto out;
+		}
+
+		/*
+		 * Page is incompressible. Store it as-is (uncompressed)
+		 * since we do not want to return too many disk write
+		 * errors which has side effect of hanging the system.
+		 */
+		if (unlikely(clen > max_zpage_size)) {
+			clen = PAGE_SIZE;
+			page_store = alloc_page(GFP_NOIO | __GFP_HIGHMEM);
+			if (unlikely(!page_store)) {
+				mutex_unlock(&zram->lock);
+				pr_info("Error allocating memory for "
+					"incompressible page: %u\n", index);
+				zram_stat64_inc(zram,
+					&zram->stats.failed_writes);
+				goto out;
+			}
+
+			offset = 0;
+			zram_set_flag(zram, index, ZRAM_UNCOMPRESSED);
+			zram_stat_inc(&zram->stats.pages_expand);
+			zram->table[index].page = page_store;
+			src = kmap_atomic(page, KM_USER0);
+			goto memstore;
+		}
+
+		if (xv_malloc(zram->mem_pool, clen + sizeof(*zheader),
+				&zram->table[index].page, &offset,
+				GFP_NOIO | __GFP_HIGHMEM)) {
+			mutex_unlock(&zram->lock);
+			pr_info("Error allocating memory for compressed "
+				"page: %u, size=%zu\n", index, clen);
+			zram_stat64_inc(zram, &zram->stats.failed_writes);
+			goto out;
+		}
+
+memstore:
+		zram->table[index].offset = offset;
+
+		cmem = kmap_atomic(zram->table[index].page, KM_USER1) +
+				zram->table[index].offset;
+
+#if 0
+		/* Back-reference needed for memory defragmentation */
+		if (!zram_test_flag(zram, index, ZRAM_UNCOMPRESSED)) {
+			zheader = (struct zobj_header *)cmem;
+			zheader->table_idx = index;
+			cmem += sizeof(*zheader);
+		}
+#endif
+
+		memcpy(cmem, src, clen);
+
+		kunmap_atomic(cmem, KM_USER1);
+		if (unlikely(zram_test_flag(zram, index, ZRAM_UNCOMPRESSED)))
+			kunmap_atomic(src, KM_USER0);
+
+		/* Update stats */
+		zram_stat64_add(zram, &zram->stats.compr_size, clen);
+		zram_stat_inc(&zram->stats.pages_stored);
+		if (clen <= PAGE_SIZE / 2)
+			zram_stat_inc(&zram->stats.good_compress);
+
+		mutex_unlock(&zram->lock);
+		index++;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	set_bit(BIO_UPTODATE, &bio->bi_flags);
@@ -537,14 +762,23 @@ out:
 }
 
 /*
+<<<<<<< HEAD
  * Check if request is within bounds and aligned on zram logical blocks.
+=======
+ * Check if request is within bounds and page aligned.
+>>>>>>> android-omap-tuna-jb
  */
 static inline int valid_io_request(struct zram *zram, struct bio *bio)
 {
 	if (unlikely(
 		(bio->bi_sector >= (zram->disksize >> SECTOR_SHIFT)) ||
+<<<<<<< HEAD
 		(bio->bi_sector & (ZRAM_SECTOR_PER_LOGICAL_BLOCK - 1)) ||
 		(bio->bi_size & (ZRAM_LOGICAL_BLOCK_SIZE - 1)))) {
+=======
+		(bio->bi_sector & (SECTORS_PER_PAGE - 1)) ||
+		(bio->bi_size & (PAGE_SIZE - 1)))) {
+>>>>>>> android-omap-tuna-jb
 
 		return 0;
 	}
@@ -560,6 +794,7 @@ static int zram_make_request(struct request_queue *queue, struct bio *bio)
 {
 	struct zram *zram = queue->queuedata;
 
+<<<<<<< HEAD
 	if (unlikely(!zram->init_done) && zram_init_device(zram))
 		goto error;
 
@@ -588,6 +823,37 @@ void __zram_reset_device(struct zram *zram)
 {
 	size_t index;
 
+=======
+	if (!valid_io_request(zram, bio)) {
+		zram_stat64_inc(zram, &zram->stats.invalid_io);
+		bio_io_error(bio);
+		return 0;
+	}
+
+	if (unlikely(!zram->init_done) && zram_init_device(zram)) {
+		bio_io_error(bio);
+		return 0;
+	}
+
+	switch (bio_data_dir(bio)) {
+	case READ:
+		zram_read(zram, bio);
+		break;
+
+	case WRITE:
+		zram_write(zram, bio);
+		break;
+	}
+
+	return 0;
+}
+
+void zram_reset_device(struct zram *zram)
+{
+	size_t index;
+
+	mutex_lock(&zram->init_lock);
+>>>>>>> android-omap-tuna-jb
 	zram->init_done = 0;
 
 	/* Free various per-device buffers */
@@ -624,6 +890,7 @@ void __zram_reset_device(struct zram *zram)
 	memset(&zram->stats, 0, sizeof(zram->stats));
 
 	zram->disksize = 0;
+<<<<<<< HEAD
 }
 
 void zram_reset_device(struct zram *zram)
@@ -631,6 +898,9 @@ void zram_reset_device(struct zram *zram)
 	down_write(&zram->init_lock);
 	__zram_reset_device(zram);
 	up_write(&zram->init_lock);
+=======
+	mutex_unlock(&zram->init_lock);
+>>>>>>> android-omap-tuna-jb
 }
 
 int zram_init_device(struct zram *zram)
@@ -638,10 +908,17 @@ int zram_init_device(struct zram *zram)
 	int ret;
 	size_t num_pages;
 
+<<<<<<< HEAD
 	down_write(&zram->init_lock);
 
 	if (zram->init_done) {
 		up_write(&zram->init_lock);
+=======
+	mutex_lock(&zram->init_lock);
+
+	if (zram->init_done) {
+		mutex_unlock(&zram->init_lock);
+>>>>>>> android-omap-tuna-jb
 		return 0;
 	}
 
@@ -651,22 +928,37 @@ int zram_init_device(struct zram *zram)
 	if (!zram->compress_workmem) {
 		pr_err("Error allocating compressor working memory!\n");
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto fail_no_table;
+=======
+		goto fail;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	zram->compress_buffer = (void *)__get_free_pages(__GFP_ZERO, 1);
 	if (!zram->compress_buffer) {
 		pr_err("Error allocating compressor buffer space\n");
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto fail_no_table;
+=======
+		goto fail;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	num_pages = zram->disksize >> PAGE_SHIFT;
 	zram->table = vzalloc(num_pages * sizeof(*zram->table));
 	if (!zram->table) {
 		pr_err("Error allocating zram address table\n");
+<<<<<<< HEAD
 		ret = -ENOMEM;
 		goto fail_no_table;
+=======
+		/* To prevent accessing table entries during cleanup */
+		zram->disksize = 0;
+		ret = -ENOMEM;
+		goto fail;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	set_capacity(zram->disk, zram->disksize >> SECTOR_SHIFT);
@@ -682,23 +974,38 @@ int zram_init_device(struct zram *zram)
 	}
 
 	zram->init_done = 1;
+<<<<<<< HEAD
 	up_write(&zram->init_lock);
+=======
+	mutex_unlock(&zram->init_lock);
+>>>>>>> android-omap-tuna-jb
 
 	pr_debug("Initialization done!\n");
 	return 0;
 
+<<<<<<< HEAD
 fail_no_table:
 	/* To prevent accessing table entries during cleanup */
 	zram->disksize = 0;
 fail:
 	__zram_reset_device(zram);
 	up_write(&zram->init_lock);
+=======
+fail:
+	mutex_unlock(&zram->init_lock);
+	zram_reset_device(zram);
+
+>>>>>>> android-omap-tuna-jb
 	pr_err("Initialization failed: err=%d\n", ret);
 	return ret;
 }
 
+<<<<<<< HEAD
 static void zram_slot_free_notify(struct block_device *bdev,
 				unsigned long index)
+=======
+void zram_slot_free_notify(struct block_device *bdev, unsigned long index)
+>>>>>>> android-omap-tuna-jb
 {
 	struct zram *zram;
 
@@ -716,8 +1023,13 @@ static int create_device(struct zram *zram, int device_id)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 	init_rwsem(&zram->lock);
 	init_rwsem(&zram->init_lock);
+=======
+	mutex_init(&zram->lock);
+	mutex_init(&zram->init_lock);
+>>>>>>> android-omap-tuna-jb
 	spin_lock_init(&zram->stat64_lock);
 
 	zram->queue = blk_alloc_queue(GFP_KERNEL);
@@ -794,9 +1106,15 @@ static int __init zram_init(void)
 {
 	int ret, dev_id;
 
+<<<<<<< HEAD
 	if (zram_num_devices > max_num_devices) {
 		pr_warning("Invalid value for num_devices: %u\n",
 				zram_num_devices);
+=======
+	if (num_devices > max_num_devices) {
+		pr_warning("Invalid value for num_devices: %u\n",
+				num_devices);
+>>>>>>> android-omap-tuna-jb
 		ret = -EINVAL;
 		goto out;
 	}
@@ -808,6 +1126,7 @@ static int __init zram_init(void)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (!zram_num_devices) {
 		pr_info("num_devices not specified. Using default: 1\n");
 		zram_num_devices = 1;
@@ -817,12 +1136,28 @@ static int __init zram_init(void)
 	pr_info("Creating %u devices ...\n", zram_num_devices);
 	zram_devices = kzalloc(zram_num_devices * sizeof(struct zram), GFP_KERNEL);
 	if (!zram_devices) {
+=======
+	if (!num_devices) {
+		pr_info("num_devices not specified. Using default: 1\n");
+		num_devices = 1;
+	}
+
+	/* Allocate the device array and initialize each one */
+	pr_info("Creating %u devices ...\n", num_devices);
+	devices = kzalloc(num_devices * sizeof(struct zram), GFP_KERNEL);
+	if (!devices) {
+>>>>>>> android-omap-tuna-jb
 		ret = -ENOMEM;
 		goto unregister;
 	}
 
+<<<<<<< HEAD
 	for (dev_id = 0; dev_id < zram_num_devices; dev_id++) {
 		ret = create_device(&zram_devices[dev_id], dev_id);
+=======
+	for (dev_id = 0; dev_id < num_devices; dev_id++) {
+		ret = create_device(&devices[dev_id], dev_id);
+>>>>>>> android-omap-tuna-jb
 		if (ret)
 			goto free_devices;
 	}
@@ -831,8 +1166,13 @@ static int __init zram_init(void)
 
 free_devices:
 	while (dev_id)
+<<<<<<< HEAD
 		destroy_device(&zram_devices[--dev_id]);
 	kfree(zram_devices);
+=======
+		destroy_device(&devices[--dev_id]);
+	kfree(devices);
+>>>>>>> android-omap-tuna-jb
 unregister:
 	unregister_blkdev(zram_major, "zram");
 out:
@@ -844,8 +1184,13 @@ static void __exit zram_exit(void)
 	int i;
 	struct zram *zram;
 
+<<<<<<< HEAD
 	for (i = 0; i < zram_num_devices; i++) {
 		zram = &zram_devices[i];
+=======
+	for (i = 0; i < num_devices; i++) {
+		zram = &devices[i];
+>>>>>>> android-omap-tuna-jb
 
 		destroy_device(zram);
 		if (zram->init_done)
@@ -854,12 +1199,21 @@ static void __exit zram_exit(void)
 
 	unregister_blkdev(zram_major, "zram");
 
+<<<<<<< HEAD
 	kfree(zram_devices);
 	pr_debug("Cleanup done!\n");
 }
 
 module_param(zram_num_devices, uint, 0);
 MODULE_PARM_DESC(zram_num_devices, "Number of zram devices");
+=======
+	kfree(devices);
+	pr_debug("Cleanup done!\n");
+}
+
+module_param(num_devices, uint, 0);
+MODULE_PARM_DESC(num_devices, "Number of zram devices");
+>>>>>>> android-omap-tuna-jb
 
 module_init(zram_init);
 module_exit(zram_exit);

@@ -539,7 +539,10 @@ static void acm_port_down(struct acm *acm)
 {
 	int i;
 
+<<<<<<< HEAD
 	mutex_lock(&open_mutex);
+=======
+>>>>>>> android-omap-tuna-jb
 	if (acm->dev) {
 		usb_autopm_get_interface(acm->control);
 		acm_set_control(acm, acm->ctrlout = 0);
@@ -551,14 +554,33 @@ static void acm_port_down(struct acm *acm)
 		acm->control->needs_remote_wakeup = 0;
 		usb_autopm_put_interface(acm->control);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&open_mutex);
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 static void acm_tty_hangup(struct tty_struct *tty)
 {
+<<<<<<< HEAD
 	struct acm *acm = tty->driver_data;
 	tty_port_hangup(&acm->port);
 	acm_port_down(acm);
+=======
+	struct acm *acm;
+
+	mutex_lock(&open_mutex);
+	acm = tty->driver_data;
+
+	if (!acm)
+		goto out;
+
+	tty_port_hangup(&acm->port);
+	acm_port_down(acm);
+
+out:
+	mutex_unlock(&open_mutex);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void acm_tty_close(struct tty_struct *tty, struct file *filp)
@@ -569,8 +591,14 @@ static void acm_tty_close(struct tty_struct *tty, struct file *filp)
 	   shutdown */
 	if (!acm)
 		return;
+<<<<<<< HEAD
 	if (tty_port_close_start(&acm->port, tty, filp) == 0) {
 		mutex_lock(&open_mutex);
+=======
+
+	mutex_lock(&open_mutex);
+	if (tty_port_close_start(&acm->port, tty, filp) == 0) {
+>>>>>>> android-omap-tuna-jb
 		if (!acm->dev) {
 			tty_port_tty_set(&acm->port, NULL);
 			acm_tty_unregister(acm);
@@ -582,6 +610,10 @@ static void acm_tty_close(struct tty_struct *tty, struct file *filp)
 	acm_port_down(acm);
 	tty_port_close_end(&acm->port, tty);
 	tty_port_tty_set(&acm->port, NULL);
+<<<<<<< HEAD
+=======
+	mutex_unlock(&open_mutex);
+>>>>>>> android-omap-tuna-jb
 }
 
 static int acm_tty_write(struct tty_struct *tty,
@@ -1181,6 +1213,11 @@ made_compressed_probe:
 		i = device_create_file(&intf->dev, &dev_attr_wCountryCodes);
 		if (i < 0) {
 			kfree(acm->country_codes);
+<<<<<<< HEAD
+=======
+			acm->country_codes = NULL;
+			acm->country_code_size = 0;
+>>>>>>> android-omap-tuna-jb
 			goto skip_countries;
 		}
 
@@ -1189,6 +1226,11 @@ made_compressed_probe:
 		if (i < 0) {
 			device_remove_file(&intf->dev, &dev_attr_wCountryCodes);
 			kfree(acm->country_codes);
+<<<<<<< HEAD
+=======
+			acm->country_codes = NULL;
+			acm->country_code_size = 0;
+>>>>>>> android-omap-tuna-jb
 			goto skip_countries;
 		}
 	}
@@ -1456,6 +1498,19 @@ static const struct usb_device_id acm_ids[] = {
 	},
 	{ USB_DEVICE(0x22b8, 0x6425), /* Motorola MOTOMAGX phones */
 	},
+<<<<<<< HEAD
+=======
+	/* Motorola H24 HSPA module: */
+	{ USB_DEVICE(0x22b8, 0x2d91) }, /* modem                                */
+	{ USB_DEVICE(0x22b8, 0x2d92) }, /* modem           + diagnostics        */
+	{ USB_DEVICE(0x22b8, 0x2d93) }, /* modem + AT port                      */
+	{ USB_DEVICE(0x22b8, 0x2d95) }, /* modem + AT port + diagnostics        */
+	{ USB_DEVICE(0x22b8, 0x2d96) }, /* modem                         + NMEA */
+	{ USB_DEVICE(0x22b8, 0x2d97) }, /* modem           + diagnostics + NMEA */
+	{ USB_DEVICE(0x22b8, 0x2d99) }, /* modem + AT port               + NMEA */
+	{ USB_DEVICE(0x22b8, 0x2d9a) }, /* modem + AT port + diagnostics + NMEA */
+
+>>>>>>> android-omap-tuna-jb
 	{ USB_DEVICE(0x0572, 0x1329), /* Hummingbird huc56s (Conexant) */
 	.driver_info = NO_UNION_NORMAL, /* union descriptor misplaced on
 					   data interface instead of
@@ -1534,6 +1589,12 @@ static const struct usb_device_id acm_ids[] = {
 	{ NOKIA_PCSUITE_ACM_INFO(0x03cd), }, /* Nokia C7 */
 	{ SAMSUNG_PCSUITE_ACM_INFO(0x6651), }, /* Samsung GTi8510 (INNOV8) */
 
+<<<<<<< HEAD
+=======
+	/* Support for Owen devices */
+	{ USB_DEVICE(0x03eb, 0x0030), }, /* Owen SI30 */
+
+>>>>>>> android-omap-tuna-jb
 	/* NOTE: non-Nokia COMM/ACM/0xff is likely MSFT RNDIS... NOT a modem! */
 
 	/* Support Lego NXT using pbLua firmware */

@@ -389,6 +389,7 @@ ohci_shutdown (struct usb_hcd *hcd)
 	struct ohci_hcd *ohci;
 
 	ohci = hcd_to_ohci (hcd);
+<<<<<<< HEAD
 	ohci_writel (ohci, OHCI_INTR_MIE, &ohci->regs->intrdisable);
 	ohci->hc_control = ohci_readl(ohci, &ohci->regs->control);
 
@@ -400,6 +401,16 @@ ohci_shutdown (struct usb_hcd *hcd)
 
 	/* flush the writes */
 	(void) ohci_readl (ohci, &ohci->regs->control);
+=======
+	ohci_writel(ohci, (u32) ~0, &ohci->regs->intrdisable);
+
+	/* Software reset, after which the controller goes into SUSPEND */
+	ohci_writel(ohci, OHCI_HCR, &ohci->regs->cmdstatus);
+	ohci_readl(ohci, &ohci->regs->cmdstatus);	/* flush the writes */
+	udelay(10);
+
+	ohci_writel(ohci, ohci->fminterval, &ohci->regs->fminterval);
+>>>>>>> android-omap-tuna-jb
 }
 
 static int check_ed(struct ohci_hcd *ohci, struct ed *ed)

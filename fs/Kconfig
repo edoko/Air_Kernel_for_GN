@@ -57,6 +57,7 @@ config FILE_LOCKING
           for filesystems like NFS and for the flock() system
           call. Disabling this option saves about 11k.
 
+<<<<<<< HEAD
 config FSYNC
 	bool "Enable fsync()"
 	default y
@@ -64,6 +65,8 @@ config FSYNC
 	  This option is unstable.
 	  But, system speeds up.
 
+=======
+>>>>>>> android-omap-tuna-jb
 source "fs/notify/Kconfig"
 
 source "fs/quota/Kconfig"

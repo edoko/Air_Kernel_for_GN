@@ -241,7 +241,11 @@ MODULE_DEVICE_TABLE(of, mdio_ofgpio_match);
 
 static struct platform_driver mdio_ofgpio_driver = {
 	.driver = {
+<<<<<<< HEAD
 		.name = "mdio-gpio",
+=======
+		.name = "mdio-ofgpio",
+>>>>>>> android-omap-tuna-jb
 		.owner = THIS_MODULE,
 		.of_match_table = mdio_ofgpio_match,
 	},

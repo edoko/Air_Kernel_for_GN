@@ -1325,6 +1325,10 @@ static int pass_accept_req(struct c4iw_dev *dev, struct sk_buff *skb)
 	unsigned int stid = GET_POPEN_TID(ntohl(req->tos_stid));
 	struct tid_info *t = dev->rdev.lldi.tids;
 	unsigned int hwtid = GET_TID(req);
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh;
+>>>>>>> android-omap-tuna-jb
 	struct dst_entry *dst;
 	struct l2t_entry *l2t;
 	struct rtable *rt;
@@ -1357,11 +1361,20 @@ static int pass_accept_req(struct c4iw_dev *dev, struct sk_buff *skb)
 		goto reject;
 	}
 	dst = &rt->dst;
+<<<<<<< HEAD
 	if (dst->neighbour->dev->flags & IFF_LOOPBACK) {
 		pdev = ip_dev_find(&init_net, peer_ip);
 		BUG_ON(!pdev);
 		l2t = cxgb4_l2t_get(dev->rdev.lldi.l2t, dst->neighbour,
 				    pdev, 0);
+=======
+	rcu_read_lock();
+	neigh = dst_get_neighbour(dst);
+	if (neigh->dev->flags & IFF_LOOPBACK) {
+		pdev = ip_dev_find(&init_net, peer_ip);
+		BUG_ON(!pdev);
+		l2t = cxgb4_l2t_get(dev->rdev.lldi.l2t, neigh, pdev, 0);
+>>>>>>> android-omap-tuna-jb
 		mtu = pdev->mtu;
 		tx_chan = cxgb4_port_chan(pdev);
 		smac_idx = (cxgb4_port_viid(pdev) & 0x7F) << 1;
@@ -1372,6 +1385,7 @@ static int pass_accept_req(struct c4iw_dev *dev, struct sk_buff *skb)
 		rss_qid = dev->rdev.lldi.rxq_ids[cxgb4_port_idx(pdev) * step];
 		dev_put(pdev);
 	} else {
+<<<<<<< HEAD
 		l2t = cxgb4_l2t_get(dev->rdev.lldi.l2t, dst->neighbour,
 					dst->neighbour->dev, 0);
 		mtu = dst_mtu(dst);
@@ -1384,6 +1398,20 @@ static int pass_accept_req(struct c4iw_dev *dev, struct sk_buff *skb)
 		rss_qid = dev->rdev.lldi.rxq_ids[
 			  cxgb4_port_idx(dst->neighbour->dev) * step];
 	}
+=======
+		l2t = cxgb4_l2t_get(dev->rdev.lldi.l2t, neigh, neigh->dev, 0);
+		mtu = dst_mtu(dst);
+		tx_chan = cxgb4_port_chan(neigh->dev);
+		smac_idx = (cxgb4_port_viid(neigh->dev) & 0x7F) << 1;
+		step = dev->rdev.lldi.ntxq / dev->rdev.lldi.nchan;
+		txq_idx = cxgb4_port_idx(neigh->dev) * step;
+		ctrlq_idx = cxgb4_port_idx(neigh->dev);
+		step = dev->rdev.lldi.nrxq / dev->rdev.lldi.nchan;
+		rss_qid = dev->rdev.lldi.rxq_ids[
+			  cxgb4_port_idx(neigh->dev) * step];
+	}
+	rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 	if (!l2t) {
 		printk(KERN_ERR MOD "%s - failed to allocate l2t entry!\n",
 		       __func__);
@@ -1847,6 +1875,10 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
 	struct c4iw_ep *ep;
 	struct rtable *rt;
 	struct net_device *pdev;
+<<<<<<< HEAD
+=======
+	struct neighbour *neigh;
+>>>>>>> android-omap-tuna-jb
 	int step;
 
 	if ((conn_param->ord > c4iw_max_read_depth) ||
@@ -1908,14 +1940,26 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
 	}
 	ep->dst = &rt->dst;
 
+<<<<<<< HEAD
 	/* get a l2t entry */
 	if (ep->dst->neighbour->dev->flags & IFF_LOOPBACK) {
+=======
+	rcu_read_lock();
+	neigh = dst_get_neighbour(ep->dst);
+
+	/* get a l2t entry */
+	if (neigh->dev->flags & IFF_LOOPBACK) {
+>>>>>>> android-omap-tuna-jb
 		PDBG("%s LOOPBACK\n", __func__);
 		pdev = ip_dev_find(&init_net,
 				   cm_id->remote_addr.sin_addr.s_addr);
 		ep->l2t = cxgb4_l2t_get(ep->com.dev->rdev.lldi.l2t,
+<<<<<<< HEAD
 					ep->dst->neighbour,
 					pdev, 0);
+=======
+					neigh, pdev, 0);
+>>>>>>> android-omap-tuna-jb
 		ep->mtu = pdev->mtu;
 		ep->tx_chan = cxgb4_port_chan(pdev);
 		ep->smac_idx = (cxgb4_port_viid(pdev) & 0x7F) << 1;
@@ -1930,6 +1974,7 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
 		dev_put(pdev);
 	} else {
 		ep->l2t = cxgb4_l2t_get(ep->com.dev->rdev.lldi.l2t,
+<<<<<<< HEAD
 					ep->dst->neighbour,
 					ep->dst->neighbour->dev, 0);
 		ep->mtu = dst_mtu(ep->dst);
@@ -1945,6 +1990,22 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
 		ep->rss_qid = ep->com.dev->rdev.lldi.rxq_ids[
 			      cxgb4_port_idx(ep->dst->neighbour->dev) * step];
 	}
+=======
+					neigh, neigh->dev, 0);
+		ep->mtu = dst_mtu(ep->dst);
+		ep->tx_chan = cxgb4_port_chan(neigh->dev);
+		ep->smac_idx = (cxgb4_port_viid(neigh->dev) & 0x7F) << 1;
+		step = ep->com.dev->rdev.lldi.ntxq /
+		       ep->com.dev->rdev.lldi.nchan;
+		ep->txq_idx = cxgb4_port_idx(neigh->dev) * step;
+		ep->ctrlq_idx = cxgb4_port_idx(neigh->dev);
+		step = ep->com.dev->rdev.lldi.nrxq /
+		       ep->com.dev->rdev.lldi.nchan;
+		ep->rss_qid = ep->com.dev->rdev.lldi.rxq_ids[
+			      cxgb4_port_idx(neigh->dev) * step];
+	}
+	rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 	if (!ep->l2t) {
 		printk(KERN_ERR MOD "%s - cannot alloc l2e.\n", __func__);
 		err = -ENOMEM;

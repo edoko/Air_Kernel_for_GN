@@ -74,7 +74,10 @@ return_from_irq:
 	b	label_smc
 
 label_smc:
+<<<<<<< HEAD
 	.arch_extension sec
+=======
+>>>>>>> android-omap-tuna-jb
 	INVALIDATE_BTB
 	dsb
 	dmb

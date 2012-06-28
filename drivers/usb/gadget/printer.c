@@ -1602,7 +1602,11 @@ cleanup(void)
 	if (status)
 		ERROR(dev, "usb_gadget_unregister_driver %x\n", status);
 
+<<<<<<< HEAD
 	unregister_chrdev_region(g_printer_devno, 2);
+=======
+	unregister_chrdev_region(g_printer_devno, 1);
+>>>>>>> android-omap-tuna-jb
 	class_destroy(usb_gadget_class);
 	mutex_unlock(&usb_printer_gadget.lock_printer_io);
 }

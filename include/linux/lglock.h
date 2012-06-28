@@ -22,6 +22,10 @@
 #include <linux/spinlock.h>
 #include <linux/lockdep.h>
 #include <linux/percpu.h>
+<<<<<<< HEAD
+=======
+#include <linux/cpu.h>
+>>>>>>> android-omap-tuna-jb
 
 /* can make br locks by using local lock for read side, global lock for write */
 #define br_lock_init(name)	name##_lock_init()
@@ -72,9 +76,37 @@
 
 #define DEFINE_LGLOCK(name)						\
 									\
+<<<<<<< HEAD
  DEFINE_PER_CPU(arch_spinlock_t, name##_lock);				\
  DEFINE_LGLOCK_LOCKDEP(name);						\
 									\
+=======
+ DEFINE_SPINLOCK(name##_cpu_lock);					\
+ cpumask_t name##_cpus __read_mostly;					\
+ DEFINE_PER_CPU(arch_spinlock_t, name##_lock);				\
+ DEFINE_LGLOCK_LOCKDEP(name);						\
+									\
+ static int								\
+ name##_lg_cpu_callback(struct notifier_block *nb,			\
+				unsigned long action, void *hcpu)	\
+ {									\
+	switch (action & ~CPU_TASKS_FROZEN) {				\
+	case CPU_UP_PREPARE:						\
+		spin_lock(&name##_cpu_lock);				\
+		cpu_set((unsigned long)hcpu, name##_cpus);		\
+		spin_unlock(&name##_cpu_lock);				\
+		break;							\
+	case CPU_UP_CANCELED: case CPU_DEAD:				\
+		spin_lock(&name##_cpu_lock);				\
+		cpu_clear((unsigned long)hcpu, name##_cpus);		\
+		spin_unlock(&name##_cpu_lock);				\
+	}								\
+	return NOTIFY_OK;						\
+ }									\
+ static struct notifier_block name##_lg_cpu_notifier = {		\
+	.notifier_call = name##_lg_cpu_callback,			\
+ };									\
+>>>>>>> android-omap-tuna-jb
  void name##_lock_init(void) {						\
 	int i;								\
 	LOCKDEP_INIT_MAP(&name##_lock_dep_map, #name, &name##_lock_key, 0); \
@@ -83,6 +115,14 @@
 		lock = &per_cpu(name##_lock, i);			\
 		*lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;	\
 	}								\
+<<<<<<< HEAD
+=======
+	register_hotcpu_notifier(&name##_lg_cpu_notifier);		\
+	get_online_cpus();						\
+	for_each_online_cpu(i)						\
+		cpu_set(i, name##_cpus);				\
+	put_online_cpus();						\
+>>>>>>> android-omap-tuna-jb
  }									\
  EXPORT_SYMBOL(name##_lock_init);					\
 									\
@@ -124,9 +164,15 @@
 									\
  void name##_global_lock_online(void) {					\
 	int i;								\
+<<<<<<< HEAD
 	preempt_disable();						\
 	rwlock_acquire(&name##_lock_dep_map, 0, 0, _RET_IP_);		\
 	for_each_online_cpu(i) {					\
+=======
+	spin_lock(&name##_cpu_lock);					\
+	rwlock_acquire(&name##_lock_dep_map, 0, 0, _RET_IP_);		\
+	for_each_cpu(i, &name##_cpus) {					\
+>>>>>>> android-omap-tuna-jb
 		arch_spinlock_t *lock;					\
 		lock = &per_cpu(name##_lock, i);			\
 		arch_spin_lock(lock);					\
@@ -137,12 +183,20 @@
  void name##_global_unlock_online(void) {				\
 	int i;								\
 	rwlock_release(&name##_lock_dep_map, 1, _RET_IP_);		\
+<<<<<<< HEAD
 	for_each_online_cpu(i) {					\
+=======
+	for_each_cpu(i, &name##_cpus) {					\
+>>>>>>> android-omap-tuna-jb
 		arch_spinlock_t *lock;					\
 		lock = &per_cpu(name##_lock, i);			\
 		arch_spin_unlock(lock);					\
 	}								\
+<<<<<<< HEAD
 	preempt_enable();						\
+=======
+	spin_unlock(&name##_cpu_lock);					\
+>>>>>>> android-omap-tuna-jb
  }									\
  EXPORT_SYMBOL(name##_global_unlock_online);				\
 									\

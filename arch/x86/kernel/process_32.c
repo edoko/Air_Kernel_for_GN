@@ -293,6 +293,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 				 *next = &next_p->thread;
 	int cpu = smp_processor_id();
 	struct tss_struct *tss = &per_cpu(init_tss, cpu);
+<<<<<<< HEAD
 	bool preload_fpu;
 
 	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
@@ -309,6 +310,13 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	/* we're going to use this soon, after a few expensive things */
 	if (preload_fpu)
 		prefetch(next->fpu.state);
+=======
+	fpu_switch_t fpu;
+
+	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
+
+	fpu = switch_fpu_prepare(prev_p, next_p);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Reload esp0.
@@ -348,11 +356,14 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
 		__switch_to_xtra(prev_p, next_p, tss);
 
+<<<<<<< HEAD
 	/* If we're going to preload the fpu context, make sure clts
 	   is run while we're batching the cpu state updates. */
 	if (preload_fpu)
 		clts();
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Leave lazy mode, flushing any hypercalls made here.
 	 * This must be done before restoring TLS segments so
@@ -362,15 +373,23 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
 	 */
 	arch_end_context_switch(next_p);
 
+<<<<<<< HEAD
 	if (preload_fpu)
 		__math_state_restore();
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Restore %gs if needed (which is common)
 	 */
 	if (prev->gs | next->gs)
 		lazy_load_gs(next->gs);
 
+<<<<<<< HEAD
+=======
+	switch_fpu_finish(next_p, fpu);
+
+>>>>>>> android-omap-tuna-jb
 	percpu_write(current_task, next_p);
 
 	return prev_p;

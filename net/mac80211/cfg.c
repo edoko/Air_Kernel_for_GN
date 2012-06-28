@@ -1798,7 +1798,11 @@ ieee80211_offchan_tx_done(struct ieee80211_work *wk, struct sk_buff *skb)
 	 * so in that case userspace will have to deal with it.
 	 */
 
+<<<<<<< HEAD
 	if (wk->offchan_tx.wait && wk->offchan_tx.frame)
+=======
+	if (wk->offchan_tx.wait && !wk->offchan_tx.status)
+>>>>>>> android-omap-tuna-jb
 		cfg80211_mgmt_tx_status(wk->sdata->dev,
 					(unsigned long) wk->offchan_tx.frame,
 					wk->ie, wk->ie_len, false, GFP_KERNEL);

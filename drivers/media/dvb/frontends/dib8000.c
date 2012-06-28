@@ -10,6 +10,11 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/mutex.h>
+
+>>>>>>> android-omap-tuna-jb
 #include "dvb_math.h"
 
 #include "dvb_frontend.h"
@@ -37,6 +42,10 @@ struct i2c_device {
 	u8 addr;
 	u8 *i2c_write_buffer;
 	u8 *i2c_read_buffer;
+<<<<<<< HEAD
+=======
+	struct mutex *i2c_buffer_lock;
+>>>>>>> android-omap-tuna-jb
 };
 
 struct dib8000_state {
@@ -77,6 +86,10 @@ struct dib8000_state {
 	struct i2c_msg msg[2];
 	u8 i2c_write_buffer[4];
 	u8 i2c_read_buffer[2];
+<<<<<<< HEAD
+=======
+	struct mutex i2c_buffer_lock;
+>>>>>>> android-omap-tuna-jb
 };
 
 enum dib8000_power_mode {
@@ -86,6 +99,7 @@ enum dib8000_power_mode {
 
 static u16 dib8000_i2c_read16(struct i2c_device *i2c, u16 reg)
 {
+<<<<<<< HEAD
 	struct i2c_msg msg[2] = {
 		{.addr = i2c->addr >> 1, .flags = 0,
 			.buf = i2c->i2c_write_buffer, .len = 2},
@@ -95,15 +109,48 @@ static u16 dib8000_i2c_read16(struct i2c_device *i2c, u16 reg)
 
 	msg[0].buf[0] = reg >> 8;
 	msg[0].buf[1] = reg & 0xff;
+=======
+	u16 ret;
+	struct i2c_msg msg[2] = {
+		{.addr = i2c->addr >> 1, .flags = 0, .len = 2},
+		{.addr = i2c->addr >> 1, .flags = I2C_M_RD, .len = 2},
+	};
+
+	if (mutex_lock_interruptible(i2c->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return 0;
+	}
+
+	msg[0].buf    = i2c->i2c_write_buffer;
+	msg[0].buf[0] = reg >> 8;
+	msg[0].buf[1] = reg & 0xff;
+	msg[1].buf    = i2c->i2c_read_buffer;
+>>>>>>> android-omap-tuna-jb
 
 	if (i2c_transfer(i2c->adap, msg, 2) != 2)
 		dprintk("i2c read error on %d", reg);
 
+<<<<<<< HEAD
 	return (msg[1].buf[0] << 8) | msg[1].buf[1];
+=======
+	ret = (msg[1].buf[0] << 8) | msg[1].buf[1];
+	mutex_unlock(i2c->i2c_buffer_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static u16 dib8000_read_word(struct dib8000_state *state, u16 reg)
 {
+<<<<<<< HEAD
+=======
+	u16 ret;
+
+	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return 0;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	state->i2c_write_buffer[0] = reg >> 8;
 	state->i2c_write_buffer[1] = reg & 0xff;
 
@@ -120,7 +167,14 @@ static u16 dib8000_read_word(struct dib8000_state *state, u16 reg)
 	if (i2c_transfer(state->i2c.adap, state->msg, 2) != 2)
 		dprintk("i2c read error on %d", reg);
 
+<<<<<<< HEAD
 	return (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
+=======
+	ret = (state->i2c_read_buffer[0] << 8) | state->i2c_read_buffer[1];
+	mutex_unlock(&state->i2c_buffer_lock);
+
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static u32 dib8000_read32(struct dib8000_state *state, u16 reg)
@@ -135,22 +189,48 @@ static u32 dib8000_read32(struct dib8000_state *state, u16 reg)
 
 static int dib8000_i2c_write16(struct i2c_device *i2c, u16 reg, u16 val)
 {
+<<<<<<< HEAD
 	struct i2c_msg msg = {.addr = i2c->addr >> 1, .flags = 0,
 		.buf = i2c->i2c_write_buffer, .len = 4};
 	int ret = 0;
 
+=======
+	struct i2c_msg msg = {.addr = i2c->addr >> 1, .flags = 0, .len = 4};
+	int ret = 0;
+
+	if (mutex_lock_interruptible(i2c->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+
+	msg.buf    = i2c->i2c_write_buffer;
+>>>>>>> android-omap-tuna-jb
 	msg.buf[0] = (reg >> 8) & 0xff;
 	msg.buf[1] = reg & 0xff;
 	msg.buf[2] = (val >> 8) & 0xff;
 	msg.buf[3] = val & 0xff;
 
 	ret = i2c_transfer(i2c->adap, &msg, 1) != 1 ? -EREMOTEIO : 0;
+<<<<<<< HEAD
+=======
+	mutex_unlock(i2c->i2c_buffer_lock);
+>>>>>>> android-omap-tuna-jb
 
 	return ret;
 }
 
 static int dib8000_write_word(struct dib8000_state *state, u16 reg, u16 val)
 {
+<<<<<<< HEAD
+=======
+	int ret;
+
+	if (mutex_lock_interruptible(&state->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	state->i2c_write_buffer[0] = (reg >> 8) & 0xff;
 	state->i2c_write_buffer[1] = reg & 0xff;
 	state->i2c_write_buffer[2] = (val >> 8) & 0xff;
@@ -162,7 +242,15 @@ static int dib8000_write_word(struct dib8000_state *state, u16 reg, u16 val)
 	state->msg[0].buf = state->i2c_write_buffer;
 	state->msg[0].len = 4;
 
+<<<<<<< HEAD
 	return i2c_transfer(state->i2c.adap, state->msg, 1) != 1 ? -EREMOTEIO : 0;
+=======
+	ret = (i2c_transfer(state->i2c.adap, state->msg, 1) != 1 ?
+			-EREMOTEIO : 0);
+	mutex_unlock(&state->i2c_buffer_lock);
+
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static const s16 coeff_2k_sb_1seg_dqpsk[8] = {
@@ -2434,8 +2522,20 @@ int dib8000_i2c_enumeration(struct i2c_adapter *host, int no_of_demods, u8 defau
 	if (!client.i2c_read_buffer) {
 		dprintk("%s: not enough memory", __func__);
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		goto error_memory;
 	}
+=======
+		goto error_memory_read;
+	}
+	client.i2c_buffer_lock = kzalloc(sizeof(struct mutex), GFP_KERNEL);
+	if (!client.i2c_buffer_lock) {
+		dprintk("%s: not enough memory", __func__);
+		ret = -ENOMEM;
+		goto error_memory_lock;
+	}
+	mutex_init(client.i2c_buffer_lock);
+>>>>>>> android-omap-tuna-jb
 
 	for (k = no_of_demods - 1; k >= 0; k--) {
 		/* designated i2c address */
@@ -2476,8 +2576,15 @@ int dib8000_i2c_enumeration(struct i2c_adapter *host, int no_of_demods, u8 defau
 	}
 
 error:
+<<<<<<< HEAD
 	kfree(client.i2c_read_buffer);
 error_memory:
+=======
+	kfree(client.i2c_buffer_lock);
+error_memory_lock:
+	kfree(client.i2c_read_buffer);
+error_memory_read:
+>>>>>>> android-omap-tuna-jb
 	kfree(client.i2c_write_buffer);
 
 	return ret;
@@ -2581,6 +2688,11 @@ struct dvb_frontend *dib8000_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, s
 	state->i2c.addr = i2c_addr;
 	state->i2c.i2c_write_buffer = state->i2c_write_buffer;
 	state->i2c.i2c_read_buffer = state->i2c_read_buffer;
+<<<<<<< HEAD
+=======
+	mutex_init(&state->i2c_buffer_lock);
+	state->i2c.i2c_buffer_lock = &state->i2c_buffer_lock;
+>>>>>>> android-omap-tuna-jb
 	state->gpio_val = cfg->gpio_val;
 	state->gpio_dir = cfg->gpio_dir;
 

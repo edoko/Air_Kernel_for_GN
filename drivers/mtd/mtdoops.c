@@ -253,6 +253,12 @@ static void find_next_position(struct mtdoops_context *cxt)
 	size_t retlen;
 
 	for (page = 0; page < cxt->oops_pages; page++) {
+<<<<<<< HEAD
+=======
+		if (mtd->block_isbad &&
+		    mtd->block_isbad(mtd, page * record_size))
+			continue;
+>>>>>>> android-omap-tuna-jb
 		/* Assume the page is used */
 		mark_page_used(cxt, page);
 		ret = mtd->read(mtd, page * record_size, MTDOOPS_HEADER_SIZE,
@@ -369,7 +375,11 @@ static void mtdoops_notify_add(struct mtd_info *mtd)
 
 	/* oops_page_used is a bit field */
 	cxt->oops_page_used = vmalloc(DIV_ROUND_UP(mtdoops_pages,
+<<<<<<< HEAD
 			BITS_PER_LONG));
+=======
+			BITS_PER_LONG) * sizeof(unsigned long));
+>>>>>>> android-omap-tuna-jb
 	if (!cxt->oops_page_used) {
 		printk(KERN_ERR "mtdoops: could not allocate page array\n");
 		return;

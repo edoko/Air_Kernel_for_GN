@@ -3568,6 +3568,7 @@ PVRSRVMapMemInfoMemBW(IMG_UINT32 ui32BridgeID,
 
 
 
+<<<<<<< HEAD
 static IMG_INT
 MMU_GetPDDevPAddrBW(IMG_UINT32 ui32BridgeID,
 					PVRSRV_BRIDGE_IN_GETMMU_PD_DEVPADDR *psGetMmuPDDevPAddrIN,
@@ -3602,6 +3603,8 @@ MMU_GetPDDevPAddrBW(IMG_UINT32 ui32BridgeID,
 
 
 
+=======
+>>>>>>> android-omap-tuna-jb
 IMG_INT
 DummyBW(IMG_UINT32 ui32BridgeID,
 		IMG_VOID *psBridgeIn,
@@ -4062,6 +4065,10 @@ static PVRSRV_ERROR ModifyCompleteSyncOpsCallBack(IMG_PVOID		pvParam,
 
 OpFlushedComplete:
 		DoModifyCompleteSyncOps(psModSyncOpInfo);
+<<<<<<< HEAD
+=======
+		PVRSRVKernelSyncInfoDecRef(psModSyncOpInfo->psKernelSyncInfo, IMG_NULL);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	OSFreeMem(PVRSRV_OS_PAGEABLE_HEAP, 	sizeof(MODIFY_SYNC_OP_INFO), (IMG_VOID *)psModSyncOpInfo, 0);
@@ -4146,6 +4153,11 @@ PVRSRVDestroySyncInfoModObjBW(IMG_UINT32                                        
 		return 0;
 	}
 
+<<<<<<< HEAD
+=======
+	PVRSRVKernelSyncInfoDecRef(psModSyncOpInfo->psKernelSyncInfo, IMG_NULL);
+
+>>>>>>> android-omap-tuna-jb
 	psDestroySyncInfoModObjOUT->eError = PVRSRVReleaseHandle(psPerProc->psHandleBase,
 																	 psDestroySyncInfoModObjIN->hKernelSyncInfoModObj,
 																	 PVRSRV_HANDLE_TYPE_SYNC_INFO_MOD_OBJ);
@@ -4207,6 +4219,18 @@ PVRSRVModifyPendingSyncOpsBW(IMG_UINT32									ui32BridgeID,
 	}
 
 	
+<<<<<<< HEAD
+=======
+	if (psKernelSyncInfo == IMG_NULL)
+	{
+		psModifySyncOpsOUT->eError = PVRSRV_ERROR_INVALID_PARAMS;
+		PVR_DPF((PVR_DBG_VERBOSE, "PVRSRVModifyPendingSyncOpsBW: SyncInfo bad handle"));
+		return 0;
+	}
+
+	PVRSRVKernelSyncInfoIncRef(psKernelSyncInfo, IMG_NULL);
+	
+>>>>>>> android-omap-tuna-jb
 	psModSyncOpInfo->psKernelSyncInfo = psKernelSyncInfo;
 	psModSyncOpInfo->ui32ModifyFlags = psModifySyncOpsIN->ui32ModifyFlags;
 	psModSyncOpInfo->ui32ReadOpsPendingSnapShot = psKernelSyncInfo->psSyncData->ui32ReadOpsPending;
@@ -4278,6 +4302,10 @@ PVRSRVModifyCompleteSyncOpsBW(IMG_UINT32							ui32BridgeID,
 		return 0;
 	}
 
+<<<<<<< HEAD
+=======
+	PVRSRVKernelSyncInfoDecRef(psModSyncOpInfo->psKernelSyncInfo, IMG_NULL);
+>>>>>>> android-omap-tuna-jb
 	psModSyncOpInfo->psKernelSyncInfo = IMG_NULL;
 
 	
@@ -4472,18 +4500,25 @@ FreeSyncInfoCallback(IMG_PVOID	pvParam,
                      IMG_BOOL	bDummy)
 {
 	PVRSRV_KERNEL_SYNC_INFO *psSyncInfo;
+<<<<<<< HEAD
 	PVRSRV_ERROR eError;
+=======
+>>>>>>> android-omap-tuna-jb
 
 	PVR_UNREFERENCED_PARAMETER(ui32Param);
     PVR_UNREFERENCED_PARAMETER(bDummy);
 
 	psSyncInfo = (PVRSRV_KERNEL_SYNC_INFO *)pvParam;
 
+<<<<<<< HEAD
 	eError = PVRSRVFreeSyncInfoKM(psSyncInfo);
 	if (eError != PVRSRV_OK)
 	{
 		return eError;
 	}
+=======
+	PVRSRVKernelSyncInfoDecRef(psSyncInfo, IMG_NULL);
+>>>>>>> android-omap-tuna-jb
 
 	return PVRSRV_OK;
 }
@@ -4546,7 +4581,11 @@ PVRSRVAllocSyncInfoBW(IMG_UINT32                                         ui32Bri
 
 	
  allocsyncinfo_errorexit_freesyncinfo:
+<<<<<<< HEAD
 	PVRSRVFreeSyncInfoKM(psSyncInfo);
+=======
+	PVRSRVKernelSyncInfoDecRef(psSyncInfo, IMG_NULL);
+>>>>>>> android-omap-tuna-jb
 
  allocsyncinfo_errorexit:
 
@@ -4729,9 +4768,12 @@ CommonBridgeInit(IMG_VOID)
 	SetDispatchTableEntry(PVRSRV_BRIDGE_FREE_SHARED_SYS_MEM, PVRSRVFreeSharedSysMemoryBW);
 	SetDispatchTableEntry(PVRSRV_BRIDGE_MAP_MEMINFO_MEM, PVRSRVMapMemInfoMemBW);
 
+<<<<<<< HEAD
     
 	SetDispatchTableEntry(PVRSRV_BRIDGE_GETMMU_PD_DEVPADDR, MMU_GetPDDevPAddrBW);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	
 	SetDispatchTableEntry(PVRSRV_BRIDGE_INITSRV_CONNECT,	&PVRSRVInitSrvConnectBW);
 	SetDispatchTableEntry(PVRSRV_BRIDGE_INITSRV_DISCONNECT, &PVRSRVInitSrvDisconnectBW);

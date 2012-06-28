@@ -47,6 +47,10 @@
 #include <linux/blkdev.h>
 #include <linux/completion.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
+=======
+#include <linux/workqueue.h>
+>>>>>>> android-omap-tuna-jb
 #include <scsi/scsi_host.h>
 
 struct us_data;
@@ -72,7 +76,11 @@ struct us_unusual_dev {
 #define US_FLIDX_DISCONNECTING	3	/* disconnect in progress   */
 #define US_FLIDX_RESETTING	4	/* device reset in progress */
 #define US_FLIDX_TIMED_OUT	5	/* SCSI midlayer timed out  */
+<<<<<<< HEAD
 #define US_FLIDX_DONT_SCAN	6	/* don't scan (disconnect)  */
+=======
+#define US_FLIDX_SCAN_PENDING	6	/* scanning not yet done    */
+>>>>>>> android-omap-tuna-jb
 #define US_FLIDX_REDO_READ10	7	/* redo READ(10) command    */
 #define US_FLIDX_READ10_WORKED	8	/* previous READ(10) succeeded */
 
@@ -147,8 +155,13 @@ struct us_data {
 	/* mutual exclusion and synchronization structures */
 	struct completion	cmnd_ready;	 /* to sleep thread on	    */
 	struct completion	notify;		 /* thread begin/end	    */
+<<<<<<< HEAD
 	wait_queue_head_t	delay_wait;	 /* wait during scan, reset */
 	struct completion	scanning_done;	 /* wait for scan thread    */
+=======
+	wait_queue_head_t	delay_wait;	 /* wait during reset	    */
+	struct delayed_work	scan_dwork;	 /* for async scanning      */
+>>>>>>> android-omap-tuna-jb
 
 	/* subdriver information */
 	void			*extra;		 /* Any extra data          */

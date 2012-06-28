@@ -1,12 +1,44 @@
+<<<<<<< HEAD
 /*************************************************************************/ /*!
 @Title          Services reference count debugging
 @Copyright      Copyright (c) Imagination Technologies Ltd. All Rights Reserved
 @License        Strictly Confidential.
+=======
+/**********************************************************************
+ *
+ * Copyright (C) Imagination Technologies Ltd. All rights reserved.
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU General Public License,
+ * version 2, as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope it will be useful but, except 
+ * as otherwise stated in writing, without any warranty; without even the 
+ * implied warranty of merchantability or fitness for a particular purpose. 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+ * 
+ * The full GNU General Public License is included in this distribution in
+ * the file called "COPYING".
+ *
+ * Contact Information:
+ * Imagination Technologies Ltd. <gpl-support@imgtec.com>
+ * Home Park Estate, Kings Langley, Herts, WD4 8LZ, UK 
+ *
+>>>>>>> android-omap-tuna-jb
 */ /**************************************************************************/
 
 #ifndef __REFCOUNT_H__
 #define __REFCOUNT_H__
 
+<<<<<<< HEAD
+=======
+#include "pvr_bridge_km.h"
+
+>>>>>>> android-omap-tuna-jb
 #if defined(PVRSRV_REFCOUNT_DEBUG)
 
 void PVRSRVDumpRefCountCCB(void);
@@ -46,6 +78,13 @@ void PVRSRVBMBufIncExport2(const IMG_CHAR *pszFile,
 						   IMG_INT iLine, BM_BUF *pBuf);
 void PVRSRVBMBufDecExport2(const IMG_CHAR *pszFile,
 						   IMG_INT iLine, BM_BUF *pBuf);
+<<<<<<< HEAD
+=======
+void PVRSRVBMXProcIncRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
+						  IMG_UINT32 ui32Index);
+void PVRSRVBMXProcDecRef2(const IMG_CHAR *pszFile, IMG_INT iLine,
+						  IMG_UINT32 ui32Index);
+>>>>>>> android-omap-tuna-jb
 
 #if defined(__linux__)
 
@@ -80,14 +119,22 @@ static INLINE void PVRSRVKernelSyncInfoIncRef(PVRSRV_KERNEL_SYNC_INFO *psKernelS
 								PVRSRV_KERNEL_MEM_INFO *psKernelMemInfo)
 {
 	PVR_UNREFERENCED_PARAMETER(psKernelMemInfo);
+<<<<<<< HEAD
 	psKernelSyncInfo->ui32RefCount++;
+=======
+	PVRSRVAcquireSyncInfoKM(psKernelSyncInfo);
+>>>>>>> android-omap-tuna-jb
 }
 
 static INLINE void PVRSRVKernelSyncInfoDecRef(PVRSRV_KERNEL_SYNC_INFO *psKernelSyncInfo,
 								PVRSRV_KERNEL_MEM_INFO *psKernelMemInfo)
 {
 	PVR_UNREFERENCED_PARAMETER(psKernelMemInfo);
+<<<<<<< HEAD
 	psKernelSyncInfo->ui32RefCount--;
+=======
+	PVRSRVReleaseSyncInfoKM(psKernelSyncInfo);
+>>>>>>> android-omap-tuna-jb
 }
 
 static INLINE void PVRSRVKernelMemInfoIncRef(PVRSRV_KERNEL_MEM_INFO *psKernelMemInfo)
@@ -100,6 +147,7 @@ static INLINE void PVRSRVKernelMemInfoDecRef(PVRSRV_KERNEL_MEM_INFO *psKernelMem
 	psKernelMemInfo->ui32RefCount--;
 }
 
+<<<<<<< HEAD
 #if defined(__linux__)
 
 /* mmap refcounting is Linux specific */
@@ -143,6 +191,61 @@ static INLINE void PVRSRVBMBufIncExport(BM_BUF *pBuf)
 static INLINE void PVRSRVBMBufDecExport(BM_BUF *pBuf)
 {
 	pBuf->ui32ExportCount--;
+=======
+static INLINE void PVRSRVBMBufIncRef(BM_BUF *pBuf)
+{
+	pBuf->ui32RefCount++;
+}
+
+static INLINE void PVRSRVBMBufDecRef(BM_BUF *pBuf)
+{
+	pBuf->ui32RefCount--;
+}
+
+static INLINE void PVRSRVBMBufIncExport(BM_BUF *pBuf)
+{
+	pBuf->ui32ExportCount++;
+}
+
+static INLINE void PVRSRVBMBufDecExport(BM_BUF *pBuf)
+{
+	pBuf->ui32ExportCount--;
+}
+
+static INLINE void PVRSRVBMXProcIncRef(IMG_UINT32 ui32Index)
+{
+	gXProcWorkaroundShareData[ui32Index].ui32RefCount++;
+}
+
+static INLINE void PVRSRVBMXProcDecRef(IMG_UINT32 ui32Index)
+{
+	gXProcWorkaroundShareData[ui32Index].ui32RefCount--;
+}
+
+#if defined(__linux__)
+
+/* mmap refcounting is Linux specific */
+#include "mmap.h"
+
+static INLINE void PVRSRVOffsetStructIncRef(PKV_OFFSET_STRUCT psOffsetStruct)
+{
+	psOffsetStruct->ui32RefCount++;
+}
+
+static INLINE void PVRSRVOffsetStructDecRef(PKV_OFFSET_STRUCT psOffsetStruct)
+{
+	psOffsetStruct->ui32RefCount--;
+}
+
+static INLINE void PVRSRVOffsetStructIncMapped(PKV_OFFSET_STRUCT psOffsetStruct)
+{
+	psOffsetStruct->ui32Mapped++;
+}
+
+static INLINE void PVRSRVOffsetStructDecMapped(PKV_OFFSET_STRUCT psOffsetStruct)
+{
+	psOffsetStruct->ui32Mapped--;
+>>>>>>> android-omap-tuna-jb
 }
 
 #endif /* defined(__linux__) */

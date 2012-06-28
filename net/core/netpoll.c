@@ -193,7 +193,11 @@ void netpoll_poll_dev(struct net_device *dev)
 
 	poll_napi(dev);
 
+<<<<<<< HEAD
 	if (dev->priv_flags & IFF_SLAVE) {
+=======
+	if (dev->flags & IFF_SLAVE) {
+>>>>>>> android-omap-tuna-jb
 		if (dev->npinfo) {
 			struct net_device *bond_dev = dev->master;
 			struct sk_buff *skb;

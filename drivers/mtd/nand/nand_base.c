@@ -2097,14 +2097,32 @@ static int nand_write_page(struct mtd_info *mtd, struct nand_chip *chip,
 
 /**
  * nand_fill_oob - [Internal] Transfer client buffer to oob
+<<<<<<< HEAD
  * @chip:	nand chip structure
+=======
+ * @mtd:	MTD device structure
+>>>>>>> android-omap-tuna-jb
  * @oob:	oob data buffer
  * @len:	oob data write length
  * @ops:	oob ops structure
  */
+<<<<<<< HEAD
 static uint8_t *nand_fill_oob(struct nand_chip *chip, uint8_t *oob, size_t len,
 						struct mtd_oob_ops *ops)
 {
+=======
+static uint8_t *nand_fill_oob(struct mtd_info *mtd, uint8_t *oob, size_t len,
+			      struct mtd_oob_ops *ops)
+{
+	struct nand_chip *chip = mtd->priv;
+
+	/*
+	 * Initialise to all 0xFF, to avoid the possibility of left over OOB
+	 * data from a previous OOB read.
+	 */
+	memset(chip->oob_poi, 0xff, mtd->oobsize);
+
+>>>>>>> android-omap-tuna-jb
 	switch (ops->mode) {
 
 	case MTD_OOB_PLACE:
@@ -2201,10 +2219,13 @@ static int nand_do_write_ops(struct mtd_info *mtd, loff_t to,
 	    (chip->pagebuf << chip->page_shift) < (to + ops->len))
 		chip->pagebuf = -1;
 
+<<<<<<< HEAD
 	/* If we're not given explicit OOB data, let it be 0xFF */
 	if (likely(!oob))
 		memset(chip->oob_poi, 0xff, mtd->oobsize);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* Don't allow multipage oob writes with offset */
 	if (oob && ops->ooboffs && (ops->ooboffs + ops->ooblen > oobmaxlen))
 		return -EINVAL;
@@ -2226,8 +2247,16 @@ static int nand_do_write_ops(struct mtd_info *mtd, loff_t to,
 
 		if (unlikely(oob)) {
 			size_t len = min(oobwritelen, oobmaxlen);
+<<<<<<< HEAD
 			oob = nand_fill_oob(chip, oob, len, ops);
 			oobwritelen -= len;
+=======
+			oob = nand_fill_oob(mtd, oob, len, ops);
+			oobwritelen -= len;
+		} else {
+			/* We still need to erase leftover OOB data */
+			memset(chip->oob_poi, 0xff, mtd->oobsize);
+>>>>>>> android-omap-tuna-jb
 		}
 
 		ret = chip->write_page(mtd, chip, wbuf, page, cached,
@@ -2401,10 +2430,15 @@ static int nand_do_write_oob(struct mtd_info *mtd, loff_t to,
 	if (page == chip->pagebuf)
 		chip->pagebuf = -1;
 
+<<<<<<< HEAD
 	memset(chip->oob_poi, 0xff, mtd->oobsize);
 	nand_fill_oob(chip, ops->oobbuf, ops->ooblen, ops);
 	status = chip->ecc.write_oob(mtd, chip, page & chip->pagemask);
 	memset(chip->oob_poi, 0xff, mtd->oobsize);
+=======
+	nand_fill_oob(mtd, ops->oobbuf, ops->ooblen, ops);
+	status = chip->ecc.write_oob(mtd, chip, page & chip->pagemask);
+>>>>>>> android-omap-tuna-jb
 
 	if (status)
 		return status;

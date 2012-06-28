@@ -14,6 +14,10 @@
 #include <linux/list.h>
 #include <linux/slab.h>
 #include <linux/types.h>
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+>>>>>>> android-omap-tuna-jb
 
 #include <asm/compat.h>
 #include <asm/ccwdev.h>

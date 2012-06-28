@@ -1354,7 +1354,11 @@ static ssize_t binary_sysctl(const int *name, int nlen,
 
 	fput(file);
 out_putname:
+<<<<<<< HEAD
 	putname(pathname);
+=======
+	__putname(pathname);
+>>>>>>> android-omap-tuna-jb
 out:
 	return result;
 }

@@ -14,6 +14,7 @@
 #include <linux/module.h>
 #include <linux/sigma.h>
 
+<<<<<<< HEAD
 /* Return: 0==OK, <0==error, =1 ==no more actions */
 static int
 process_sigma_action(struct i2c_client *client, struct sigma_firmware *ssfw)
@@ -21,6 +22,36 @@ process_sigma_action(struct i2c_client *client, struct sigma_firmware *ssfw)
 	struct sigma_action *sa = (void *)(ssfw->fw->data + ssfw->pos);
 	size_t len = sigma_action_len(sa);
 	int ret = 0;
+=======
+static size_t sigma_action_size(struct sigma_action *sa)
+{
+	size_t payload = 0;
+
+	switch (sa->instr) {
+	case SIGMA_ACTION_WRITEXBYTES:
+	case SIGMA_ACTION_WRITESINGLE:
+	case SIGMA_ACTION_WRITESAFELOAD:
+		payload = sigma_action_len(sa);
+		break;
+	default:
+		break;
+	}
+
+	payload = ALIGN(payload, 2);
+
+	return payload + sizeof(struct sigma_action);
+}
+
+/*
+ * Returns a negative error value in case of an error, 0 if processing of
+ * the firmware should be stopped after this action, 1 otherwise.
+ */
+static int
+process_sigma_action(struct i2c_client *client, struct sigma_action *sa)
+{
+	size_t len = sigma_action_len(sa);
+	int ret;
+>>>>>>> android-omap-tuna-jb
 
 	pr_debug("%s: instr:%i addr:%#x len:%zu\n", __func__,
 		sa->instr, sa->addr, len);
@@ -29,12 +60,16 @@ process_sigma_action(struct i2c_client *client, struct sigma_firmware *ssfw)
 	case SIGMA_ACTION_WRITEXBYTES:
 	case SIGMA_ACTION_WRITESINGLE:
 	case SIGMA_ACTION_WRITESAFELOAD:
+<<<<<<< HEAD
 		if (ssfw->fw->size < ssfw->pos + len)
 			return -EINVAL;
+=======
+>>>>>>> android-omap-tuna-jb
 		ret = i2c_master_send(client, (void *)&sa->addr, len);
 		if (ret < 0)
 			return -EINVAL;
 		break;
+<<<<<<< HEAD
 
 	case SIGMA_ACTION_DELAY:
 		ret = 0;
@@ -45,18 +80,31 @@ process_sigma_action(struct i2c_client *client, struct sigma_firmware *ssfw)
 	case SIGMA_ACTION_END:
 		return 1;
 
+=======
+	case SIGMA_ACTION_DELAY:
+		udelay(len);
+		len = 0;
+		break;
+	case SIGMA_ACTION_END:
+		return 0;
+>>>>>>> android-omap-tuna-jb
 	default:
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/* when arrive here ret=0 or sent data */
 	ssfw->pos += sigma_action_size(sa, len);
 	return ssfw->pos == ssfw->fw->size;
+=======
+	return 1;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int
 process_sigma_actions(struct i2c_client *client, struct sigma_firmware *ssfw)
 {
+<<<<<<< HEAD
 	pr_debug("%s: processing %p\n", __func__, ssfw);
 
 	while (1) {
@@ -67,6 +115,32 @@ process_sigma_actions(struct i2c_client *client, struct sigma_firmware *ssfw)
 		else if (ret)
 			return ret;
 	}
+=======
+	struct sigma_action *sa;
+	size_t size;
+	int ret;
+
+	while (ssfw->pos + sizeof(*sa) <= ssfw->fw->size) {
+		sa = (struct sigma_action *)(ssfw->fw->data + ssfw->pos);
+
+		size = sigma_action_size(sa);
+		ssfw->pos += size;
+		if (ssfw->pos > ssfw->fw->size || size == 0)
+			break;
+
+		ret = process_sigma_action(client, sa);
+
+		pr_debug("%s: action returned %i\n", __func__, ret);
+
+		if (ret <= 0)
+			return ret;
+	}
+
+	if (ssfw->pos != ssfw->fw->size)
+		return -EINVAL;
+
+	return 0;
+>>>>>>> android-omap-tuna-jb
 }
 
 int process_sigma_firmware(struct i2c_client *client, const char *name)
@@ -89,16 +163,34 @@ int process_sigma_firmware(struct i2c_client *client, const char *name)
 
 	/* then verify the header */
 	ret = -EINVAL;
+<<<<<<< HEAD
 	if (fw->size < sizeof(*ssfw_head))
+=======
+
+	/*
+	 * Reject too small or unreasonable large files. The upper limit has been
+	 * chosen a bit arbitrarily, but it should be enough for all practical
+	 * purposes and having the limit makes it easier to avoid integer
+	 * overflows later in the loading process.
+	 */
+	if (fw->size < sizeof(*ssfw_head) || fw->size >= 0x4000000)
+>>>>>>> android-omap-tuna-jb
 		goto done;
 
 	ssfw_head = (void *)fw->data;
 	if (memcmp(ssfw_head->magic, SIGMA_MAGIC, ARRAY_SIZE(ssfw_head->magic)))
 		goto done;
 
+<<<<<<< HEAD
 	crc = crc32(0, fw->data, fw->size);
 	pr_debug("%s: crc=%x\n", __func__, crc);
 	if (crc != ssfw_head->crc)
+=======
+	crc = crc32(0, fw->data + sizeof(*ssfw_head),
+			fw->size - sizeof(*ssfw_head));
+	pr_debug("%s: crc=%x\n", __func__, crc);
+	if (crc != le32_to_cpu(ssfw_head->crc))
+>>>>>>> android-omap-tuna-jb
 		goto done;
 
 	ssfw.pos = sizeof(*ssfw_head);

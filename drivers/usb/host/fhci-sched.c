@@ -1,7 +1,11 @@
 /*
  * Freescale QUICC Engine USB Host Controller Driver
  *
+<<<<<<< HEAD
  * Copyright (c) Freescale Semicondutor, Inc. 2006.
+=======
+ * Copyright (c) Freescale Semicondutor, Inc. 2006, 2011.
+>>>>>>> android-omap-tuna-jb
  *               Shlomi Gridish <gridish@freescale.com>
  *               Jerry Huang <Chang-Ming.Huang@freescale.com>
  * Copyright (c) Logic Product Development, Inc. 2007
@@ -810,9 +814,17 @@ void fhci_queue_urb(struct fhci_hcd *fhci, struct urb *urb)
 		ed->dev_addr = usb_pipedevice(urb->pipe);
 		ed->max_pkt_size = usb_maxpacket(urb->dev, urb->pipe,
 			usb_pipeout(urb->pipe));
+<<<<<<< HEAD
 		td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++, FHCI_TA_SETUP,
 			USB_TD_TOGGLE_DATA0, urb->setup_packet, 8, 0, 0, true);
 
+=======
+		/* setup stage */
+		td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++, FHCI_TA_SETUP,
+			USB_TD_TOGGLE_DATA0, urb->setup_packet, 8, 0, 0, true);
+
+		/* data stage */
+>>>>>>> android-omap-tuna-jb
 		if (data_len > 0) {
 			td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++,
 				usb_pipeout(urb->pipe) ? FHCI_TA_OUT :
@@ -820,9 +832,24 @@ void fhci_queue_urb(struct fhci_hcd *fhci, struct urb *urb)
 				USB_TD_TOGGLE_DATA1, data, data_len, 0, 0,
 				true);
 		}
+<<<<<<< HEAD
 		td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++,
 			usb_pipeout(urb->pipe) ? FHCI_TA_IN : FHCI_TA_OUT,
 			USB_TD_TOGGLE_DATA1, data, 0, 0, 0, true);
+=======
+
+		/* status stage */
+		if (data_len > 0)
+			td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++,
+				(usb_pipeout(urb->pipe) ? FHCI_TA_IN :
+							  FHCI_TA_OUT),
+				USB_TD_TOGGLE_DATA1, data, 0, 0, 0, true);
+		else
+			 td = fhci_td_fill(fhci, urb, urb_priv, ed, cnt++,
+				FHCI_TA_IN,
+				USB_TD_TOGGLE_DATA1, data, 0, 0, 0, true);
+
+>>>>>>> android-omap-tuna-jb
 		urb_state = US_CTRL_SETUP;
 		break;
 	case FHCI_TF_ISO:

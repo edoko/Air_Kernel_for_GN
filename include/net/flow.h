@@ -7,6 +7,10 @@
 #ifndef _NET_FLOW_H
 #define _NET_FLOW_H
 
+<<<<<<< HEAD
+=======
+#include <linux/socket.h>
+>>>>>>> android-omap-tuna-jb
 #include <linux/in6.h>
 #include <asm/atomic.h>
 
@@ -68,7 +72,11 @@ struct flowi4 {
 #define fl4_ipsec_spi		uli.spi
 #define fl4_mh_type		uli.mht.type
 #define fl4_gre_key		uli.gre_key
+<<<<<<< HEAD
 };
+=======
+} __attribute__((__aligned__(BITS_PER_LONG/8)));
+>>>>>>> android-omap-tuna-jb
 
 static inline void flowi4_init_output(struct flowi4 *fl4, int oif,
 				      __u32 mark, __u8 tos, __u8 scope,
@@ -89,6 +97,19 @@ static inline void flowi4_init_output(struct flowi4 *fl4, int oif,
 	fl4->fl4_dport = dport;
 	fl4->fl4_sport = sport;
 }
+<<<<<<< HEAD
+=======
+
+/* Reset some input parameters after previous lookup */
+static inline void flowi4_update_output(struct flowi4 *fl4, int oif, __u8 tos,
+					__be32 daddr, __be32 saddr)
+{
+	fl4->flowi4_oif = oif;
+	fl4->flowi4_tos = tos;
+	fl4->daddr = daddr;
+	fl4->saddr = saddr;
+}
+>>>>>>> android-omap-tuna-jb
 				      
 
 struct flowi6 {
@@ -112,7 +133,11 @@ struct flowi6 {
 #define fl6_ipsec_spi		uli.spi
 #define fl6_mh_type		uli.mht.type
 #define fl6_gre_key		uli.gre_key
+<<<<<<< HEAD
 };
+=======
+} __attribute__((__aligned__(BITS_PER_LONG/8)));
+>>>>>>> android-omap-tuna-jb
 
 struct flowidn {
 	struct flowi_common	__fl_common;
@@ -127,7 +152,11 @@ struct flowidn {
 	union flowi_uli		uli;
 #define fld_sport		uli.ports.sport
 #define fld_dport		uli.ports.dport
+<<<<<<< HEAD
 };
+=======
+} __attribute__((__aligned__(BITS_PER_LONG/8)));
+>>>>>>> android-omap-tuna-jb
 
 struct flowi {
 	union {
@@ -161,6 +190,27 @@ static inline struct flowi *flowidn_to_flowi(struct flowidn *fldn)
 	return container_of(fldn, struct flowi, u.dn);
 }
 
+<<<<<<< HEAD
+=======
+typedef unsigned long flow_compare_t;
+
+static inline size_t flow_key_size(u16 family)
+{
+	switch (family) {
+	case AF_INET:
+		BUILD_BUG_ON(sizeof(struct flowi4) % sizeof(flow_compare_t));
+		return sizeof(struct flowi4) / sizeof(flow_compare_t);
+	case AF_INET6:
+		BUILD_BUG_ON(sizeof(struct flowi6) % sizeof(flow_compare_t));
+		return sizeof(struct flowi6) / sizeof(flow_compare_t);
+	case AF_DECnet:
+		BUILD_BUG_ON(sizeof(struct flowidn) % sizeof(flow_compare_t));
+		return sizeof(struct flowidn) / sizeof(flow_compare_t);
+	}
+	return 0;
+}
+
+>>>>>>> android-omap-tuna-jb
 #define FLOW_DIR_IN	0
 #define FLOW_DIR_OUT	1
 #define FLOW_DIR_FWD	2

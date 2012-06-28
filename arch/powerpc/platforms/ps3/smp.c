@@ -94,6 +94,11 @@ static void __init ps3_smp_setup_cpu(int cpu)
 
 		if (result)
 			virqs[i] = NO_IRQ;
+<<<<<<< HEAD
+=======
+		else
+			ps3_register_ipi_irq(cpu, virqs[i]);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	ps3_register_ipi_debug_brk(cpu, virqs[PPC_MSG_DEBUGGER_BREAK]);

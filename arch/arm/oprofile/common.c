@@ -116,7 +116,11 @@ int __init oprofile_arch_init(struct oprofile_operations *ops)
 	return oprofile_perf_init(ops);
 }
 
+<<<<<<< HEAD
 void __exit oprofile_arch_exit(void)
+=======
+void oprofile_arch_exit(void)
+>>>>>>> android-omap-tuna-jb
 {
 	oprofile_perf_exit();
 }

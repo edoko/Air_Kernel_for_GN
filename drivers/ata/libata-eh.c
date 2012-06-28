@@ -3487,7 +3487,12 @@ static int ata_count_probe_trials_cb(struct ata_ering_entry *ent, void *void_arg
 	u64 now = get_jiffies_64();
 	int *trials = void_arg;
 
+<<<<<<< HEAD
 	if (ent->timestamp < now - min(now, interval))
+=======
+	if ((ent->eflags & ATA_EFLAG_OLD_ER) ||
+	    (ent->timestamp < now - min(now, interval)))
+>>>>>>> android-omap-tuna-jb
 		return -1;
 
 	(*trials)++;

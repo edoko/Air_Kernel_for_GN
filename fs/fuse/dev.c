@@ -1516,7 +1516,11 @@ static int fuse_retrieve(struct fuse_conn *fc, struct inode *inode,
 	else if (outarg->offset + num > file_size)
 		num = file_size - outarg->offset;
 
+<<<<<<< HEAD
 	while (num) {
+=======
+	while (num && req->num_pages < FUSE_MAX_PAGES_PER_REQ) {
+>>>>>>> android-omap-tuna-jb
 		struct page *page;
 		unsigned int this_num;
 
@@ -1530,6 +1534,10 @@ static int fuse_retrieve(struct fuse_conn *fc, struct inode *inode,
 
 		num -= this_num;
 		total_len += this_num;
+<<<<<<< HEAD
+=======
+		index++;
+>>>>>>> android-omap-tuna-jb
 	}
 	req->misc.retrieve_in.offset = outarg->offset;
 	req->misc.retrieve_in.size = total_len;

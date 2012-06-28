@@ -1058,6 +1058,10 @@ wbcir_probe(struct pnp_dev *device, const struct pnp_device_id *dev_id)
 		goto exit_unregister_led;
 	}
 
+<<<<<<< HEAD
+=======
+	data->dev->driver_type = RC_DRIVER_IR_RAW;
+>>>>>>> android-omap-tuna-jb
 	data->dev->driver_name = WBCIR_NAME;
 	data->dev->input_name = WBCIR_NAME;
 	data->dev->input_phys = "wbcir/cir0";

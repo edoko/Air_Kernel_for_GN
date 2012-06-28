@@ -8,7 +8,11 @@
 
 #ifdef __powerpc64__
 
+<<<<<<< HEAD
 extern char _end[];
+=======
+extern char __end_interrupts[];
+>>>>>>> android-omap-tuna-jb
 
 static inline int in_kernel_text(unsigned long addr)
 {

@@ -328,6 +328,10 @@ static void tcp_grow_window(struct sock *sk, struct sk_buff *skb)
 			incr = __tcp_grow_window(sk, skb);
 
 		if (incr) {
+<<<<<<< HEAD
+=======
+			incr = max_t(int, incr, 2 * skb->len);
+>>>>>>> android-omap-tuna-jb
 			tp->rcv_ssthresh = min(tp->rcv_ssthresh + incr,
 					       tp->window_clamp);
 			inet_csk(sk)->icsk_ack.quick |= 1;
@@ -460,8 +464,16 @@ static void tcp_rcv_rtt_update(struct tcp_sock *tp, u32 sample, int win_dep)
 		if (!win_dep) {
 			m -= (new_sample >> 3);
 			new_sample += m;
+<<<<<<< HEAD
 		} else if (m < new_sample)
 			new_sample = m << 3;
+=======
+		} else {
+			m <<= 3;
+			if (m < new_sample)
+				new_sample = m;
+		}
+>>>>>>> android-omap-tuna-jb
 	} else {
 		/* No previous measure. */
 		new_sample = m << 3;
@@ -1289,25 +1301,43 @@ static int tcp_match_skb_to_sack(struct sock *sk, struct sk_buff *skb,
 	return in_sack;
 }
 
+<<<<<<< HEAD
 static u8 tcp_sacktag_one(struct sk_buff *skb, struct sock *sk,
 			  struct tcp_sacktag_state *state,
 			  int dup_sack, int pcount)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
 	u8 sacked = TCP_SKB_CB(skb)->sacked;
+=======
+/* Mark the given newly-SACKed range as such, adjusting counters and hints. */
+static u8 tcp_sacktag_one(struct sock *sk,
+			  struct tcp_sacktag_state *state, u8 sacked,
+			  u32 start_seq, u32 end_seq,
+			  int dup_sack, int pcount)
+{
+	struct tcp_sock *tp = tcp_sk(sk);
+>>>>>>> android-omap-tuna-jb
 	int fack_count = state->fack_count;
 
 	/* Account D-SACK for retransmitted packet. */
 	if (dup_sack && (sacked & TCPCB_RETRANS)) {
 		if (tp->undo_marker && tp->undo_retrans &&
+<<<<<<< HEAD
 		    after(TCP_SKB_CB(skb)->end_seq, tp->undo_marker))
+=======
+		    after(end_seq, tp->undo_marker))
+>>>>>>> android-omap-tuna-jb
 			tp->undo_retrans--;
 		if (sacked & TCPCB_SACKED_ACKED)
 			state->reord = min(fack_count, state->reord);
 	}
 
 	/* Nothing to do; acked frame is about to be dropped (was ACKed). */
+<<<<<<< HEAD
 	if (!after(TCP_SKB_CB(skb)->end_seq, tp->snd_una))
+=======
+	if (!after(end_seq, tp->snd_una))
+>>>>>>> android-omap-tuna-jb
 		return sacked;
 
 	if (!(sacked & TCPCB_SACKED_ACKED)) {
@@ -1326,13 +1356,21 @@ static u8 tcp_sacktag_one(struct sk_buff *skb, struct sock *sk,
 				/* New sack for not retransmitted frame,
 				 * which was in hole. It is reordering.
 				 */
+<<<<<<< HEAD
 				if (before(TCP_SKB_CB(skb)->seq,
+=======
+				if (before(start_seq,
+>>>>>>> android-omap-tuna-jb
 					   tcp_highest_sack_seq(tp)))
 					state->reord = min(fack_count,
 							   state->reord);
 
 				/* SACK enhanced F-RTO (RFC4138; Appendix B) */
+<<<<<<< HEAD
 				if (!after(TCP_SKB_CB(skb)->end_seq, tp->frto_highmark))
+=======
+				if (!after(end_seq, tp->frto_highmark))
+>>>>>>> android-omap-tuna-jb
 					state->flag |= FLAG_ONLY_ORIG_SACKED;
 			}
 
@@ -1350,8 +1388,12 @@ static u8 tcp_sacktag_one(struct sk_buff *skb, struct sock *sk,
 
 		/* Lost marker hint past SACKed? Tweak RFC3517 cnt */
 		if (!tcp_is_fack(tp) && (tp->lost_skb_hint != NULL) &&
+<<<<<<< HEAD
 		    before(TCP_SKB_CB(skb)->seq,
 			   TCP_SKB_CB(tp->lost_skb_hint)->seq))
+=======
+		    before(start_seq, TCP_SKB_CB(tp->lost_skb_hint)->seq))
+>>>>>>> android-omap-tuna-jb
 			tp->lost_cnt_hint += pcount;
 
 		if (fack_count > tp->fackets_out)
@@ -1370,6 +1412,12 @@ static u8 tcp_sacktag_one(struct sk_buff *skb, struct sock *sk,
 	return sacked;
 }
 
+<<<<<<< HEAD
+=======
+/* Shift newly-SACKed bytes from this skb to the immediately previous
+ * already-SACKed sk_buff. Mark the newly-SACKed bytes as such.
+ */
+>>>>>>> android-omap-tuna-jb
 static int tcp_shifted_skb(struct sock *sk, struct sk_buff *skb,
 			   struct tcp_sacktag_state *state,
 			   unsigned int pcount, int shifted, int mss,
@@ -1377,12 +1425,30 @@ static int tcp_shifted_skb(struct sock *sk, struct sk_buff *skb,
 {
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct sk_buff *prev = tcp_write_queue_prev(sk, skb);
+<<<<<<< HEAD
 
 	BUG_ON(!pcount);
 
 	/* Tweak before seqno plays */
 	if (!tcp_is_fack(tp) && tcp_is_sack(tp) && tp->lost_skb_hint &&
 	    !before(TCP_SKB_CB(tp->lost_skb_hint)->seq, TCP_SKB_CB(skb)->seq))
+=======
+	u32 start_seq = TCP_SKB_CB(skb)->seq;	/* start of newly-SACKed */
+	u32 end_seq = start_seq + shifted;	/* end of newly-SACKed */
+
+	BUG_ON(!pcount);
+
+	/* Adjust counters and hints for the newly sacked sequence
+	 * range but discard the return value since prev is already
+	 * marked. We must tag the range first because the seq
+	 * advancement below implicitly advances
+	 * tcp_highest_sack_seq() when skb is highest_sack.
+	 */
+	tcp_sacktag_one(sk, state, TCP_SKB_CB(skb)->sacked,
+			start_seq, end_seq, dup_sack, pcount);
+
+	if (skb == tp->lost_skb_hint)
+>>>>>>> android-omap-tuna-jb
 		tp->lost_cnt_hint += pcount;
 
 	TCP_SKB_CB(prev)->end_seq += shifted;
@@ -1408,9 +1474,12 @@ static int tcp_shifted_skb(struct sock *sk, struct sk_buff *skb,
 		skb_shinfo(skb)->gso_type = 0;
 	}
 
+<<<<<<< HEAD
 	/* We discard results */
 	tcp_sacktag_one(skb, sk, state, dup_sack, pcount);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* Difference in this won't matter, both ACKed by the same cumul. ACK */
 	TCP_SKB_CB(prev)->sacked |= (TCP_SKB_CB(skb)->sacked & TCPCB_EVER_RETRANS);
 
@@ -1558,6 +1627,13 @@ static struct sk_buff *tcp_shift_skb_data(struct sock *sk, struct sk_buff *skb,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	/* tcp_sacktag_one() won't SACK-tag ranges below snd_una */
+	if (!after(TCP_SKB_CB(skb)->seq + len, tp->snd_una))
+		goto fallback;
+
+>>>>>>> android-omap-tuna-jb
 	if (!skb_shift(prev, skb, len))
 		goto fallback;
 	if (!tcp_shifted_skb(sk, skb, state, pcount, len, mss, dup_sack))
@@ -1648,10 +1724,21 @@ static struct sk_buff *tcp_sacktag_walk(struct sk_buff *skb, struct sock *sk,
 			break;
 
 		if (in_sack) {
+<<<<<<< HEAD
 			TCP_SKB_CB(skb)->sacked = tcp_sacktag_one(skb, sk,
 								  state,
 								  dup_sack,
 								  tcp_skb_pcount(skb));
+=======
+			TCP_SKB_CB(skb)->sacked =
+				tcp_sacktag_one(sk,
+						state,
+						TCP_SKB_CB(skb)->sacked,
+						TCP_SKB_CB(skb)->seq,
+						TCP_SKB_CB(skb)->end_seq,
+						dup_sack,
+						tcp_skb_pcount(skb));
+>>>>>>> android-omap-tuna-jb
 
 			if (!before(TCP_SKB_CB(skb)->seq,
 				    tcp_highest_sack_seq(tp)))
@@ -2536,6 +2623,10 @@ static void tcp_mark_head_lost(struct sock *sk, int packets, int mark_head)
 
 		if (cnt > packets) {
 			if ((tcp_is_sack(tp) && !tcp_is_fack(tp)) ||
+<<<<<<< HEAD
+=======
+			    (TCP_SKB_CB(skb)->sacked & TCPCB_SACKED_ACKED) ||
+>>>>>>> android-omap-tuna-jb
 			    (oldcnt >= packets))
 				break;
 
@@ -2821,12 +2912,18 @@ static int tcp_try_undo_loss(struct sock *sk)
 static inline void tcp_complete_cwr(struct sock *sk)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
+<<<<<<< HEAD
 	/* Do not moderate cwnd if it's already undone in cwr or recovery. */
 	if (tp->undo_marker) {
 		if (inet_csk(sk)->icsk_ca_state == TCP_CA_CWR)
 			tp->snd_cwnd = min(tp->snd_cwnd, tp->snd_ssthresh);
 		else /* PRR */
 			tp->snd_cwnd = tp->snd_ssthresh;
+=======
+	/* Do not moderate cwnd if it's already undone in cwr or recovery */
+	if (tp->undo_marker && tp->snd_cwnd > tp->snd_ssthresh) {
+		tp->snd_cwnd = tp->snd_ssthresh;
+>>>>>>> android-omap-tuna-jb
 		tp->snd_cwnd_stamp = tcp_time_stamp;
 	}
 	tcp_ca_event(sk, CA_EVENT_COMPLETE_CWR);
@@ -2944,6 +3041,7 @@ void tcp_simple_retransmit(struct sock *sk)
 }
 EXPORT_SYMBOL(tcp_simple_retransmit);
 
+<<<<<<< HEAD
 /* This function implements the PRR algorithm, specifcally the PRR-SSRB
  * (proportional rate reduction with slow start reduction bound) as described in
  * http://www.ietf.org/id/draft-mathis-tcpm-proportional-rate-reduction-01.txt.
@@ -2976,6 +3074,8 @@ static void tcp_update_cwnd_in_recovery(struct sock *sk, int newly_acked_sacked,
 	tp->snd_cwnd = tcp_packets_in_flight(tp) + sndcnt;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 /* Process an event, which can update packets-in-flight not trivially.
  * Main goal of this function is to calculate new estimate for left_out,
  * taking into account both packets sitting in receiver's buffer and
@@ -2987,8 +3087,12 @@ static void tcp_update_cwnd_in_recovery(struct sock *sk, int newly_acked_sacked,
  * It does _not_ decide what to send, it is made in function
  * tcp_xmit_retransmit_queue().
  */
+<<<<<<< HEAD
 static void tcp_fastretrans_alert(struct sock *sk, int pkts_acked,
 				  int newly_acked_sacked, int flag)
+=======
+static void tcp_fastretrans_alert(struct sock *sk, int pkts_acked, int flag)
+>>>>>>> android-omap-tuna-jb
 {
 	struct inet_connection_sock *icsk = inet_csk(sk);
 	struct tcp_sock *tp = tcp_sk(sk);
@@ -3138,17 +3242,24 @@ static void tcp_fastretrans_alert(struct sock *sk, int pkts_acked,
 
 		tp->bytes_acked = 0;
 		tp->snd_cwnd_cnt = 0;
+<<<<<<< HEAD
 		tp->prior_cwnd = tp->snd_cwnd;
 		tp->prr_delivered = 0;
 		tp->prr_out = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 		tcp_set_ca_state(sk, TCP_CA_Recovery);
 		fast_rexmit = 1;
 	}
 
 	if (do_lost || (tcp_is_fack(tp) && tcp_head_timedout(sk)))
 		tcp_update_scoreboard(sk, fast_rexmit);
+<<<<<<< HEAD
 	tp->prr_delivered += newly_acked_sacked;
 	tcp_update_cwnd_in_recovery(sk, newly_acked_sacked, fast_rexmit, flag);
+=======
+	tcp_cwnd_down(sk, flag);
+>>>>>>> android-omap-tuna-jb
 	tcp_xmit_retransmit_queue(sk);
 }
 
@@ -3662,8 +3773,11 @@ static int tcp_ack(struct sock *sk, struct sk_buff *skb, int flag)
 	u32 prior_in_flight;
 	u32 prior_fackets;
 	int prior_packets;
+<<<<<<< HEAD
 	int prior_sacked = tp->sacked_out;
 	int newly_acked_sacked = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 	int frto_cwnd = 0;
 
 	/* If the ack is older than previous acks
@@ -3735,9 +3849,12 @@ static int tcp_ack(struct sock *sk, struct sk_buff *skb, int flag)
 	/* See if we can take anything off of the retransmit queue. */
 	flag |= tcp_clean_rtx_queue(sk, prior_fackets, prior_snd_una);
 
+<<<<<<< HEAD
 	newly_acked_sacked = (prior_packets - prior_sacked) -
 			     (tp->packets_out - tp->sacked_out);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	if (tp->frto_counter)
 		frto_cwnd = tcp_process_frto(sk, flag);
 	/* Guarantee sacktag reordering detection against wrap-arounds */
@@ -3750,7 +3867,11 @@ static int tcp_ack(struct sock *sk, struct sk_buff *skb, int flag)
 		    tcp_may_raise_cwnd(sk, flag))
 			tcp_cong_avoid(sk, ack, prior_in_flight);
 		tcp_fastretrans_alert(sk, prior_packets - tp->packets_out,
+<<<<<<< HEAD
 				      newly_acked_sacked, flag);
+=======
+				      flag);
+>>>>>>> android-omap-tuna-jb
 	} else {
 		if ((flag & FLAG_DATA_ACKED) && !frto_cwnd)
 			tcp_cong_avoid(sk, ack, prior_in_flight);

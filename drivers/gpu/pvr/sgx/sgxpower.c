@@ -271,6 +271,10 @@ PVRSRV_ERROR SGXPrePowerState (IMG_HANDLE				hDevHandle,
 							IMG_FALSE) != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"SGXPrePowerState: Wait for SGX ukernel power transition failed."));
+<<<<<<< HEAD
+=======
+			SGXDumpDebugInfo(psDevInfo, IMG_FALSE);
+>>>>>>> android-omap-tuna-jb
 			PVR_DBG_BREAK;
 		}
 		#endif 

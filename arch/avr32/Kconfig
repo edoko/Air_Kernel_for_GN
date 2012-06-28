@@ -8,6 +8,10 @@ config AVR32
 	select HAVE_KPROBES
 	select HAVE_GENERIC_HARDIRQS
 	select GENERIC_IRQ_PROBE
+<<<<<<< HEAD
+=======
+	select GENERIC_ATOMIC64
+>>>>>>> android-omap-tuna-jb
 	select HARDIRQS_SW_RESEND
 	select GENERIC_IRQ_SHOW
 	help

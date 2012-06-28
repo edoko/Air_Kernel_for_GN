@@ -1059,6 +1059,15 @@ int usb_serial_probe(struct usb_interface *interface,
 		serial->attached = 1;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Avoid race with tty_open and serial_install by setting the
+	 * disconnected flag and not clearing it until all ports have been
+	 * registered.
+	 */
+	serial->disconnected = 1;
+
+>>>>>>> android-omap-tuna-jb
 	if (get_free_serial(serial, num_ports, &minor) == NULL) {
 		dev_err(&interface->dev, "No more free serial devices\n");
 		goto probe_error;
@@ -1083,6 +1092,11 @@ int usb_serial_probe(struct usb_interface *interface,
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	serial->disconnected = 0;
+
+>>>>>>> android-omap-tuna-jb
 	usb_serial_console_init(debug, minor);
 
 exit:

@@ -664,7 +664,11 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
 	vma->vm_flags |= VM_RESERVED|VM_DONTEXPAND;
 
 	if (use_ptemod)
+<<<<<<< HEAD
 		vma->vm_flags |= VM_DONTCOPY|VM_PFNMAP;
+=======
+		vma->vm_flags |= VM_DONTCOPY;
+>>>>>>> android-omap-tuna-jb
 
 	vma->vm_private_data = map;
 

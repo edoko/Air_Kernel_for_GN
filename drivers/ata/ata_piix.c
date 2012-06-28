@@ -113,6 +113,11 @@ enum {
 	PIIX_PATA_FLAGS		= ATA_FLAG_SLAVE_POSS,
 	PIIX_SATA_FLAGS		= ATA_FLAG_SATA | PIIX_FLAG_CHECKINTR,
 
+<<<<<<< HEAD
+=======
+	PIIX_FLAG_PIO16		= (1 << 30), /*support 16bit PIO only*/
+
+>>>>>>> android-omap-tuna-jb
 	PIIX_80C_PRI		= (1 << 5) | (1 << 4),
 	PIIX_80C_SEC		= (1 << 7) | (1 << 6),
 
@@ -147,6 +152,10 @@ enum piix_controller_ids {
 	ich8m_apple_sata,	/* locks up on second port enable */
 	tolapai_sata,
 	piix_pata_vmw,			/* PIIX4 for VMware, spurious DMA_ERR */
+<<<<<<< HEAD
+=======
+	ich8_sata_snb,
+>>>>>>> android-omap-tuna-jb
 };
 
 struct piix_map_db {
@@ -177,6 +186,10 @@ static int piix_sidpr_scr_write(struct ata_link *link,
 static int piix_sidpr_set_lpm(struct ata_link *link, enum ata_lpm_policy policy,
 			      unsigned hints);
 static bool piix_irq_check(struct ata_port *ap);
+<<<<<<< HEAD
+=======
+static int piix_port_start(struct ata_port *ap);
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_PM
 static int piix_pci_device_suspend(struct pci_dev *pdev, pm_message_t mesg);
 static int piix_pci_device_resume(struct pci_dev *pdev);
@@ -298,14 +311,21 @@ static const struct pci_device_id piix_pci_tbl[] = {
 	/* SATA Controller IDE (PCH) */
 	{ 0x8086, 0x3b2e, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
 	/* SATA Controller IDE (CPT) */
+<<<<<<< HEAD
 	{ 0x8086, 0x1c00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
 	/* SATA Controller IDE (CPT) */
 	{ 0x8086, 0x1c01, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
+=======
+	{ 0x8086, 0x1c00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_snb },
+	/* SATA Controller IDE (CPT) */
+	{ 0x8086, 0x1c01, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_snb },
+>>>>>>> android-omap-tuna-jb
 	/* SATA Controller IDE (CPT) */
 	{ 0x8086, 0x1c08, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_2port_sata },
 	/* SATA Controller IDE (CPT) */
 	{ 0x8086, 0x1c09, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_2port_sata },
 	/* SATA Controller IDE (PBG) */
+<<<<<<< HEAD
 	{ 0x8086, 0x1d00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
 	/* SATA Controller IDE (PBG) */
 	{ 0x8086, 0x1d08, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_2port_sata },
@@ -313,6 +333,15 @@ static const struct pci_device_id piix_pci_tbl[] = {
 	{ 0x8086, 0x1e00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
 	/* SATA Controller IDE (Panther Point) */
 	{ 0x8086, 0x1e01, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata },
+=======
+	{ 0x8086, 0x1d00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_snb },
+	/* SATA Controller IDE (PBG) */
+	{ 0x8086, 0x1d08, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_2port_sata },
+	/* SATA Controller IDE (Panther Point) */
+	{ 0x8086, 0x1e00, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_snb },
+	/* SATA Controller IDE (Panther Point) */
+	{ 0x8086, 0x1e01, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_snb },
+>>>>>>> android-omap-tuna-jb
 	/* SATA Controller IDE (Panther Point) */
 	{ 0x8086, 0x1e08, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_2port_sata },
 	/* SATA Controller IDE (Panther Point) */
@@ -338,6 +367,10 @@ static struct scsi_host_template piix_sht = {
 static struct ata_port_operations piix_sata_ops = {
 	.inherits		= &ata_bmdma32_port_ops,
 	.sff_irq_check		= piix_irq_check,
+<<<<<<< HEAD
+=======
+	.port_start		= piix_port_start,
+>>>>>>> android-omap-tuna-jb
 };
 
 static struct ata_port_operations piix_pata_ops = {
@@ -478,6 +511,10 @@ static const struct piix_map_db *piix_map_db_table[] = {
 	[ich8_2port_sata]	= &ich8_2port_map_db,
 	[ich8m_apple_sata]	= &ich8m_apple_map_db,
 	[tolapai_sata]		= &tolapai_map_db,
+<<<<<<< HEAD
+=======
+	[ich8_sata_snb]		= &ich8_map_db,
+>>>>>>> android-omap-tuna-jb
 };
 
 static struct ata_port_info piix_port_info[] = {
@@ -606,6 +643,22 @@ static struct ata_port_info piix_port_info[] = {
 		.port_ops	= &piix_vmw_ops,
 	},
 
+<<<<<<< HEAD
+=======
+	/*
+	 * some Sandybridge chipsets have broken 32 mode up to now,
+	 * see https://bugzilla.kernel.org/show_bug.cgi?id=40592
+	 */
+	[ich8_sata_snb] =
+	{
+		.flags		= PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR | PIIX_FLAG_PIO16,
+		.pio_mask	= ATA_PIO4,
+		.mwdma_mask	= ATA_MWDMA2,
+		.udma_mask	= ATA_UDMA6,
+		.port_ops	= &piix_sata_ops,
+	},
+
+>>>>>>> android-omap-tuna-jb
 };
 
 static struct pci_bits piix_enable_bits[] = {
@@ -649,6 +702,17 @@ static const struct ich_laptop ich_laptop[] = {
 	{ 0, }
 };
 
+<<<<<<< HEAD
+=======
+static int piix_port_start(struct ata_port *ap)
+{
+	if (!(ap->flags & PIIX_FLAG_PIO16))
+		ap->pflags |= ATA_PFLAG_PIO32 | ATA_PFLAG_PIO32CHANGE;
+
+	return ata_bmdma_port_start(ap);
+}
+
+>>>>>>> android-omap-tuna-jb
 /**
  *	ich_pata_cable_detect - Probe host controller cable detect info
  *	@ap: Port for which cable detect info is desired

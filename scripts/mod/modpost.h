@@ -113,6 +113,10 @@ struct module {
 	int has_cleanup;
 	struct buffer dev_table_buf;
 	char	     srcversion[25];
+<<<<<<< HEAD
+=======
+	int is_dot_o;
+>>>>>>> android-omap-tuna-jb
 };
 
 struct elf_info {

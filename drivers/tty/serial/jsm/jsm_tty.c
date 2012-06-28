@@ -118,6 +118,22 @@ static void jsm_tty_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	udelay(10);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * jsm_tty_write()
+ *
+ * Take data from the user or kernel and send it out to the FEP.
+ * In here exists all the Transparent Print magic as well.
+ */
+static void jsm_tty_write(struct uart_port *port)
+{
+	struct jsm_channel *channel;
+	channel = container_of(port, struct jsm_channel, uart_port);
+	channel->ch_bd->bd_ops->copy_data_from_queue_to_uart(channel);
+}
+
+>>>>>>> android-omap-tuna-jb
 static void jsm_tty_start_tx(struct uart_port *port)
 {
 	struct jsm_channel *channel = (struct jsm_channel *)port;
@@ -216,6 +232,7 @@ static int jsm_tty_open(struct uart_port *port)
 			return -ENOMEM;
 		}
 	}
+<<<<<<< HEAD
 	if (!channel->ch_wqueue) {
 		channel->ch_wqueue = kzalloc(WQUEUESIZE, GFP_KERNEL);
 		if (!channel->ch_wqueue) {
@@ -224,6 +241,8 @@ static int jsm_tty_open(struct uart_port *port)
 			return -ENOMEM;
 		}
 	}
+=======
+>>>>>>> android-omap-tuna-jb
 
 	channel->ch_flags &= ~(CH_OPENING);
 	/*
@@ -237,7 +256,10 @@ static int jsm_tty_open(struct uart_port *port)
 	 */
 	channel->ch_r_head = channel->ch_r_tail = 0;
 	channel->ch_e_head = channel->ch_e_tail = 0;
+<<<<<<< HEAD
 	channel->ch_w_head = channel->ch_w_tail = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 
 	brd->bd_ops->flush_uart_write(channel);
 	brd->bd_ops->flush_uart_read(channel);
@@ -836,6 +858,7 @@ void jsm_check_queue_flow_control(struct jsm_channel *ch)
 		}
 	}
 }
+<<<<<<< HEAD
 
 /*
  * jsm_tty_write()
@@ -908,3 +931,5 @@ int jsm_tty_write(struct uart_port *port)
 
 	return data_count;
 }
+=======
+>>>>>>> android-omap-tuna-jb

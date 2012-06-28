@@ -1149,6 +1149,10 @@ struct nfs_rpc_ops {
 	const struct dentry_operations *dentry_ops;
 	const struct inode_operations *dir_inode_ops;
 	const struct inode_operations *file_inode_ops;
+<<<<<<< HEAD
+=======
+	const struct file_operations *file_ops;
+>>>>>>> android-omap-tuna-jb
 
 	int	(*getroot) (struct nfs_server *, struct nfs_fh *,
 			    struct nfs_fsinfo *);

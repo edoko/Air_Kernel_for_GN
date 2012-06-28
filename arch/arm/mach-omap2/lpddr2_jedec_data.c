@@ -62,7 +62,10 @@ const struct lpddr2_timings lpddr2_jedec_timings_400_mhz = {
 };
 
 /* Base AC Timing values specified by JESD209-2 for 333 MHz operation */
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb
 const struct lpddr2_timings lpddr2_jedec_timings_333_mhz = {
 	.max_freq	= 333000000,
 	.RL		= 5,

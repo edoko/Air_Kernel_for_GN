@@ -1766,7 +1766,11 @@ static int replace_system_preds(struct event_subsystem *system,
 		 * replace the filter for the call.
 		 */
 		filter = call->filter;
+<<<<<<< HEAD
 		call->filter = filter_item->filter;
+=======
+		rcu_assign_pointer(call->filter, filter_item->filter);
+>>>>>>> android-omap-tuna-jb
 		filter_item->filter = filter;
 
 		fail = false;
@@ -1821,7 +1825,11 @@ int apply_event_filter(struct ftrace_event_call *call, char *filter_string)
 		filter = call->filter;
 		if (!filter)
 			goto out_unlock;
+<<<<<<< HEAD
 		call->filter = NULL;
+=======
+		RCU_INIT_POINTER(call->filter, NULL);
+>>>>>>> android-omap-tuna-jb
 		/* Make sure the filter is not being used */
 		synchronize_sched();
 		__free_filter(filter);
@@ -1862,7 +1870,11 @@ out:
 	 * string
 	 */
 	tmp = call->filter;
+<<<<<<< HEAD
 	call->filter = filter;
+=======
+	rcu_assign_pointer(call->filter, filter);
+>>>>>>> android-omap-tuna-jb
 	if (tmp) {
 		/* Make sure the call is done with the filter */
 		synchronize_sched();

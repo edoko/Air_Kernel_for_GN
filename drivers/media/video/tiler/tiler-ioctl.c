@@ -58,11 +58,19 @@ s32 tiler_notify_event(int event, void *data)
  */
 
 /* check if an offset is used */
+<<<<<<< HEAD
 static bool _m_offs_in_use(u32 offs, u32 length, struct security_info *si)
 {
 	struct __buf_info *_b;
 	/* have mutex */
 	list_for_each_entry(_b, &si->bufs, by_sid)
+=======
+static bool _m_offs_in_use(u32 offs, u32 length, struct process_info *pi)
+{
+	struct __buf_info *_b;
+	/* have mutex */
+	list_for_each_entry(_b, &pi->bufs, by_pid)
+>>>>>>> android-omap-tuna-jb
 		if (_b->buf_info.offset < offs + length &&
 		    _b->buf_info.offset + _b->buf_info.length > offs)
 			return 1;
@@ -70,13 +78,21 @@ static bool _m_offs_in_use(u32 offs, u32 length, struct security_info *si)
 }
 
 /* get an offset */
+<<<<<<< HEAD
 static u32 _m_get_offs(struct security_info *si, u32 length)
+=======
+static u32 _m_get_offs(struct process_info *pi, u32 length)
+>>>>>>> android-omap-tuna-jb
 {
 	static u32 offs = 0xda7a;
 
 	/* ensure no-one is using this offset */
 	while ((offs << PAGE_SHIFT) + length < length ||
+<<<<<<< HEAD
 	       _m_offs_in_use(offs << PAGE_SHIFT, length, si)) {
+=======
+	       _m_offs_in_use(offs << PAGE_SHIFT, length, pi)) {
+>>>>>>> android-omap-tuna-jb
 		/* use a pseudo-random generator to get a new offset to try */
 
 		/* Galois LSF: 20, 17 */
@@ -86,6 +102,7 @@ static u32 _m_get_offs(struct security_info *si, u32 length)
 	return offs << PAGE_SHIFT;
 }
 
+<<<<<<< HEAD
 /* find and lock a block.  security_info is optional */
 static struct mem_info *
 _m_lock_block(u32 key, u32 id, struct security_info *si) {
@@ -98,6 +115,20 @@ _m_lock_block(u32 key, u32 id, struct security_info *si) {
 
 		/* find block in security list and free it */
 		list_for_each_entry(gi, &si->groups, by_sid) {
+=======
+/* find and lock a block.  process_info is optional */
+static struct mem_info *
+_m_lock_block(u32 key, u32 id, struct process_info *pi) {
+	struct gid_info *gi;
+	struct mem_info *mi;
+
+	/* if process_info is given, look there first */
+	if (pi) {
+		/* have mutex */
+
+		/* find block in process list and free it */
+		list_for_each_entry(gi, &pi->groups, by_pid) {
+>>>>>>> android-omap-tuna-jb
 			mi = ops->lock(key, id, gi);
 			if (mi)
 				return mi;
@@ -109,7 +140,11 @@ _m_lock_block(u32 key, u32 id, struct security_info *si) {
 }
 
 /* register a buffer */
+<<<<<<< HEAD
 static s32 _m_register_buf(struct __buf_info *_b, struct security_info *si)
+=======
+static s32 _m_register_buf(struct __buf_info *_b, struct process_info *pi)
+>>>>>>> android-omap-tuna-jb
 {
 	struct mem_info *mi;
 	struct tiler_buf_info *b = &_b->buf_info;
@@ -122,7 +157,11 @@ static s32 _m_register_buf(struct __buf_info *_b, struct security_info *si)
 	/* find each block */
 	b->length = 0;
 	for (i = 0; i < num; i++) {
+<<<<<<< HEAD
 		mi = _m_lock_block(b->blocks[i].key, b->blocks[i].id, si);
+=======
+		mi = _m_lock_block(b->blocks[i].key, b->blocks[i].id, pi);
+>>>>>>> android-omap-tuna-jb
 		if (!mi) {
 			/* unlock any blocks already found */
 			while (i--)
@@ -141,11 +180,19 @@ static s32 _m_register_buf(struct __buf_info *_b, struct security_info *si)
 
 	/* if found all, register buffer */
 	offs = _b->mi[0]->blk.phys & ~PAGE_MASK;
+<<<<<<< HEAD
 	b->offset = _m_get_offs(si, b->length) + offs;
 	b->length -= offs;
 
 	/* have mutex */
 	list_add(&_b->by_sid, &si->bufs);
+=======
+	b->offset = _m_get_offs(pi, b->length) + offs;
+	b->length -= offs;
+
+	/* have mutex */
+	list_add(&_b->by_pid, &pi->bufs);
+>>>>>>> android-omap-tuna-jb
 
 	return 0;
 }
@@ -156,7 +203,11 @@ void _m_unregister_buf(struct __buf_info *_b)
 	u32 i;
 
 	/* unregister */
+<<<<<<< HEAD
 	list_del(&_b->by_sid);
+=======
+	list_del(&_b->by_pid);
+>>>>>>> android-omap-tuna-jb
 
 	/* no longer using the blocks */
 	for (i = 0; i < _b->buf_info.num_blocks; i++)
@@ -171,14 +222,21 @@ void _m_unregister_buf(struct __buf_info *_b)
  *  ==========================================================================
  */
 
+<<<<<<< HEAD
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
+=======
+>>>>>>> android-omap-tuna-jb
 /* mmap tiler buffer into user's virtual space */
 static s32 tiler_mmap(struct file *filp, struct vm_area_struct *vma)
 {
 	struct __buf_info *_b;
 	struct tiler_buf_info *b = NULL;
 	u32 i, map_offs, map_size, blk_offs, blk_size, mapped_size;
+<<<<<<< HEAD
 	struct security_info *si = filp->private_data;
+=======
+	struct process_info *pi = filp->private_data;
+>>>>>>> android-omap-tuna-jb
 	u32 offs = vma->vm_pgoff << PAGE_SHIFT;
 	u32 size = vma->vm_end - vma->vm_start;
 
@@ -186,7 +244,11 @@ static s32 tiler_mmap(struct file *filp, struct vm_area_struct *vma)
 
 	/* find tiler buffer to mmap */
 	mutex_lock(&ops->mtx);
+<<<<<<< HEAD
 	list_for_each_entry(_b, &si->bufs, by_sid) {
+=======
+	list_for_each_entry(_b, &pi->bufs, by_pid) {
+>>>>>>> android-omap-tuna-jb
 		/* we support partial mmaping of a whole tiler buffer */
 		if (offs >= (_b->buf_info.offset & PAGE_MASK) &&
 		    offs + size <= PAGE_ALIGN(_b->buf_info.offset +
@@ -231,7 +293,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 {
 	s32 r;
 	void __user *data = (void __user *)arg;
+<<<<<<< HEAD
 	struct security_info *si = filp->private_data;
+=======
+	struct process_info *pi = filp->private_data;
+>>>>>>> android-omap-tuna-jb
 	struct __buf_info *_b;
 	struct tiler_buf_info buf_info = {0};
 	struct tiler_block_info block_info = {0};
@@ -248,7 +314,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 		case TILFMT_PAGE:
 			r = ops->alloc(block_info.fmt, block_info.dim.len, 1,
 					block_info.key, block_info.group_id,
+<<<<<<< HEAD
 					si, &mi);
+=======
+					pi, &mi);
+>>>>>>> android-omap-tuna-jb
 			break;
 		case TILFMT_8BIT:
 		case TILFMT_16BIT:
@@ -257,7 +327,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 					block_info.dim.area.width,
 					block_info.dim.area.height,
 					block_info.key, block_info.group_id,
+<<<<<<< HEAD
 					si, &mi);
+=======
+					pi, &mi);
+>>>>>>> android-omap-tuna-jb
 			break;
 		default:
 			return -EINVAL;
@@ -282,7 +356,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 
 		/* search current process first, then all processes */
 		mutex_lock(&ops->mtx);
+<<<<<<< HEAD
 		mi = _m_lock_block(block_info.key, block_info.id, si);
+=======
+		mi = _m_lock_block(block_info.key, block_info.id, pi);
+>>>>>>> android-omap-tuna-jb
 		mutex_unlock(&ops->mtx);
 		if (mi)
 			ops->unlock_free(mi, true);
@@ -305,7 +383,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 			return -EFAULT;
 
 		r = ops->pin(block_info.fmt, block_info.dim.len, 1,
+<<<<<<< HEAD
 			      block_info.key, block_info.group_id, si,
+=======
+			      block_info.key, block_info.group_id, pi,
+>>>>>>> android-omap-tuna-jb
 			      &mi, (u32)block_info.ptr);
 		if (r)
 			return r;
@@ -330,7 +412,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 		mutex_lock(&ops->mtx);
 		r = -ENOENT;
 		/* buffer registration is per process */
+<<<<<<< HEAD
 		list_for_each_entry(_b, &si->bufs, by_sid) {
+=======
+		list_for_each_entry(_b, &pi->bufs, by_pid) {
+>>>>>>> android-omap-tuna-jb
 			if (buf_info.offset == _b->buf_info.offset) {
 				memcpy(&buf_info, &_b->buf_info,
 					sizeof(buf_info));
@@ -361,7 +447,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 		}
 
 		mutex_lock(&ops->mtx);
+<<<<<<< HEAD
 		r = _m_register_buf(_b, si);
+=======
+		r = _m_register_buf(_b, pi);
+>>>>>>> android-omap-tuna-jb
 		mutex_unlock(&ops->mtx);
 
 		if (r) {
@@ -386,7 +476,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 		r = -EFAULT;
 		mutex_lock(&ops->mtx);
 		/* buffer registration is per process */
+<<<<<<< HEAD
 		list_for_each_entry(_b, &si->bufs, by_sid) {
+=======
+		list_for_each_entry(_b, &pi->bufs, by_pid) {
+>>>>>>> android-omap-tuna-jb
 			if (buf_info.offset == _b->buf_info.offset) {
 				/* only retrieve buffer length */
 				buf_info.length = _b->buf_info.length;
@@ -413,7 +507,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 			ops->reserve_nv12(block_info.key,
 					  block_info.dim.area.width,
 					  block_info.dim.area.height,
+<<<<<<< HEAD
 					  block_info.group_id, si);
+=======
+					  block_info.group_id, pi);
+>>>>>>> android-omap-tuna-jb
 #else
 			return -EINVAL;
 #endif
@@ -422,6 +520,7 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 				     block_info.fmt,
 				     block_info.dim.area.width,
 				     block_info.dim.area.height,
+<<<<<<< HEAD
 					PAGE_SIZE,
 					0,
 				     block_info.group_id, si);
@@ -429,6 +528,13 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 	/* unreserve blocks */
 	case TILIOC_URBLK:
 		ops->unreserve(arg, si);
+=======
+				     block_info.group_id, pi);
+		break;
+	/* unreserve blocks */
+	case TILIOC_URBLK:
+		ops->unreserve(arg, pi);
+>>>>>>> android-omap-tuna-jb
 		break;
 	/* query a tiler block */
 	case TILIOC_QBLK:
@@ -438,7 +544,11 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 		if (block_info.id) {
 			/* look up by id if specified */
 			mutex_lock(&ops->mtx);
+<<<<<<< HEAD
 			mi = _m_lock_block(block_info.key, block_info.id, si);
+=======
+			mi = _m_lock_block(block_info.key, block_info.id, pi);
+>>>>>>> android-omap-tuna-jb
 			mutex_unlock(&ops->mtx);
 		} else
 #ifndef CONFIG_TILER_SECURE
@@ -471,24 +581,41 @@ static long tiler_ioctl(struct file *filp, u32 cmd, unsigned long arg)
 /* open tiler driver */
 static s32 tiler_open(struct inode *ip, struct file *filp)
 {
+<<<<<<< HEAD
 	struct security_info *si = __get_si(current->tgid, false,
 						SECURE_BY_PID);
 	if (!si)
 		return -ENOMEM;
 
 	filp->private_data = si;
+=======
+	struct process_info *pi = __get_pi(current->tgid, false);
+	if (!pi)
+		return -ENOMEM;
+
+	filp->private_data = pi;
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
 /* close tiler driver */
 static s32 tiler_release(struct inode *ip, struct file *filp)
 {
+<<<<<<< HEAD
 	struct security_info *si = filp->private_data;
 
 	mutex_lock(&ops->mtx);
 	/* free resources if last device in this process */
 	if (0 == --si->refs)
 		_m_free_security_info(si);
+=======
+	struct process_info *pi = filp->private_data;
+
+	mutex_lock(&ops->mtx);
+	/* free resources if last device in this process */
+	if (0 == --pi->refs)
+		_m_free_process_info(pi);
+>>>>>>> android-omap-tuna-jb
 
 	mutex_unlock(&ops->mtx);
 
@@ -502,15 +629,22 @@ static const struct file_operations tiler_fops = {
 	.release = tiler_release,
 	.mmap = tiler_mmap,
 };
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 
 void tiler_ioctl_init(struct tiler_ops *tiler)
 {
 	ops = tiler;
+<<<<<<< HEAD
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 	ops->fops = &tiler_fops;
 #endif
+=======
+	ops->fops = &tiler_fops;
+>>>>>>> android-omap-tuna-jb
 
 #ifdef CONFIG_TILER_SECURE
 	offset_lookup = ssptr_lookup = false;

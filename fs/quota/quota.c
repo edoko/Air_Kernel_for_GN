@@ -355,7 +355,11 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
 	 * resolution (think about autofs) and thus deadlocks could arise.
 	 */
 	if (cmds == Q_QUOTAON) {
+<<<<<<< HEAD
 		ret = user_path_at(AT_FDCWD, addr, LOOKUP_FOLLOW, &path);
+=======
+		ret = user_path_at(AT_FDCWD, addr, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &path);
+>>>>>>> android-omap-tuna-jb
 		if (ret)
 			pathp = ERR_PTR(ret);
 		else

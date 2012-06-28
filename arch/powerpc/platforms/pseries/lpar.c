@@ -745,6 +745,10 @@ void __trace_hcall_entry(unsigned long opcode, unsigned long *args)
 		goto out;
 
 	(*depth)++;
+<<<<<<< HEAD
+=======
+	preempt_disable();
+>>>>>>> android-omap-tuna-jb
 	trace_hcall_entry(opcode, args);
 	(*depth)--;
 
@@ -767,6 +771,10 @@ void __trace_hcall_exit(long opcode, unsigned long retval,
 
 	(*depth)++;
 	trace_hcall_exit(opcode, retval, retbuf);
+<<<<<<< HEAD
+=======
+	preempt_enable();
+>>>>>>> android-omap-tuna-jb
 	(*depth)--;
 
 out:

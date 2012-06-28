@@ -307,6 +307,14 @@ static inline bool dma_pte_present(struct dma_pte *pte)
 	return (pte->val & 3) != 0;
 }
 
+<<<<<<< HEAD
+=======
+static inline bool dma_pte_superpage(struct dma_pte *pte)
+{
+	return (pte->val & (1 << 7));
+}
+
+>>>>>>> android-omap-tuna-jb
 static inline int first_pte_in_page(struct dma_pte *pte)
 {
 	return !((unsigned long)pte & ~VTD_PAGE_MASK);
@@ -578,17 +586,29 @@ static void domain_update_iommu_snooping(struct dmar_domain *domain)
 
 static void domain_update_iommu_superpage(struct dmar_domain *domain)
 {
+<<<<<<< HEAD
 	int i, mask = 0xf;
+=======
+	struct dmar_drhd_unit *drhd;
+	struct intel_iommu *iommu = NULL;
+	int mask = 0xf;
+>>>>>>> android-omap-tuna-jb
 
 	if (!intel_iommu_superpage) {
 		domain->iommu_superpage = 0;
 		return;
 	}
 
+<<<<<<< HEAD
 	domain->iommu_superpage = 4; /* 1TiB */
 
 	for_each_set_bit(i, &domain->iommu_bmp, g_num_of_iommus) {
 		mask |= cap_super_page_val(g_iommus[i]->cap);
+=======
+	/* set iommu_superpage to the smallest common denominator */
+	for_each_active_iommu(iommu, drhd) {
+		mask &= cap_super_page_val(iommu->cap);
+>>>>>>> android-omap-tuna-jb
 		if (!mask) {
 			break;
 		}
@@ -731,29 +751,44 @@ out:
 }
 
 static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+<<<<<<< HEAD
 				      unsigned long pfn, int large_level)
+=======
+				      unsigned long pfn, int target_level)
+>>>>>>> android-omap-tuna-jb
 {
 	int addr_width = agaw_to_width(domain->agaw) - VTD_PAGE_SHIFT;
 	struct dma_pte *parent, *pte = NULL;
 	int level = agaw_to_level(domain->agaw);
+<<<<<<< HEAD
 	int offset, target_level;
+=======
+	int offset;
+>>>>>>> android-omap-tuna-jb
 
 	BUG_ON(!domain->pgd);
 	BUG_ON(addr_width < BITS_PER_LONG && pfn >> addr_width);
 	parent = domain->pgd;
 
+<<<<<<< HEAD
 	/* Search pte */
 	if (!large_level)
 		target_level = 1;
 	else
 		target_level = large_level;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	while (level > 0) {
 		void *tmp_page;
 
 		offset = pfn_level_offset(pfn, level);
 		pte = &parent[offset];
+<<<<<<< HEAD
 		if (!large_level && (pte->val & DMA_PTE_LARGE_PAGE))
+=======
+		if (!target_level && (dma_pte_superpage(pte) || !dma_pte_present(pte)))
+>>>>>>> android-omap-tuna-jb
 			break;
 		if (level == target_level)
 			break;
@@ -817,13 +852,21 @@ static struct dma_pte *dma_pfn_level_pte(struct dmar_domain *domain,
 }
 
 /* clear last level pte, a tlb flush should be followed */
+<<<<<<< HEAD
 static void dma_pte_clear_range(struct dmar_domain *domain,
+=======
+static int dma_pte_clear_range(struct dmar_domain *domain,
+>>>>>>> android-omap-tuna-jb
 				unsigned long start_pfn,
 				unsigned long last_pfn)
 {
 	int addr_width = agaw_to_width(domain->agaw) - VTD_PAGE_SHIFT;
 	unsigned int large_page = 1;
 	struct dma_pte *first_pte, *pte;
+<<<<<<< HEAD
+=======
+	int order;
+>>>>>>> android-omap-tuna-jb
 
 	BUG_ON(addr_width < BITS_PER_LONG && start_pfn >> addr_width);
 	BUG_ON(addr_width < BITS_PER_LONG && last_pfn >> addr_width);
@@ -847,6 +890,12 @@ static void dma_pte_clear_range(struct dmar_domain *domain,
 				   (void *)pte - (void *)first_pte);
 
 	} while (start_pfn && start_pfn <= last_pfn);
+<<<<<<< HEAD
+=======
+
+	order = (large_page - 1) * 9;
+	return order;
+>>>>>>> android-omap-tuna-jb
 }
 
 /* free page table pages. last level pte should already be cleared */
@@ -3740,6 +3789,10 @@ static int intel_iommu_domain_init(struct iommu_domain *domain)
 		vm_domain_exit(dmar_domain);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
+=======
+	domain_update_iommu_cap(dmar_domain);
+>>>>>>> android-omap-tuna-jb
 	domain->priv = dmar_domain;
 
 	return 0;
@@ -3865,14 +3918,24 @@ static int intel_iommu_unmap(struct iommu_domain *domain,
 {
 	struct dmar_domain *dmar_domain = domain->priv;
 	size_t size = PAGE_SIZE << gfp_order;
+<<<<<<< HEAD
 
 	dma_pte_clear_range(dmar_domain, iova >> VTD_PAGE_SHIFT,
+=======
+	int order;
+
+	order = dma_pte_clear_range(dmar_domain, iova >> VTD_PAGE_SHIFT,
+>>>>>>> android-omap-tuna-jb
 			    (iova + size - 1) >> VTD_PAGE_SHIFT);
 
 	if (dmar_domain->max_addr == iova + size)
 		dmar_domain->max_addr = iova;
 
+<<<<<<< HEAD
 	return gfp_order;
+=======
+	return order;
+>>>>>>> android-omap-tuna-jb
 }
 
 static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,

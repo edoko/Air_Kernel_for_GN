@@ -200,6 +200,7 @@ void __init default_setup_apic_routing(void)
 	 * - we find more than 8 CPUs in acpi LAPIC listing with xAPIC support
 	 */
 
+<<<<<<< HEAD
 	if (!cmdline_apic && apic == &apic_default) {
 		struct apic *bigsmp = generic_bigsmp_probe();
 		if (bigsmp) {
@@ -208,6 +209,10 @@ void __init default_setup_apic_routing(void)
 			       apic->name);
 		}
 	}
+=======
+	if (!cmdline_apic && apic == &apic_default)
+		generic_bigsmp_probe();
+>>>>>>> android-omap-tuna-jb
 #endif
 
 	if (apic->setup_apic_routing)

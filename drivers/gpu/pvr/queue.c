@@ -25,6 +25,10 @@
  ******************************************************************************/
 
 #include "services_headers.h"
+<<<<<<< HEAD
+=======
+#include "pvr_bridge_km.h"
+>>>>>>> android-omap-tuna-jb
 
 #include "lists.h"
 #include "ttrace.h"
@@ -625,6 +629,11 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVInsertCommandKM(PVRSRV_QUEUE_INFO	*psQueue,
 		psCommand->psDstSync[i].ui32WriteOpsPending = PVRSRVGetWriteOpsPending(apsDstSync[i], IMG_FALSE);
 		psCommand->psDstSync[i].ui32ReadOps2Pending = PVRSRVGetReadOpsPending(apsDstSync[i], IMG_FALSE);
 
+<<<<<<< HEAD
+=======
+		PVRSRVKernelSyncInfoIncRef(apsDstSync[i], IMG_NULL);
+
+>>>>>>> android-omap-tuna-jb
 		PVR_DPF((PVR_DBG_MESSAGE, "PVRSRVInsertCommandKM: Dst %u RO-VA:0x%x WO-VA:0x%x ROP:0x%x WOP:0x%x",
 				i, psCommand->psDstSync[i].psKernelSyncInfoKM->sReadOps2CompleteDevVAddr.uiAddr,
 				psCommand->psDstSync[i].psKernelSyncInfoKM->sWriteOpsCompleteDevVAddr.uiAddr,
@@ -642,6 +651,11 @@ PVRSRV_ERROR IMG_CALLCONV PVRSRVInsertCommandKM(PVRSRV_QUEUE_INFO	*psQueue,
 		psCommand->psSrcSync[i].ui32WriteOpsPending = PVRSRVGetWriteOpsPending(apsSrcSync[i], IMG_TRUE);
 		psCommand->psSrcSync[i].ui32ReadOps2Pending = PVRSRVGetReadOpsPending(apsSrcSync[i], IMG_TRUE);
 
+<<<<<<< HEAD
+=======
+		PVRSRVKernelSyncInfoIncRef(apsSrcSync[i], IMG_NULL);
+
+>>>>>>> android-omap-tuna-jb
 		PVR_DPF((PVR_DBG_MESSAGE, "PVRSRVInsertCommandKM: Src %u RO-VA:0x%x WO-VA:0x%x ROP:0x%x WOP:0x%x",
 				i, psCommand->psSrcSync[i].psKernelSyncInfoKM->sReadOps2CompleteDevVAddr.uiAddr,
 				psCommand->psSrcSync[i].psKernelSyncInfoKM->sWriteOpsCompleteDevVAddr.uiAddr,
@@ -1003,6 +1017,11 @@ IMG_VOID PVRSRVCommandCompleteKM(IMG_HANDLE	hCmdCookie,
 	{
 		psCmdCompleteData->psDstSync[i].psKernelSyncInfoKM->psSyncData->ui32WriteOpsComplete++;
 
+<<<<<<< HEAD
+=======
+		PVRSRVKernelSyncInfoDecRef(psCmdCompleteData->psDstSync[i].psKernelSyncInfoKM, IMG_NULL);
+
+>>>>>>> android-omap-tuna-jb
 		PVR_TTRACE_SYNC_OBJECT(PVRSRV_TRACE_GROUP_QUEUE, QUEUE_TOKEN_UPDATE_DST,
 					  psCmdCompleteData->psDstSync[i].psKernelSyncInfoKM,
 					  PVRSRV_SYNCOP_COMPLETE);
@@ -1019,6 +1038,11 @@ IMG_VOID PVRSRVCommandCompleteKM(IMG_HANDLE	hCmdCookie,
 	{
 		psCmdCompleteData->psSrcSync[i].psKernelSyncInfoKM->psSyncData->ui32ReadOps2Complete++;
 
+<<<<<<< HEAD
+=======
+		PVRSRVKernelSyncInfoDecRef(psCmdCompleteData->psSrcSync[i].psKernelSyncInfoKM, IMG_NULL);
+
+>>>>>>> android-omap-tuna-jb
 		PVR_TTRACE_SYNC_OBJECT(PVRSRV_TRACE_GROUP_QUEUE, QUEUE_TOKEN_UPDATE_SRC,
 					  psCmdCompleteData->psSrcSync[i].psKernelSyncInfoKM,
 					  PVRSRV_SYNCOP_COMPLETE);
@@ -1185,6 +1209,10 @@ PVRSRV_ERROR PVRSRVRemoveCmdProcListKM(IMG_UINT32 ui32DevIndex,
 				
 				if (psCmdCompleteData != IMG_NULL)
 				{
+<<<<<<< HEAD
+=======
+					PVR_ASSERT(psCmdCompleteData->bInUse == IMG_FALSE);
+>>>>>>> android-omap-tuna-jb
 					OSFreeMem(PVRSRV_OS_NON_PAGEABLE_HEAP, psCmdCompleteData->ui32AllocSize,
 							  psCmdCompleteData, IMG_NULL);
 					psDeviceCommandData[ui32CmdTypeCounter].apsCmdCompleteData[ui32CmdCounter] = IMG_NULL;

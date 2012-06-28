@@ -969,6 +969,10 @@ struct file {
 #ifdef CONFIG_EPOLL
 	/* Used by fs/eventpoll.c to link all the hooks to this file */
 	struct list_head	f_ep_links;
+<<<<<<< HEAD
+=======
+	struct list_head	f_tfile_llink;
+>>>>>>> android-omap-tuna-jb
 #endif /* #ifdef CONFIG_EPOLL */
 	struct address_space	*f_mapping;
 #ifdef CONFIG_DEBUG_WRITECOUNT
@@ -1882,6 +1886,10 @@ extern int fd_statfs(int, struct kstatfs *);
 extern int statfs_by_dentry(struct dentry *, struct kstatfs *);
 extern int freeze_super(struct super_block *super);
 extern int thaw_super(struct super_block *super);
+<<<<<<< HEAD
+=======
+extern bool our_mnt(struct vfsmount *mnt);
+>>>>>>> android-omap-tuna-jb
 
 extern int current_umask(void);
 
@@ -2282,10 +2290,15 @@ extern int should_remove_suid(struct dentry *);
 extern int file_remove_suid(struct file *);
 
 extern void __insert_inode_hash(struct inode *, unsigned long hashval);
+<<<<<<< HEAD
+=======
+extern void remove_inode_hash(struct inode *);
+>>>>>>> android-omap-tuna-jb
 static inline void insert_inode_hash(struct inode *inode)
 {
 	__insert_inode_hash(inode, inode->i_ino);
 }
+<<<<<<< HEAD
 
 extern void __remove_inode_hash(struct inode *);
 static inline void remove_inode_hash(struct inode *inode)
@@ -2294,6 +2307,8 @@ static inline void remove_inode_hash(struct inode *inode)
 		__remove_inode_hash(inode);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 extern void inode_sb_list_add(struct inode *inode);
 
 #ifdef CONFIG_BLOCK

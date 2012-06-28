@@ -31,6 +31,10 @@
 /** struct ip_options - IP Options
  *
  * @faddr - Saved first hop address
+<<<<<<< HEAD
+=======
+ * @nexthop - Saved nexthop address in LSRR and SSRR
+>>>>>>> android-omap-tuna-jb
  * @is_data - Options in __data, rather than skb
  * @is_strictroute - Strict source route
  * @srr_is_hit - Packet destination addr was our one
@@ -41,6 +45,10 @@
  */
 struct ip_options {
 	__be32		faddr;
+<<<<<<< HEAD
+=======
+	__be32		nexthop;
+>>>>>>> android-omap-tuna-jb
 	unsigned char	optlen;
 	unsigned char	srr;
 	unsigned char	rr;

@@ -29,7 +29,10 @@ struct thread_info {
 	__u32			flags;		/* low level flags */
 	__u32			status;		/* thread synchronous flags */
 	__u32			cpu;		/* current CPU */
+<<<<<<< HEAD
 #define HAVE_THREAD_INFO_CPU	1
+=======
+>>>>>>> android-omap-tuna-jb
 	int			preempt_count;	/* 0 => preemptable,
 						   <0 => BUG */
 	mm_segment_t		addr_limit;
@@ -243,8 +246,11 @@ static inline struct thread_info *current_thread_info(void)
  * ever touches our thread-synchronous status, so we don't
  * have to worry about atomic accesses.
  */
+<<<<<<< HEAD
 #define TS_USEDFPU		0x0001	/* FPU was used by this task
 					   this quantum (SMP) */
+=======
+>>>>>>> android-omap-tuna-jb
 #define TS_COMPAT		0x0002	/* 32bit syscall active (64BIT)*/
 #define TS_POLLING		0x0004	/* idle task polling need_resched,
 					   skip sending interrupt */

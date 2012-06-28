@@ -30,6 +30,12 @@
 #include <linux/ion.h>
 #include <linux/omap_ion.h>
 
+<<<<<<< HEAD
+=======
+void PVRSRVExportFDToIONHandles(int fd, struct ion_client **client,
+								struct ion_handle *handles[2]);
+
+>>>>>>> android-omap-tuna-jb
 struct ion_handle *PVRSRVExportFDToIONHandle(int fd,
 											 struct ion_client **client);
 

@@ -238,17 +238,23 @@ static ssize_t hugetlbfs_read(struct file *filp, char __user *buf,
 	loff_t isize;
 	ssize_t retval = 0;
 
+<<<<<<< HEAD
 	mutex_lock(&inode->i_mutex);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* validate length */
 	if (len == 0)
 		goto out;
 
+<<<<<<< HEAD
 	isize = i_size_read(inode);
 	if (!isize)
 		goto out;
 
 	end_index = (isize - 1) >> huge_page_shift(h);
+=======
+>>>>>>> android-omap-tuna-jb
 	for (;;) {
 		struct page *page;
 		unsigned long nr, ret;
@@ -256,18 +262,34 @@ static ssize_t hugetlbfs_read(struct file *filp, char __user *buf,
 
 		/* nr is the maximum number of bytes to copy from this page */
 		nr = huge_page_size(h);
+<<<<<<< HEAD
+=======
+		isize = i_size_read(inode);
+		if (!isize)
+			goto out;
+		end_index = (isize - 1) >> huge_page_shift(h);
+>>>>>>> android-omap-tuna-jb
 		if (index >= end_index) {
 			if (index > end_index)
 				goto out;
 			nr = ((isize - 1) & ~huge_page_mask(h)) + 1;
+<<<<<<< HEAD
 			if (nr <= offset) {
 				goto out;
 			}
+=======
+			if (nr <= offset)
+				goto out;
+>>>>>>> android-omap-tuna-jb
 		}
 		nr = nr - offset;
 
 		/* Find the page */
+<<<<<<< HEAD
 		page = find_get_page(mapping, index);
+=======
+		page = find_lock_page(mapping, index);
+>>>>>>> android-omap-tuna-jb
 		if (unlikely(page == NULL)) {
 			/*
 			 * We have a HOLE, zero out the user-buffer for the
@@ -279,17 +301,29 @@ static ssize_t hugetlbfs_read(struct file *filp, char __user *buf,
 			else
 				ra = 0;
 		} else {
+<<<<<<< HEAD
+=======
+			unlock_page(page);
+
+>>>>>>> android-omap-tuna-jb
 			/*
 			 * We have the page, copy it to user space buffer.
 			 */
 			ra = hugetlbfs_read_actor(page, offset, buf, len, nr);
 			ret = ra;
+<<<<<<< HEAD
+=======
+			page_cache_release(page);
+>>>>>>> android-omap-tuna-jb
 		}
 		if (ra < 0) {
 			if (retval == 0)
 				retval = ra;
+<<<<<<< HEAD
 			if (page)
 				page_cache_release(page);
+=======
+>>>>>>> android-omap-tuna-jb
 			goto out;
 		}
 
@@ -299,16 +333,22 @@ static ssize_t hugetlbfs_read(struct file *filp, char __user *buf,
 		index += offset >> huge_page_shift(h);
 		offset &= ~huge_page_mask(h);
 
+<<<<<<< HEAD
 		if (page)
 			page_cache_release(page);
 
+=======
+>>>>>>> android-omap-tuna-jb
 		/* short read or no more work */
 		if ((ret != nr) || (len == 0))
 			break;
 	}
 out:
 	*ppos = ((loff_t)index << huge_page_shift(h)) + offset;
+<<<<<<< HEAD
 	mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> android-omap-tuna-jb
 	return retval;
 }
 

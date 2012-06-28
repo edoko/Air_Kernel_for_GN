@@ -78,7 +78,11 @@ static void mipi_hsi_terminate_communication(
 
 	switch (iod->format) {
 	case IPC_BOOT:
+<<<<<<< HEAD
 		if (&mipi_ld->hsi_channles[HSI_FLASHLESS_CHANNEL].opened)
+=======
+		if (mipi_ld->hsi_channles[HSI_FLASHLESS_CHANNEL].opened)
+>>>>>>> android-omap-tuna-jb
 			if_hsi_close_channel(&mipi_ld->hsi_channles[
 					HSI_FLASHLESS_CHANNEL]);
 		if (wake_lock_active(&mipi_ld->wlock))
@@ -86,7 +90,11 @@ static void mipi_hsi_terminate_communication(
 		break;
 
 	case IPC_RAMDUMP:
+<<<<<<< HEAD
 		if (&mipi_ld->hsi_channles[HSI_CP_RAMDUMP_CHANNEL].opened)
+=======
+		if (mipi_ld->hsi_channles[HSI_CP_RAMDUMP_CHANNEL].opened)
+>>>>>>> android-omap-tuna-jb
 			if_hsi_close_channel(&mipi_ld->hsi_channles[
 					HSI_CP_RAMDUMP_CHANNEL]);
 		if (wake_lock_active(&mipi_ld->wlock))
@@ -106,8 +114,13 @@ static int mipi_hsi_send(struct link_device *ld, struct io_device *iod,
 {
 	int ret;
 	struct mipi_link_device *mipi_ld = to_mipi_link_device(ld);
+<<<<<<< HEAD
 
 	struct sk_buff_head *txq;
+=======
+	struct sk_buff_head *txq;
+	size_t tx_size;
+>>>>>>> android-omap-tuna-jb
 
 	switch (iod->format) {
 	case IPC_RAW:
@@ -147,6 +160,12 @@ static int mipi_hsi_send(struct link_device *ld, struct io_device *iod,
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	/* store the tx size before run the tx_work, tx_delayed_work*/
+	tx_size = skb->len;
+
+>>>>>>> android-omap-tuna-jb
 	/* save io device into cb area */
 	*((struct io_device **)skb->cb) = iod;
 	/* en queue skb data */
@@ -156,7 +175,12 @@ static int mipi_hsi_send(struct link_device *ld, struct io_device *iod,
 		queue_delayed_work(ld->tx_raw_wq, &ld->tx_delayed_work, 0);
 	else
 		queue_work(ld->tx_wq, &ld->tx_work);
+<<<<<<< HEAD
 	return skb->len;
+=======
+
+	return tx_size;
+>>>>>>> android-omap-tuna-jb
 }
 
 static void mipi_hsi_tx_work(struct work_struct *work)
@@ -466,6 +490,12 @@ static int hsi_init_handshake(struct mipi_link_device *mipi_ld, int mode)
 	case HSI_INIT_MODE_FLASHLESS_BOOT:
 		mipi_ld->ld.com_state = COM_BOOT;
 
+<<<<<<< HEAD
+=======
+		if (timer_pending(&mipi_ld->hsi_acwake_down_timer))
+			del_timer(&mipi_ld->hsi_acwake_down_timer);
+
+>>>>>>> android-omap-tuna-jb
 		if (mipi_ld->hsi_channles[HSI_FLASHLESS_CHANNEL].opened) {
 			hsi_ioctl(mipi_ld->hsi_channles[
 			HSI_FLASHLESS_CHANNEL].dev, HSI_IOCTL_SW_RESET,
@@ -677,7 +707,12 @@ static void hsi_conn_err_recovery(struct mipi_link_device *mipi_ld)
 		pr_err("[MIPI-HSI] hsi_read fail : %d\n", ret);
 
 	for (i = 1; i < HSI_NUM_OF_USE_CHANNELS; i++) {
+<<<<<<< HEAD
 		if ((mipi_ld->hsi_channles[i].recv_step == STEP_RX) &&
+=======
+		if ((mipi_ld->hsi_channles[i].recv_step ==
+				STEP_WAIT_FOR_CONN_READY) &&
+>>>>>>> android-omap-tuna-jb
 				(mipi_ld->hsi_channles[i].rx_count)) {
 			pr_err("[MIPI-HSI] there was rx pending. ch:%d, len:%d",
 					i, mipi_ld->hsi_channles[i].rx_count);
@@ -776,6 +811,14 @@ static void if_hsi_cmd_work(struct work_struct *work)
 		}
 		pr_debug("[MIPI-HSI] take command : %08x\n", hsi_cmd->command);
 
+<<<<<<< HEAD
+=======
+		if (((hsi_cmd->command & 0xF0000000) >> 28) ==
+					HSI_LL_MSG_CONN_CLOSED)
+			mipi_ld->hsi_channles[(hsi_cmd->command & 0x0F000000)
+				>> 24].recv_step = STEP_SEND_TO_CONN_CLOSED;
+
+>>>>>>> android-omap-tuna-jb
 		ret = if_hsi_write(channel, &hsi_cmd->command, 4);
 		if (ret < 0) {
 			pr_err("[MIPI-HSI] write command fail : %d\n", ret);
@@ -908,7 +951,10 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 	switch (cmd) {
 	case HSI_LL_MSG_OPEN_CONN_OCTET:
 		switch (channel->recv_step) {
+<<<<<<< HEAD
 		case STEP_SEND_TO_CONN_CLOSED:
+=======
+>>>>>>> android-omap-tuna-jb
 		case STEP_IDLE:
 			channel->recv_step = STEP_TO_ACK;
 
@@ -932,7 +978,11 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 			}
 
 			channel->packet_size = param;
+<<<<<<< HEAD
 			channel->recv_step = STEP_RX;
+=======
+			channel->recv_step = STEP_WAIT_FOR_CONN_READY;
+>>>>>>> android-omap-tuna-jb
 			if (param % 4)
 				param += (4 - (param % 4));
 			channel->rx_count = param;
@@ -945,6 +995,10 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 			return 0;
 
 		case STEP_NOT_READY:
+<<<<<<< HEAD
+=======
+		case STEP_SEND_TO_CONN_CLOSED:
+>>>>>>> android-omap-tuna-jb
 			ret = if_hsi_send_command(mipi_ld, HSI_LL_MSG_NAK, ch,
 						param);
 			if (ret) {
@@ -954,10 +1008,18 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 			}
 			return 0;
 
+<<<<<<< HEAD
 		default:
 			pr_err("[MIPI-HSI] wrong state : %08x, recv_step : %d\n",
 						cmd, channel->recv_step);
 
+=======
+		case STEP_RX:
+			pr_err("[MIPI-HSI] wrong open cmd in rx step\n");
+			return -1;
+
+		default:
+>>>>>>> android-omap-tuna-jb
 			ret = if_hsi_send_command(mipi_ld, HSI_LL_MSG_ACK, ch,
 						param);
 			if (ret) {
@@ -965,7 +1027,31 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 							ret);
 				return ret;
 			}
+<<<<<<< HEAD
 			pr_err("[MIPI-HSI] Send ACK AGAIN\n");
+=======
+			pr_err("[MIPI-HSI] wrong state : %08x, recv_step : %d, "
+				"size : %d\n", cmd, channel->recv_step, param);
+
+			if (channel->packet_size != param) {
+				pr_err("[MIPI-HSI] %d open-cmd param changed "
+					"packet_size : %d, param : %d\n",
+					channel->channel_id,
+					channel->packet_size, param);
+
+				hsi_read_cancel(channel->dev);
+				pr_err("[MIPI-HSI] read cancel\n");
+
+				channel->packet_size = param;
+				channel->recv_step = STEP_WAIT_FOR_CONN_READY;
+				if (param % 4)
+					param += (4 - (param % 4));
+				channel->rx_count = param;
+				hsi_read(channel->dev, channel->rx_data,
+						channel->rx_count / 4);
+				pr_err("[MIPI-HSI] read again with new len\n");
+			}
+>>>>>>> android-omap-tuna-jb
 			return -1;
 		}
 
@@ -999,6 +1085,11 @@ static int if_hsi_rx_cmd_handle(struct mipi_link_device *mipi_ld, u32 cmd,
 		case STEP_WAIT_FOR_CONN_CLOSED:
 			pr_debug("[MIPI-HSI] got close\n");
 
+<<<<<<< HEAD
+=======
+			mod_timer(&mipi_ld->hsi_acwake_down_timer, jiffies +
+					HSI_ACWAKE_DOWN_TIMEOUT);
+>>>>>>> android-omap-tuna-jb
 			channel->send_step = STEP_IDLE;
 			up(&channel->close_conn_done_sem);
 			return 0;
@@ -1228,6 +1319,11 @@ static void if_hsi_write_done(struct hsi_device *dev, unsigned int size)
 		(((*channel->tx_data & 0xF0000000) >> 28) ==
 			HSI_LL_MSG_CONN_CLOSED) &&
 			mipi_ld->ld.com_state == COM_ONLINE) {
+<<<<<<< HEAD
+=======
+		mod_timer(&mipi_ld->hsi_acwake_down_timer, jiffies +
+					HSI_ACWAKE_DOWN_TIMEOUT);
+>>>>>>> android-omap-tuna-jb
 		mipi_ld->hsi_channles[
 		(*channel->tx_data & 0x0F000000) >> 24].recv_step = STEP_IDLE;
 	}
@@ -1405,8 +1501,11 @@ static void if_hsi_read_done(struct hsi_device *dev, unsigned int size)
 		pr_debug("[MIPI-HSI] receive command data : 0x%x\n",
 					*channel->rx_data);
 
+<<<<<<< HEAD
 		channel->recv_step = STEP_SEND_TO_CONN_CLOSED;
 
+=======
+>>>>>>> android-omap-tuna-jb
 		ch = channel->channel_id;
 		param = 0;
 		ret = if_hsi_send_command(mipi_ld, HSI_LL_MSG_CONN_CLOSED,
@@ -1423,7 +1522,11 @@ static void if_hsi_read_done(struct hsi_device *dev, unsigned int size)
 		pr_debug("[MIPI-HSI] iodevice format : %d\n", iod->format);
 
 		if (iod->format == format_type) {
+<<<<<<< HEAD
 			channel->recv_step = STEP_NOT_READY;
+=======
+			channel->recv_step = STEP_RX;
+>>>>>>> android-omap-tuna-jb
 
 			pr_debug("[MIPI-HSI] RECV DATA : %08x(%d)-%d\n",
 				*channel->rx_data, channel->packet_size,
@@ -1439,6 +1542,7 @@ static void if_hsi_read_done(struct hsi_device *dev, unsigned int size)
 						channel->packet_size);
 			if (ret < 0) {
 				pr_err("[MIPI-HSI] recv call fail : %d\n", ret);
+<<<<<<< HEAD
 				print_hex_dump_bytes("[HSI]",
 					DUMP_PREFIX_OFFSET,
 					channel->rx_data, channel->packet_size);
@@ -1448,6 +1552,28 @@ static void if_hsi_read_done(struct hsi_device *dev, unsigned int size)
 
 			channel->recv_step = STEP_SEND_TO_CONN_CLOSED;
 
+=======
+
+				ch = channel->channel_id;
+				param = 0;
+				ret = if_hsi_send_command(mipi_ld,
+					HSI_LL_MSG_CONN_CLOSED, ch, param);
+				if (ret)
+					pr_err("[MIPI-HSI] send_cmd fail=%d\n",
+						ret);
+
+				print_hex_dump_bytes("[HSI]",
+					DUMP_PREFIX_OFFSET,
+					channel->rx_data, channel->packet_size);
+
+				/* to clean the all wrong packet */
+				channel->packet_size = 0;
+				hsi_conn_err_recovery(mipi_ld);
+				return;
+			}
+			channel->packet_size = 0;
+
+>>>>>>> android-omap-tuna-jb
 			ch = channel->channel_id;
 			param = 0;
 			ret = if_hsi_send_command(mipi_ld,

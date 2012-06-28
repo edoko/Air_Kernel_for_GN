@@ -234,6 +234,7 @@ void __init per_cpu_patch(void)
 	}
 }
 
+<<<<<<< HEAD
 void __init sun4v_patch(void)
 {
 	extern void sun4v_hvapi_init(void);
@@ -268,6 +269,52 @@ void __init sun4v_patch(void)
 
 		p2++;
 	}
+=======
+void sun4v_patch_1insn_range(struct sun4v_1insn_patch_entry *start,
+			     struct sun4v_1insn_patch_entry *end)
+{
+	while (start < end) {
+		unsigned long addr = start->addr;
+
+		*(unsigned int *) (addr +  0) = start->insn;
+		wmb();
+		__asm__ __volatile__("flush	%0" : : "r" (addr +  0));
+
+		start++;
+	}
+}
+
+void sun4v_patch_2insn_range(struct sun4v_2insn_patch_entry *start,
+			     struct sun4v_2insn_patch_entry *end)
+{
+	while (start < end) {
+		unsigned long addr = start->addr;
+
+		*(unsigned int *) (addr +  0) = start->insns[0];
+		wmb();
+		__asm__ __volatile__("flush	%0" : : "r" (addr +  0));
+
+		*(unsigned int *) (addr +  4) = start->insns[1];
+		wmb();
+		__asm__ __volatile__("flush	%0" : : "r" (addr +  4));
+
+		start++;
+	}
+}
+
+void __init sun4v_patch(void)
+{
+	extern void sun4v_hvapi_init(void);
+
+	if (tlb_type != hypervisor)
+		return;
+
+	sun4v_patch_1insn_range(&__sun4v_1insn_patch,
+				&__sun4v_1insn_patch_end);
+
+	sun4v_patch_2insn_range(&__sun4v_2insn_patch,
+				&__sun4v_2insn_patch_end);
+>>>>>>> android-omap-tuna-jb
 
 	sun4v_hvapi_init();
 }

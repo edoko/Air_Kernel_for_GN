@@ -34,11 +34,14 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/cpufreq_interactive.h>
 
+<<<<<<< HEAD
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/slab.h>
 
+=======
+>>>>>>> android-omap-tuna-jb
 static atomic_t active_count = ATOMIC_INIT(0);
 
 struct cpufreq_interactive_cpuinfo {
@@ -50,7 +53,10 @@ struct cpufreq_interactive_cpuinfo {
 	int idling;
 	u64 target_set_time;
 	u64 target_set_time_in_idle;
+<<<<<<< HEAD
 	u64 target_validate_time;
+=======
+>>>>>>> android-omap-tuna-jb
 	struct cpufreq_policy *policy;
 	struct cpufreq_frequency_table *freq_table;
 	unsigned int target_freq;
@@ -58,11 +64,14 @@ struct cpufreq_interactive_cpuinfo {
 	u64 floor_validate_time;
 	u64 hispeed_validate_time;
 	int governor_enabled;
+<<<<<<< HEAD
 	unsigned int *load_history;
 	unsigned int total_avg_load;
 	unsigned int total_load_history;
 	unsigned int low_power_rate_history;
 	unsigned int cpu_tune_value;
+=======
+>>>>>>> android-omap-tuna-jb
 };
 
 static DEFINE_PER_CPU(struct cpufreq_interactive_cpuinfo, cpuinfo);
@@ -77,6 +86,7 @@ static cpumask_t down_cpumask;
 static spinlock_t down_cpumask_lock;
 static struct mutex set_speed_lock;
 
+<<<<<<< HEAD
 static struct workqueue_struct *tune_wq;
 static struct work_struct tune_work;
 static cpumask_t tune_cpumask;
@@ -102,23 +112,36 @@ static enum tune_values {
 #define DEFAULT_LOW_POWER_THRESHOLD 35
 #define MAX_MIN_SAMPLE_TIME (80 * USEC_PER_MSEC)
 
+=======
+>>>>>>> android-omap-tuna-jb
 /* Hi speed to bump to from lo speed when load burst (default max) */
 static u64 hispeed_freq;
 
 /* Go to hi speed when CPU load at or above this value. */
 #define DEFAULT_GO_HISPEED_LOAD 85
 static unsigned long go_hispeed_load;
+<<<<<<< HEAD
 /*
  * The minimum amount of time to spend at a frequency before we can ramp down.
  */
 
 #define DEFAULT_MIN_SAMPLE_TIME (60 * USEC_PER_MSEC)
+=======
+
+/*
+ * The minimum amount of time to spend at a frequency before we can ramp down.
+ */
+#define DEFAULT_MIN_SAMPLE_TIME (80 * USEC_PER_MSEC)
+>>>>>>> android-omap-tuna-jb
 static unsigned long min_sample_time;
 
 /*
  * The sample rate of the timer used to increase frequency
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb
 #define DEFAULT_TIMER_RATE (20 * USEC_PER_MSEC)
 static unsigned long timer_rate;
 
@@ -172,8 +195,13 @@ static void cpufreq_interactive_timer(unsigned long data)
 	struct cpufreq_interactive_cpuinfo *pcpu =
 		&per_cpu(cpuinfo, data);
 	u64 now_idle;
+<<<<<<< HEAD
 	unsigned int new_freq, new_tune_value;
 	unsigned int index, i, j;
+=======
+	unsigned int new_freq;
+	unsigned int index;
+>>>>>>> android-omap-tuna-jb
 	unsigned long flags;
 
 	smp_rmb();
@@ -232,6 +260,7 @@ static void cpufreq_interactive_timer(unsigned long data)
 	 */
 	if (load_since_change > cpu_load)
 		cpu_load = load_since_change;
+<<<<<<< HEAD
 	pcpu->load_history[history_load_index] = cpu_load;
 
 	pcpu->total_load_history = 0;
@@ -279,6 +308,8 @@ static void cpufreq_interactive_timer(unsigned long data)
 		else
 			cpu_load = pcpu->total_avg_load;
 	}
+=======
+>>>>>>> android-omap-tuna-jb
 
 	if (cpu_load >= go_hispeed_load || boost_val) {
 		if (pcpu->target_freq <= pcpu->policy->min) {
@@ -318,12 +349,21 @@ static void cpufreq_interactive_timer(unsigned long data)
 	new_freq = pcpu->freq_table[index].frequency;
 
 	/*
+<<<<<<< HEAD
 	 * Do not scale down unless we have been at this frequency for the
 	 * minimum sample time since last validated.
 	 */
 	if (new_freq < pcpu->target_freq) {
 		if (cputime64_sub(pcpu->timer_run_time,
 				  pcpu->target_validate_time)
+=======
+	 * Do not scale below floor_freq unless we have been at or above the
+	 * floor frequency for the minimum sample time since last validated.
+	 */
+	if (new_freq < pcpu->floor_freq) {
+		if (cputime64_sub(pcpu->timer_run_time,
+				  pcpu->floor_validate_time)
+>>>>>>> android-omap-tuna-jb
 		    < min_sample_time) {
 			trace_cpufreq_interactive_notyet(data, cpu_load,
 					 pcpu->target_freq, new_freq);
@@ -331,7 +371,12 @@ static void cpufreq_interactive_timer(unsigned long data)
 		}
 	}
 
+<<<<<<< HEAD
 	pcpu->target_validate_time = pcpu->timer_run_time;
+=======
+	pcpu->floor_freq = new_freq;
+	pcpu->floor_validate_time = pcpu->timer_run_time;
+>>>>>>> android-omap-tuna-jb
 
 	if (pcpu->target_freq == new_freq) {
 		trace_cpufreq_interactive_already(data, cpu_load,
@@ -392,6 +437,7 @@ exit:
 	return;
 }
 
+<<<<<<< HEAD
 static void cpufreq_interactive_tune(struct work_struct *work)
 {
 	unsigned int cpu;
@@ -449,6 +495,8 @@ static void cpufreq_interactive_tune(struct work_struct *work)
 
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static void cpufreq_interactive_idle_start(void)
 {
 	struct cpufreq_interactive_cpuinfo *pcpu =
@@ -656,12 +704,21 @@ static void cpufreq_interactive_boost(void)
 		}
 
 		/*
+<<<<<<< HEAD
 		 * Refresh time at which current (possibly being
 		 * boosted) speed last validated (reset timer for
 		 * allowing speed to drop).
 		 */
 
 		pcpu->target_validate_time = ktime_to_us(ktime_get());
+=======
+		 * Set floor freq and (re)start timer for when last
+		 * validated.
+		 */
+
+		pcpu->floor_freq = hispeed_freq;
+		pcpu->floor_validate_time = ktime_to_us(ktime_get());
+>>>>>>> android-omap-tuna-jb
 	}
 
 	spin_unlock_irqrestore(&up_cpumask_lock, flags);
@@ -941,6 +998,7 @@ static ssize_t store_boostpulse(struct kobject *kobj, struct attribute *attr,
 static struct global_attr boostpulse =
 	__ATTR(boostpulse, 0200, NULL, store_boostpulse);
 
+<<<<<<< HEAD
 static ssize_t show_sampling_periods(struct kobject *kobj,
 			struct attribute *attr, char *buf)
 {
@@ -1073,6 +1131,8 @@ static struct global_attr low_power_rate_attr = __ATTR(low_power_rate,
 		     0644, show_low_power_rate, store_low_power_rate);
 
 
+=======
+>>>>>>> android-omap-tuna-jb
 static struct attribute *interactive_attributes[] = {
 	&hispeed_freq_attr.attr,
 	&go_hispeed_load_attr.attr,
@@ -1082,10 +1142,13 @@ static struct attribute *interactive_attributes[] = {
 	&input_boost.attr,
 	&boost.attr,
 	&boostpulse.attr,
+<<<<<<< HEAD
 	&low_power_threshold_attr.attr,
 	&hi_perf_threshold_attr.attr,
 	&sampling_periods_attr.attr,
 	&low_power_rate_attr.attr,
+=======
+>>>>>>> android-omap-tuna-jb
 	NULL,
 };
 
@@ -1098,7 +1161,11 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		unsigned int event)
 {
 	int rc;
+<<<<<<< HEAD
 	unsigned int j, i;
+=======
+	unsigned int j;
+>>>>>>> android-omap-tuna-jb
 	struct cpufreq_interactive_cpuinfo *pcpu;
 	struct cpufreq_frequency_table *freq_table;
 
@@ -1118,11 +1185,17 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 			pcpu->target_set_time_in_idle =
 				get_cpu_idle_time_us(j,
 					     &pcpu->target_set_time);
+<<<<<<< HEAD
 			pcpu->target_validate_time =
+=======
+			pcpu->floor_freq = pcpu->target_freq;
+			pcpu->floor_validate_time =
+>>>>>>> android-omap-tuna-jb
 				pcpu->target_set_time;
 			pcpu->hispeed_validate_time =
 				pcpu->target_set_time;
 			pcpu->governor_enabled = 1;
+<<<<<<< HEAD
 			pcpu->load_history = kmalloc(
 				(sizeof(unsigned int) * sampling_periods),
 				 GFP_KERNEL);
@@ -1130,12 +1203,17 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 				return -ENOMEM;
 			for (i = 0; i < sampling_periods; i++)
 				pcpu->load_history[i] = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 			smp_wmb();
 		}
 
 		if (!hispeed_freq)
 			hispeed_freq = policy->max;
+<<<<<<< HEAD
 		history_load_index = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 
 		/*
 		 * Do not register the idle hook and create sysfs
@@ -1170,12 +1248,18 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 			 * that is trying to run.
 			 */
 			pcpu->idle_exit_time = 0;
+<<<<<<< HEAD
 			kfree(pcpu->load_history);
 		}
 
 		flush_work(&freq_scale_down_work);
 		flush_work(&tune_work);
 
+=======
+		}
+
+		flush_work(&freq_scale_down_work);
+>>>>>>> android-omap-tuna-jb
 		if (atomic_dec_return(&active_count) > 0)
 			return 0;
 
@@ -1228,18 +1312,24 @@ static int __init cpufreq_interactive_init(void)
 	above_hispeed_delay_val = DEFAULT_ABOVE_HISPEED_DELAY;
 	timer_rate = DEFAULT_TIMER_RATE;
 
+<<<<<<< HEAD
 	sampling_periods = DEFAULT_SAMPLING_PERIODS;
 	hi_perf_threshold = DEFAULT_HI_PERF_THRESHOLD;
 	low_power_threshold = DEFAULT_LOW_POWER_THRESHOLD;
 	low_power_rate = DEFAULT_LOW_POWER_RATE;
 	cur_tune_value = DEFAULT_TUNE;
+=======
+>>>>>>> android-omap-tuna-jb
 	/* Initalize per-cpu timers */
 	for_each_possible_cpu(i) {
 		pcpu = &per_cpu(cpuinfo, i);
 		init_timer(&pcpu->cpu_timer);
 		pcpu->cpu_timer.function = cpufreq_interactive_timer;
 		pcpu->cpu_timer.data = i;
+<<<<<<< HEAD
 		pcpu->cpu_tune_value = DEFAULT_TUNE;
+=======
+>>>>>>> android-omap-tuna-jb
 	}
 
 	up_task = kthread_create(cpufreq_interactive_up_task, NULL,
@@ -1253,7 +1343,10 @@ static int __init cpufreq_interactive_init(void)
 	/* No rescuer thread, bind to CPU queuing the work for possibly
 	   warm cache (probably doesn't matter much). */
 	down_wq = alloc_workqueue("knteractive_down", 0, 1);
+<<<<<<< HEAD
 	tune_wq = alloc_workqueue("knteractive_tune", 0, 1);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	if (!down_wq)
 		goto err_freeuptask;
@@ -1261,12 +1354,17 @@ static int __init cpufreq_interactive_init(void)
 	INIT_WORK(&freq_scale_down_work,
 		  cpufreq_interactive_freq_down);
 
+<<<<<<< HEAD
 	INIT_WORK(&tune_work,
 		  cpufreq_interactive_tune);
 
 	spin_lock_init(&up_cpumask_lock);
 	spin_lock_init(&down_cpumask_lock);
 	spin_lock_init(&tune_cpumask_lock);
+=======
+	spin_lock_init(&up_cpumask_lock);
+	spin_lock_init(&down_cpumask_lock);
+>>>>>>> android-omap-tuna-jb
 	mutex_init(&set_speed_lock);
 
 	idle_notifier_register(&cpufreq_interactive_idle_nb);
@@ -1290,7 +1388,10 @@ static void __exit cpufreq_interactive_exit(void)
 	kthread_stop(up_task);
 	put_task_struct(up_task);
 	destroy_workqueue(down_wq);
+<<<<<<< HEAD
 	destroy_workqueue(tune_wq);
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 module_exit(cpufreq_interactive_exit);

@@ -227,6 +227,11 @@ static int restore_vfp_context(struct vfp_sigframe __user *frame)
 	if (magic != VFP_MAGIC || size != VFP_STORAGE_SIZE)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	vfp_flush_hwstate(thread);
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Copy the floating point registers. There can be unused
 	 * registers see asm/hwcap.h for details.
@@ -251,9 +256,12 @@ static int restore_vfp_context(struct vfp_sigframe __user *frame)
 	__get_user_error(h->fpinst, &frame->ufp_exc.fpinst, err);
 	__get_user_error(h->fpinst2, &frame->ufp_exc.fpinst2, err);
 
+<<<<<<< HEAD
 	if (!err)
 		vfp_flush_hwstate(thread);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return err ? -EFAULT : 0;
 }
 

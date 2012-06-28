@@ -1269,4 +1269,8 @@ static int __init ds_init(void)
 	return vio_register_driver(&ds_driver);
 }
 
+<<<<<<< HEAD
 subsys_initcall(ds_init);
+=======
+fs_initcall(ds_init);
+>>>>>>> android-omap-tuna-jb

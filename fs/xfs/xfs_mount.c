@@ -44,9 +44,12 @@
 #include "xfs_trace.h"
 
 
+<<<<<<< HEAD
 STATIC void	xfs_unmountfs_wait(xfs_mount_t *);
 
 
+=======
+>>>>>>> android-omap-tuna-jb
 #ifdef HAVE_PERCPU_SB
 STATIC void	xfs_icsb_balance_counter(xfs_mount_t *, xfs_sb_field_t,
 						int);
@@ -1507,11 +1510,14 @@ xfs_unmountfs(
 	 */
 	xfs_log_force(mp, XFS_LOG_SYNC);
 
+<<<<<<< HEAD
 	xfs_binval(mp->m_ddev_targp);
 	if (mp->m_rtdev_targp) {
 		xfs_binval(mp->m_rtdev_targp);
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Unreserve any blocks we have so that when we unmount we don't account
 	 * the reserved free space as used. This is really only necessary for
@@ -1537,7 +1543,20 @@ xfs_unmountfs(
 		xfs_warn(mp, "Unable to update superblock counters. "
 				"Freespace may not be correct on next mount.");
 	xfs_unmountfs_writesb(mp);
+<<<<<<< HEAD
 	xfs_unmountfs_wait(mp); 		/* wait for async bufs */
+=======
+
+	/*
+	 * Make sure all buffers have been flushed and completed before
+	 * unmounting the log.
+	 */
+	error = xfs_flush_buftarg(mp->m_ddev_targp, 1);
+	if (error)
+		xfs_warn(mp, "%d busy buffers during unmount.", error);
+	xfs_wait_buftarg(mp->m_ddev_targp);
+
+>>>>>>> android-omap-tuna-jb
 	xfs_log_unmount_write(mp);
 	xfs_log_unmount(mp);
 	xfs_uuid_unmount(mp);
@@ -1548,6 +1567,7 @@ xfs_unmountfs(
 	xfs_free_perag(mp);
 }
 
+<<<<<<< HEAD
 STATIC void
 xfs_unmountfs_wait(xfs_mount_t *mp)
 {
@@ -1558,6 +1578,8 @@ xfs_unmountfs_wait(xfs_mount_t *mp)
 	xfs_wait_buftarg(mp->m_ddev_targp);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 int
 xfs_fs_writable(xfs_mount_t *mp)
 {

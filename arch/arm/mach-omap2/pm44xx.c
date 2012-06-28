@@ -80,6 +80,7 @@ static struct clockdomain *tesla_clkdm;
 static struct powerdomain *tesla_pwrdm;
 
 static struct clockdomain *emif_clkdm, *mpuss_clkdm;
+<<<<<<< HEAD
 static struct clockdomain *abe_clkdm;
 
 /* Yet un-named erratum which requires AUTORET to be disabled for IVA PD
@@ -94,6 +95,11 @@ static struct clockdomain *abe_clkdm;
 */
 #define OMAP4_PM_ERRATUM_IVA_AUTO_RET_iXXX	BIT(1)
 
+=======
+
+/* Yet un-named erratum which requires AUTORET to be disabled for IVA PD */
+#define OMAP4_PM_ERRATUM_IVA_AUTO_RET_iXXX	BIT(1)
+>>>>>>> android-omap-tuna-jb
 /*
 * HSI - OMAP4430-2.2BUG00055:
 * HSI: DSP Swakeup generated is the same than MPU Swakeup.
@@ -118,6 +124,7 @@ static struct clockdomain *abe_clkdm;
  */
 #define OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_IDLE_iXXX	BIT(4)
 
+<<<<<<< HEAD
 /*
  * AUTO RET for IVA VDD Cannot be permanently enabled during OFF mode due to
  * potential race between IVA VDD entering RET and start of Device OFF mode.
@@ -154,6 +161,9 @@ static struct clockdomain *abe_clkdm;
 static int iva_toggle_wa_applied;
 
 u16 pm44xx_errata;
+=======
+u8 pm44xx_errata;
+>>>>>>> android-omap-tuna-jb
 #define is_pm44xx_erratum(erratum) (pm44xx_errata & OMAP4_PM_ERRATUM_##erratum)
 
 /* HACK: check CAWAKE wakeup event */
@@ -289,6 +299,7 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 			goto abort_device_off;
 		omap_vc_set_auto_trans(core_voltdm,
 			OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
+<<<<<<< HEAD
 
 		/*
 		* Do not enable IVA AUTO-RET if device targets OFF mode.
@@ -312,6 +323,11 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 				omap_vc_set_auto_trans(iva_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
 			}
+=======
+		if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
+			omap_vc_set_auto_trans(iva_voltdm,
+			  OMAP_VC_CHANNEL_AUTO_TRANSITION_RETENTION);
+>>>>>>> android-omap-tuna-jb
 		}
 
 		omap_temp_sensor_prepare_idle();
@@ -326,12 +342,15 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 		omap4_pm_suspend_save_regs();
 
 	if (omap4_device_next_state_off()) {
+<<<<<<< HEAD
 		/* Proceed with OFF mode sequence only if WA is applied */
 		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
 			if (!iva_toggle_wa_applied)
 				goto abort_device_off;
 		}
 
+=======
+>>>>>>> android-omap-tuna-jb
 		/* Save the device context to SAR RAM */
 		if (omap4_sar_save())
 			goto abort_device_off;
@@ -362,6 +381,7 @@ abort_device_off:
 		/* See note above */
 		omap_vc_set_auto_trans(core_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
+<<<<<<< HEAD
 
 		if (is_pm44xx_erratum(IVA_AUTO_RET_IDLE_iXXX)) {
 			if (omap_vc_set_auto_trans(iva_voltdm,
@@ -403,6 +423,11 @@ abort_device_off:
 				omap_vc_set_auto_trans(iva_voltdm,
 				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
 			}
+=======
+		if (!is_pm44xx_erratum(IVA_AUTO_RET_iXXX)) {
+			omap_vc_set_auto_trans(iva_voltdm,
+				OMAP_VC_CHANNEL_AUTO_TRANSITION_DISABLE);
+>>>>>>> android-omap-tuna-jb
 		}
 
 		omap_temp_sensor_resume_idle();
@@ -1345,11 +1370,16 @@ static void __init omap4_pm_setup_errata(void)
 	 * all OMAP4 silica
 	 */
 	if (cpu_is_omap44xx())
+<<<<<<< HEAD
 		pm44xx_errata |= OMAP4_PM_ERRATUM_IVA_AUTO_RET_IDLE_iXXX |
 				 OMAP4_PM_ERRATUM_HSI_SWAKEUP_iXXX;
 				
 	iva_toggle_wa_applied = 0;
 				
+=======
+		pm44xx_errata |= OMAP4_PM_ERRATUM_IVA_AUTO_RET_iXXX |
+				 OMAP4_PM_ERRATUM_HSI_SWAKEUP_iXXX;
+>>>>>>> android-omap-tuna-jb
 	/* Dynamic Dependency errata for all silicon !=443x */
 	if (cpu_is_omap443x())
 		pm44xx_errata |= OMAP4_PM_ERRATUM_MPU_EMIF_NO_DYNDEP_i688;
@@ -1366,7 +1396,11 @@ static void __init omap4_pm_setup_errata(void)
 static int __init omap4_pm_init(void)
 {
 	int ret = 0;
+<<<<<<< HEAD
 	struct clockdomain *l3_1_clkdm, *l4wkup;
+=======
+	struct clockdomain *l3_1_clkdm;
+>>>>>>> android-omap-tuna-jb
 	struct clockdomain *ducati_clkdm, *l3_2_clkdm, *l4_per, *l4_cfg;
 
 	if (!cpu_is_omap44xx())
@@ -1413,6 +1447,7 @@ static int __init omap4_pm_init(void)
 	 * doesn't work as expected. The hardware recommendation is
 	 * to keep above dependencies. Without this system locks up or
 	 * randomly crashes.
+<<<<<<< HEAD
 	 *
 	 * On 44xx:
 	 * The L4 wakeup depedency is added to workaround the OCP sync hardware
@@ -1423,15 +1458,25 @@ static int __init omap4_pm_init(void)
 	mpuss_clkdm = clkdm_lookup("mpuss_clkdm");
 	emif_clkdm = clkdm_lookup("l3_emif_clkdm");
 	abe_clkdm = clkdm_lookup("abe_clkdm");
+=======
+	 */
+	mpuss_clkdm = clkdm_lookup("mpuss_clkdm");
+	emif_clkdm = clkdm_lookup("l3_emif_clkdm");
+>>>>>>> android-omap-tuna-jb
 	l3_1_clkdm = clkdm_lookup("l3_1_clkdm");
 	l3_2_clkdm = clkdm_lookup("l3_2_clkdm");
 	ducati_clkdm = clkdm_lookup("ducati_clkdm");
 	l4_per = clkdm_lookup("l4_per_clkdm");
 	l4_cfg = clkdm_lookup("l4_cfg_clkdm");
+<<<<<<< HEAD
 	l4wkup = clkdm_lookup("l4_wkup_clkdm");
 	if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) || (!l4wkup) ||
 		(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg) ||
 		(!abe_clkdm))
+=======
+	if ((!mpuss_clkdm) || (!emif_clkdm) || (!l3_1_clkdm) ||
+		(!l3_2_clkdm) || (!ducati_clkdm) || (!l4_per) || (!l4_cfg))
+>>>>>>> android-omap-tuna-jb
 		goto err2;
 
 	/* if we cannot ever enable static dependency. */
@@ -1447,7 +1492,10 @@ static int __init omap4_pm_init(void)
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l4_cfg);
 		ret |= clkdm_add_wkdep(ducati_clkdm, l4_per);
 		ret |= clkdm_add_wkdep(ducati_clkdm, l4_cfg);
+<<<<<<< HEAD
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l4wkup);
+=======
+>>>>>>> android-omap-tuna-jb
 		if (ret) {
 			pr_err("Failed to add MPUSS -> L3/EMIF, DUCATI -> L3"
 			       " and MPUSS -> L4* wakeup dependency\n");
@@ -1465,7 +1513,10 @@ static int __init omap4_pm_init(void)
 		/* There appears to be a problem between the MPUSS and L3_1 */
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l3_1_clkdm);
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l3_2_clkdm);
+<<<<<<< HEAD
 		ret |= clkdm_add_wkdep(mpuss_clkdm, l4wkup);
+=======
+>>>>>>> android-omap-tuna-jb
 
 		/* There appears to be a problem between the Ducati and L3/L4 */
 		ret |= clkdm_add_wkdep(ducati_clkdm, l3_1_clkdm);

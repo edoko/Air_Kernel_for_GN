@@ -184,15 +184,26 @@ static unsigned long ksm_pages_unshared;
 static unsigned long ksm_rmap_items;
 
 /* Number of pages ksmd should scan in one batch */
+<<<<<<< HEAD
 static unsigned int ksm_thread_pages_to_scan = 256;
 
 /* Milliseconds ksmd should sleep between batches */
 static unsigned int ksm_thread_sleep_millisecs = 1500;
+=======
+static unsigned int ksm_thread_pages_to_scan = 100;
+
+/* Milliseconds ksmd should sleep between batches */
+static unsigned int ksm_thread_sleep_millisecs = 20;
+>>>>>>> android-omap-tuna-jb
 
 #define KSM_RUN_STOP	0
 #define KSM_RUN_MERGE	1
 #define KSM_RUN_UNMERGE	2
+<<<<<<< HEAD
 static unsigned int ksm_run = KSM_RUN_MERGE;
+=======
+static unsigned int ksm_run = KSM_RUN_STOP;
+>>>>>>> android-omap-tuna-jb
 
 static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
 static DEFINE_MUTEX(ksm_thread_mutex);

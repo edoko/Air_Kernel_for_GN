@@ -479,6 +479,10 @@ static void wl1251_op_stop(struct ieee80211_hw *hw)
 	cancel_work_sync(&wl->irq_work);
 	cancel_work_sync(&wl->tx_work);
 	cancel_work_sync(&wl->filter_work);
+<<<<<<< HEAD
+=======
+	cancel_delayed_work_sync(&wl->elp_work);
+>>>>>>> android-omap-tuna-jb
 
 	mutex_lock(&wl->mutex);
 

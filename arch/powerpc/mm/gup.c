@@ -16,6 +16,7 @@
 
 #ifdef __HAVE_ARCH_PTE_SPECIAL
 
+<<<<<<< HEAD
 static inline void get_huge_page_tail(struct page *page)
 {
 	/*
@@ -26,6 +27,8 @@ static inline void get_huge_page_tail(struct page *page)
 	atomic_inc(&page->_count);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 /*
  * The performance critical leaf functions are made noinline otherwise gcc
  * inlines everything into a single function which results in too much
@@ -57,8 +60,11 @@ static noinline int gup_pte_range(pmd_t pmd, unsigned long addr,
 			put_page(page);
 			return 0;
 		}
+<<<<<<< HEAD
 		if (PageTail(page))
 			get_huge_page_tail(page);
+=======
+>>>>>>> android-omap-tuna-jb
 		pages[*nr] = page;
 		(*nr)++;
 

@@ -64,8 +64,12 @@ void __init orion_mpp_conf(unsigned int *mpp_list, unsigned int variant_mask,
 			gpio_mode |= GPIO_INPUT_OK;
 		if (*mpp_list & MPP_OUTPUT_MASK)
 			gpio_mode |= GPIO_OUTPUT_OK;
+<<<<<<< HEAD
 		if (sel != 0)
 			gpio_mode = 0;
+=======
+
+>>>>>>> android-omap-tuna-jb
 		orion_gpio_set_valid(num, gpio_mode);
 	}
 

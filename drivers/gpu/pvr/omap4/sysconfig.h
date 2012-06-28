@@ -29,10 +29,17 @@
 
 #define VS_PRODUCT_NAME	"OMAP4"
 
+<<<<<<< HEAD
 #ifdef CONFIG_OMAP_GPU_OVERCLOCK
 #define SYS_SGX_CLOCK_SPEED		512000000
 #else
 #define SYS_SGX_CLOCK_SPEED		384000000
+=======
+#if defined(SGX540) && (SGX_CORE_REV == 120)
+#define SYS_SGX_CLOCK_SPEED		307200000
+#else
+#define SYS_SGX_CLOCK_SPEED		304742400
+>>>>>>> android-omap-tuna-jb
 #endif
 
 #define SYS_SGX_HWRECOVERY_TIMEOUT_FREQ		(100)	

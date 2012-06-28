@@ -555,7 +555,11 @@ static int __devinit altera_uart_probe(struct platform_device *pdev)
 	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (res_mem)
 		port->mapbase = res_mem->start;
+<<<<<<< HEAD
 	else if (platp->mapbase)
+=======
+	else if (platp)
+>>>>>>> android-omap-tuna-jb
 		port->mapbase = platp->mapbase;
 	else
 		return -EINVAL;
@@ -563,7 +567,11 @@ static int __devinit altera_uart_probe(struct platform_device *pdev)
 	res_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 	if (res_irq)
 		port->irq = res_irq->start;
+<<<<<<< HEAD
 	else if (platp->irq)
+=======
+	else if (platp)
+>>>>>>> android-omap-tuna-jb
 		port->irq = platp->irq;
 
 	/* Check platform data first so we can override device node data */

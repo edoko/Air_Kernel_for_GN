@@ -34,12 +34,15 @@
 
 #include <asm/unaligned.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCH_WAKE
 #include <linux/touch_wake.h>
 
 static struct mms_ts_info * touchwake_info;
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 #define MAX_FINGERS		10
 #define MAX_WIDTH		30
 #define MAX_PRESSURE		255
@@ -162,6 +165,7 @@ static irqreturn_t mms_ts_interrupt(int irq, void *dev_id)
 	print_hex_dump(KERN_DEBUG, "mms_ts raw: ",
 		       DUMP_PREFIX_OFFSET, 32, 1, buf, sz, false);
 #endif
+<<<<<<< HEAD
 
 #ifdef CONFIG_TOUCH_WAKE
 	if (device_is_suspended())
@@ -172,6 +176,8 @@ static irqreturn_t mms_ts_interrupt(int irq, void *dev_id)
 	    }
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	for (i = 0; i < sz; i += FINGER_EVENT_SZ) {
 		u8 *tmp = &buf[i];
 		int id = (tmp[0] & 0xf) - 1;
@@ -849,10 +855,13 @@ static int __devinit mms_ts_probe(struct i2c_client *client,
 	register_early_suspend(&info->early_suspend);
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCH_WAKE
 	touchwake_info = info;
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return 0;
 
 err_config:
@@ -925,15 +934,22 @@ static int mms_ts_resume(struct device *dev)
 #ifdef CONFIG_HAS_EARLYSUSPEND
 static void mms_ts_early_suspend(struct early_suspend *h)
 {
+<<<<<<< HEAD
 #ifndef CONFIG_TOUCH_WAKE
 	struct mms_ts_info *info;
 	info = container_of(h, struct mms_ts_info, early_suspend);
 	mms_ts_suspend(&info->client->dev);
 #endif
+=======
+	struct mms_ts_info *info;
+	info = container_of(h, struct mms_ts_info, early_suspend);
+	mms_ts_suspend(&info->client->dev);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void mms_ts_late_resume(struct early_suspend *h)
 {
+<<<<<<< HEAD
 #ifndef CONFIG_TOUCH_WAKE
 	struct mms_ts_info *info;
 	info = container_of(h, struct mms_ts_info, early_suspend);
@@ -958,6 +974,12 @@ void touchscreen_enable(void)
 }
 EXPORT_SYMBOL(touchscreen_enable);
 #endif
+=======
+	struct mms_ts_info *info;
+	info = container_of(h, struct mms_ts_info, early_suspend);
+	mms_ts_resume(&info->client->dev);
+}
+>>>>>>> android-omap-tuna-jb
 #endif
 
 #if defined(CONFIG_PM) && !defined(CONFIG_HAS_EARLYSUSPEND)

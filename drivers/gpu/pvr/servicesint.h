@@ -33,6 +33,10 @@ extern "C" {
 
 #include "services.h"
 #include "sysinfo.h"
+<<<<<<< HEAD
+=======
+#include "sysconfig.h"
+>>>>>>> android-omap-tuna-jb
 
 #define HWREC_DEFAULT_TIMEOUT	(500)
 
@@ -47,6 +51,13 @@ extern "C" {
 #define MIN(a,b) 					(((a) < (b)) ? (a) : (b))
 #endif
 
+<<<<<<< HEAD
+=======
+#define MAX_CLEANUP_TIME_US			(MAX_HW_TIME_US * 4)
+#define MAX_CLEANUP_TRYS			100
+#define MAX_CLEANUP_TIME_WAIT_US	(MAX_CLEANUP_TIME_US/MAX_CLEANUP_TRYS)
+
+>>>>>>> android-omap-tuna-jb
 typedef enum _PVRSRV_MEMTYPE_
 {
 	PVRSRV_MEMTYPE_UNKNOWN		= 0,
@@ -144,7 +155,11 @@ typedef struct _PVRSRV_KERNEL_SYNC_INFO_
 
 	
 	
+<<<<<<< HEAD
 	IMG_UINT32              ui32RefCount;
+=======
+	IMG_PVOID              pvRefCount;
+>>>>>>> android-omap-tuna-jb
 
 	
 	IMG_HANDLE hResItem;
@@ -341,6 +356,7 @@ PVRSRV_ERROR PVRSRVQueueCommand(IMG_HANDLE hQueueInfo,
 								PVRSRV_COMMAND *psCommand);
 
 
+<<<<<<< HEAD
 
 IMG_IMPORT PVRSRV_ERROR IMG_CALLCONV
 PVRSRVGetMMUContextPDDevPAddr(const PVRSRV_CONNECTION *psConnection,
@@ -351,6 +367,8 @@ PVRSRVGetMMUContextPDDevPAddr(const PVRSRV_CONNECTION *psConnection,
 #endif
                               IMG_DEV_PHYADDR *sPDDevPAddr);
 
+=======
+>>>>>>> android-omap-tuna-jb
 IMG_IMPORT PVRSRV_ERROR IMG_CALLCONV
 PVRSRVAllocSharedSysMem(const PVRSRV_CONNECTION *psConnection,
 						IMG_UINT32 ui32Flags,

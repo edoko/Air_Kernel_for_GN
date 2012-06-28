@@ -271,8 +271,11 @@ obj-$(CONFIG_MACH_TUNA)			+= board-tuna-connector.o
 obj-$(CONFIG_MACH_TUNA)			+= board-tuna-pogo.o
 obj-$(CONFIG_MACH_TUNA)			+= board-tuna-usbhost.o
 
+<<<<<<< HEAD
 obj-$(CONFIG_FORCE_FAST_CHARGE)		+= fastchg.o
 
+=======
+>>>>>>> android-omap-tuna-jb
 obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o \
 					   omap_phy_internal.o \
 

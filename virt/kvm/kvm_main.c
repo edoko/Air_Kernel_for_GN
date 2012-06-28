@@ -796,12 +796,21 @@ skip_lpage:
 	if (r)
 		goto out_free;
 
+<<<<<<< HEAD
 	/* map the pages in iommu page table */
+=======
+	/* map/unmap the pages in iommu page table */
+>>>>>>> android-omap-tuna-jb
 	if (npages) {
 		r = kvm_iommu_map_pages(kvm, &new);
 		if (r)
 			goto out_free;
+<<<<<<< HEAD
 	}
+=======
+	} else
+		kvm_iommu_unmap_pages(kvm, &old);
+>>>>>>> android-omap-tuna-jb
 
 	r = -ENOMEM;
 	slots = kzalloc(sizeof(struct kvm_memslots), GFP_KERNEL);

@@ -472,6 +472,11 @@ static int wm8940_set_bias_level(struct snd_soc_codec *codec,
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	codec->dapm.bias_level = level;
+
+>>>>>>> android-omap-tuna-jb
 	return ret;
 }
 

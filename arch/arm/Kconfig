@@ -20,7 +20,10 @@ config ARM
 	select HAVE_KERNEL_GZIP
 	select HAVE_KERNEL_LZO
 	select HAVE_KERNEL_LZMA
+<<<<<<< HEAD
 	select HAVE_KERNEL_XZ
+=======
+>>>>>>> android-omap-tuna-jb
 	select HAVE_IRQ_WORK
 	select HAVE_PERF_EVENTS
 	select PERF_USE_VMALLOC
@@ -138,9 +141,16 @@ config GENERIC_LOCKBREAK
 
 config RWSEM_GENERIC_SPINLOCK
 	bool
+<<<<<<< HEAD
 
 config RWSEM_XCHGADD_ALGORITHM
 	def_bool y
+=======
+	default y
+
+config RWSEM_XCHGADD_ALGORITHM
+	bool
+>>>>>>> android-omap-tuna-jb
 
 config ARCH_HAS_ILOG2_U32
 	bool
@@ -1180,7 +1190,11 @@ config ARM_ERRATA_743622
 	depends on CPU_V7
 	help
 	  This option enables the workaround for the 743622 Cortex-A9
+<<<<<<< HEAD
 	  (r2p0..r2p2) erratum. Under very rare conditions, a faulty
+=======
+	  (r2p*) erratum. Under very rare conditions, a faulty
+>>>>>>> android-omap-tuna-jb
 	  optimisation in the Cortex-A9 Store Buffer may lead to data
 	  corruption. This workaround sets a specific bit in the diagnostic
 	  register of the Cortex-A9 which disables the Store Buffer
@@ -1313,6 +1327,21 @@ config ARM_ERRATA_764369
 	  relevant cache maintenance functions and sets a specific bit
 	  in the diagnostic control register of the SCU.
 
+<<<<<<< HEAD
+=======
+config PL310_ERRATA_769419
+	bool "PL310 errata: no automatic Store Buffer drain"
+	depends on CACHE_L2X0
+	help
+	  On revisions of the PL310 prior to r3p2, the Store Buffer does
+	  not automatically drain. This can cause normal, non-cacheable
+	  writes to be retained when the memory system is idle, leading
+	  to suboptimal I/O performance for drivers using coherent DMA.
+	  This option adds a write barrier to the cpu_idle loop so that,
+	  on systems with an outer cache, the store buffer is drained
+	  explicitly.
+
+>>>>>>> android-omap-tuna-jb
 endmenu
 
 menu "Kernel Features"
@@ -1423,12 +1452,20 @@ source kernel/Kconfig.preempt
 
 config HZ
 	int
+<<<<<<< HEAD
 	default 500 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P64X0 || \
+=======
+	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P64X0 || \
+>>>>>>> android-omap-tuna-jb
 		ARCH_S5PV210 || ARCH_EXYNOS4
 	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
 	default AT91_TIMER_HZ if ARCH_AT91
 	default SHMOBILE_TIMER_HZ if ARCH_SHMOBILE
+<<<<<<< HEAD
 	default 500
+=======
+	default 100
+>>>>>>> android-omap-tuna-jb
 
 config THUMB2_KERNEL
 	bool "Compile the kernel in Thumb-2 mode (EXPERIMENTAL)"

@@ -93,6 +93,10 @@ static int eem_bind(struct usbnet *dev, struct usb_interface *intf)
 	/* no jumbogram (16K) support for now */
 
 	dev->net->hard_header_len += EEM_HEAD + ETH_FCS_LEN;
+<<<<<<< HEAD
+=======
+	dev->hard_mtu = dev->net->mtu + dev->net->hard_header_len;
+>>>>>>> android-omap-tuna-jb
 
 	return 0;
 }

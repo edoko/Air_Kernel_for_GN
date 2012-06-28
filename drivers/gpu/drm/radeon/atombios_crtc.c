@@ -1173,7 +1173,11 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
 	WREG32(EVERGREEN_GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
 
 	WREG32(EVERGREEN_DESKTOP_HEIGHT + radeon_crtc->crtc_offset,
+<<<<<<< HEAD
 	       crtc->mode.vdisplay);
+=======
+	       target_fb->height);
+>>>>>>> android-omap-tuna-jb
 	x &= ~3;
 	y &= ~1;
 	WREG32(EVERGREEN_VIEWPORT_START + radeon_crtc->crtc_offset,
@@ -1342,7 +1346,11 @@ static int avivo_crtc_do_set_base(struct drm_crtc *crtc,
 	WREG32(AVIVO_D1GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
 
 	WREG32(AVIVO_D1MODE_DESKTOP_HEIGHT + radeon_crtc->crtc_offset,
+<<<<<<< HEAD
 	       crtc->mode.vdisplay);
+=======
+	       target_fb->height);
+>>>>>>> android-omap-tuna-jb
 	x &= ~3;
 	y &= ~1;
 	WREG32(AVIVO_D1MODE_VIEWPORT_START + radeon_crtc->crtc_offset,

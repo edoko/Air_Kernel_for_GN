@@ -320,9 +320,20 @@ static int __init acpi_pnp_match(struct device *dev, void *_pnp)
 {
 	struct acpi_device *acpi = to_acpi_device(dev);
 	struct pnp_dev *pnp = _pnp;
+<<<<<<< HEAD
 
 	/* true means it matched */
 	return !acpi_get_physical_device(acpi->handle)
+=======
+	struct device *physical_device;
+
+	physical_device = acpi_get_physical_device(acpi->handle);
+	if (physical_device)
+		put_device(physical_device);
+
+	/* true means it matched */
+	return !physical_device
+>>>>>>> android-omap-tuna-jb
 	    && compare_pnp_id(pnp->id, acpi_device_hid(acpi));
 }
 

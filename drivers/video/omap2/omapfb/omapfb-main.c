@@ -29,6 +29,10 @@
 #include <linux/device.h>
 #include <linux/platform_device.h>
 #include <linux/omapfb.h>
+<<<<<<< HEAD
+=======
+#include <linux/wait.h>
+>>>>>>> android-omap-tuna-jb
 
 #include <video/omapdss.h>
 #include <plat/vram.h>
@@ -761,6 +765,14 @@ static int omapfb_open(struct fb_info *fbi, int user)
 
 static int omapfb_release(struct fb_info *fbi, int user)
 {
+<<<<<<< HEAD
+=======
+	struct omapfb_info *ofbi = FB2OFB(fbi);
+	struct omapfb2_device *fbdev = ofbi->fbdev;
+
+	omapfb_disable_vsync(fbdev);
+
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 
@@ -1298,6 +1310,12 @@ static int omapfb_blank(int blank, struct fb_info *fbi)
 				r = display->driver->enable(display);
 		}
 
+<<<<<<< HEAD
+=======
+		if (fbdev->vsync_active)
+			omapfb_enable_vsync(fbdev);
+
+>>>>>>> android-omap-tuna-jb
 		break;
 
 	case FB_BLANK_NORMAL:
@@ -1306,6 +1324,13 @@ static int omapfb_blank(int blank, struct fb_info *fbi)
 	case FB_BLANK_VSYNC_SUSPEND:
 	case FB_BLANK_HSYNC_SUSPEND:
 	case FB_BLANK_POWERDOWN:
+<<<<<<< HEAD
+=======
+
+		if (fbdev->vsync_active)
+			omapfb_disable_vsync(fbdev);
+
+>>>>>>> android-omap-tuna-jb
 		if (display->state != OMAP_DSS_DISPLAY_ACTIVE)
 			goto exit;
 
@@ -2276,6 +2301,42 @@ static int omapfb_init_display(struct omapfb2_device *fbdev,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void omapfb_send_vsync_work(struct work_struct *work)
+{
+	struct omapfb2_device *fbdev =
+		container_of(work, typeof(*fbdev), vsync_work);
+	char buf[64];
+	char *envp[2];
+
+	snprintf(buf, sizeof(buf), "VSYNC=%llu",
+		ktime_to_ns(fbdev->vsync_timestamp));
+	envp[0] = buf;
+	envp[1] = NULL;
+	kobject_uevent_env(&fbdev->dev->kobj, KOBJ_CHANGE, envp);
+}
+static void omapfb_vsync_isr(void *data, u32 mask)
+{
+	struct omapfb2_device *fbdev = data;
+	fbdev->vsync_timestamp = ktime_get();
+	schedule_work(&fbdev->vsync_work);
+}
+
+int omapfb_enable_vsync(struct omapfb2_device *fbdev)
+{
+	int r;
+	/* TODO: should determine correct IRQ like dss_mgr_wait_for_vsync does*/
+	r = omap_dispc_register_isr(omapfb_vsync_isr, fbdev, DISPC_IRQ_VSYNC);
+	return r;
+}
+
+void omapfb_disable_vsync(struct omapfb2_device *fbdev)
+{
+	omap_dispc_unregister_isr(omapfb_vsync_isr, fbdev, DISPC_IRQ_VSYNC);
+}
+
+>>>>>>> android-omap-tuna-jb
 static int omapfb_probe(struct platform_device *pdev)
 {
 	struct omapfb2_device *fbdev = NULL;
@@ -2391,6 +2452,10 @@ static int omapfb_probe(struct platform_device *pdev)
 		goto cleanup;
 	}
 
+<<<<<<< HEAD
+=======
+	INIT_WORK(&fbdev->vsync_work, omapfb_send_vsync_work);
+>>>>>>> android-omap-tuna-jb
 	return 0;
 
 cleanup:
@@ -2405,6 +2470,10 @@ static int omapfb_remove(struct platform_device *pdev)
 	struct omapfb2_device *fbdev = platform_get_drvdata(pdev);
 
 	/* FIXME: wait till completion of pending events */
+<<<<<<< HEAD
+=======
+	/* TODO: terminate vsync thread */
+>>>>>>> android-omap-tuna-jb
 
 	omapfb_remove_sysfs(fbdev);
 

@@ -77,6 +77,22 @@
 }							\
 )
 
+<<<<<<< HEAD
+=======
+/*
+ * Multiplies an integer by a fraction, while avoiding unnecessary
+ * overflow or loss of precision.
+ */
+#define mult_frac(x, numer, denom)(			\
+{							\
+	typeof(x) quot = (x) / (denom);			\
+	typeof(x) rem  = (x) % (denom);			\
+	(quot * (numer)) + ((rem * (numer)) / (denom));	\
+}							\
+)
+
+
+>>>>>>> android-omap-tuna-jb
 #define _RET_IP_		(unsigned long)__builtin_return_address(0)
 #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
 
@@ -114,6 +130,7 @@ struct completion;
 struct pt_regs;
 struct user;
 
+<<<<<<< HEAD
 /* cannot bring in linux/rcupdate.h at this point */
 #ifdef CONFIG_JRCU
 extern void rcu_note_might_resched(void);
@@ -126,6 +143,13 @@ extern int _cond_resched(void);
 # define might_resched() do { _cond_resched(); rcu_note_might_resched(); } while (0)
 #else
 # define might_resched() do { rcu_note_might_resched(); } while (0)
+=======
+#ifdef CONFIG_PREEMPT_VOLUNTARY
+extern int _cond_resched(void);
+# define might_resched() _cond_resched()
+#else
+# define might_resched() do { } while (0)
+>>>>>>> android-omap-tuna-jb
 #endif
 
 #ifdef CONFIG_DEBUG_SPINLOCK_SLEEP

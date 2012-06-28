@@ -172,6 +172,7 @@ static inline int is_compat_task(void)
 	return is_32bit_task();
 }
 
+<<<<<<< HEAD
 #else
 
 static inline int is_compat_task(void)
@@ -179,6 +180,8 @@ static inline int is_compat_task(void)
 	return 0;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 #endif
 
 static inline void __user *arch_compat_alloc_user_space(long len)

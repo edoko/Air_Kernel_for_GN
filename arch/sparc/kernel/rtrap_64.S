@@ -20,11 +20,14 @@
 
 		.text
 		.align			32
+<<<<<<< HEAD
 __handle_softirq:
 		call			do_softirq
 		 nop
 		ba,a,pt			%xcc, __handle_softirq_continue
 		 nop
+=======
+>>>>>>> android-omap-tuna-jb
 __handle_preemption:
 		call			schedule
 		 wrpr			%g0, RTRAP_PSTATE, %pstate
@@ -89,9 +92,13 @@ rtrap:
 		cmp			%l1, 0
 
 		/* mm/ultra.S:xcall_report_regs KNOWS about this load. */
+<<<<<<< HEAD
 		bne,pn			%icc, __handle_softirq
 		 ldx			[%sp + PTREGS_OFF + PT_V9_TSTATE], %l1
 __handle_softirq_continue:
+=======
+		 ldx			[%sp + PTREGS_OFF + PT_V9_TSTATE], %l1
+>>>>>>> android-omap-tuna-jb
 rtrap_xcall:
 		sethi			%hi(0xf << 20), %l4
 		and			%l1, %l4, %l4

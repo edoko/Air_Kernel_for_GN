@@ -131,6 +131,11 @@ typedef struct _SGXMKIF_CMDTA_SHARED_
 	IMG_UINT32			ui323DTQSyncReadOpsPendingVal;
 	IMG_DEV_VIRTADDR	s3DTQSyncReadOpsCompleteDevVAddr;
 
+<<<<<<< HEAD
+=======
+	
+	PVRSRV_DEVICE_SYNC_OBJECT	sTA3DDependency;
+>>>>>>> android-omap-tuna-jb
 
 #if defined(SUPPORT_SGX_GENERALISED_SYNCOBJECTS)
 	
@@ -143,12 +148,18 @@ typedef struct _SGXMKIF_CMDTA_SHARED_
 #else
 	
 	IMG_UINT32			ui32NumSrcSyncs;
+<<<<<<< HEAD
 	PVRSRV_DEVICE_SYNC_OBJECT	asSrcSyncs[SGX_MAX_SRC_SYNCS];
 #endif
 
 	
 	PVRSRV_DEVICE_SYNC_OBJECT	sTA3DDependency;
 
+=======
+	PVRSRV_DEVICE_SYNC_OBJECT	asSrcSyncs[SGX_MAX_SRC_SYNCS_TA];
+#endif
+
+>>>>>>> android-omap-tuna-jb
 	CTL_STATUS			sCtlTAStatusInfo[SGX_MAX_TA_STATUS_VALS];
 	CTL_STATUS			sCtl3DStatusInfo[SGX_MAX_3D_STATUS_VALS];
 
@@ -170,11 +181,19 @@ typedef struct _SGXMKIF_TRANSFERCMD_SHARED_
 	
 
  	IMG_UINT32			ui32NumSrcSyncs;
+<<<<<<< HEAD
  	PVRSRV_DEVICE_SYNC_OBJECT	asSrcSyncs[SGX_MAX_SRC_SYNCS];
 	
 
  	IMG_UINT32			ui32NumDstSyncs;
  	PVRSRV_DEVICE_SYNC_OBJECT	asDstSyncs[SGX_MAX_DST_SYNCS];	
+=======
+ 	PVRSRV_DEVICE_SYNC_OBJECT	asSrcSyncs[SGX_MAX_SRC_SYNCS_TQ];
+	
+
+ 	IMG_UINT32			ui32NumDstSyncs;
+ 	PVRSRV_DEVICE_SYNC_OBJECT	asDstSyncs[SGX_MAX_DST_SYNCS_TQ];	
+>>>>>>> android-omap-tuna-jb
 	
 	IMG_UINT32		ui32TASyncWriteOpsPendingVal;
 	IMG_DEV_VIRTADDR	sTASyncWriteOpsCompleteDevVAddr;
@@ -231,6 +250,11 @@ typedef struct _SGXMKIF_HWDEVICE_SYNC_LIST_
 #define PVRSRV_USSE_EDM_INTERRUPT_IDLE			(1UL << 2)	
 
 #define PVRSRV_USSE_EDM_CLEANUPCMD_COMPLETE 	(1UL << 0)	
+<<<<<<< HEAD
+=======
+#define PVRSRV_USSE_EDM_CLEANUPCMD_BUSY		 	(1UL << 1)	
+#define PVRSRV_USSE_EDM_CLEANUPCMD_DONE		 	(1UL << 2)	
+>>>>>>> android-omap-tuna-jb
 
 #if defined(FIX_HW_BRN_28889)
 #define PVRSRV_USSE_EDM_BIF_INVAL_COMPLETE 		(1UL << 0)	

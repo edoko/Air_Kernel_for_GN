@@ -495,7 +495,11 @@ static inline void default_wait_for_init_deassert(atomic_t *deassert)
 	return;
 }
 
+<<<<<<< HEAD
 extern struct apic *generic_bigsmp_probe(void);
+=======
+extern void generic_bigsmp_probe(void);
+>>>>>>> android-omap-tuna-jb
 
 
 #ifdef CONFIG_X86_LOCAL_APIC

@@ -33,12 +33,17 @@ static bool security = CONFIG_TILER_SECURITY;
 
 module_param(security, bool, 0644);
 MODULE_PARM_DESC(security,
+<<<<<<< HEAD
 	"Separate allocations by different security ids (pid or token)");
+=======
+	"Separate allocations by different processes into different pages");
+>>>>>>> android-omap-tuna-jb
 
 static struct list_head procs;	/* list of process info structs */
 static struct tiler_ops *ops;	/* shared methods and variables */
 
 /*
+<<<<<<< HEAD
  *  security_info handling methods
  *  ==========================================================================
  */
@@ -48,6 +53,16 @@ struct security_info *__get_si(int token, bool kernel,
 				enum secure_id_type sec_type)
 {
 	struct security_info *si;
+=======
+ *  process_info handling methods
+ *  ==========================================================================
+ */
+
+/* get process info, and increment refs for device tracking */
+struct process_info *__get_pi(pid_t pid, bool kernel)
+{
+	struct process_info *pi;
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * treat all processes as the same, kernel processes are still treated
@@ -55,6 +70,7 @@ struct security_info *__get_si(int token, bool kernel,
 	 * closes the tiler driver
 	 */
 	if (!security)
+<<<<<<< HEAD
 		token = 0;
 
 	/* find process context */
@@ -63,10 +79,19 @@ struct security_info *__get_si(int token, bool kernel,
 		if (si->token == token &&
 			si->kernel == kernel &&
 			si->sec_type == sec_type)
+=======
+		pid = 0;
+
+	/* find process context */
+	mutex_lock(&ops->mtx);
+	list_for_each_entry(pi, &procs, list) {
+		if (pi->pid == pid && pi->kernel == kernel)
+>>>>>>> android-omap-tuna-jb
 			goto done;
 	}
 
 	/* create process context */
+<<<<<<< HEAD
 	si = kmalloc(sizeof(*si), GFP_KERNEL);
 	if (!si)
 		goto done;
@@ -84,6 +109,24 @@ done:
 		si->refs++;
 	mutex_unlock(&ops->mtx);
 	return si;
+=======
+	pi = kmalloc(sizeof(*pi), GFP_KERNEL);
+	if (!pi)
+		goto done;
+	memset(pi, 0, sizeof(*pi));
+
+	pi->pid = pid;
+	pi->kernel = kernel;
+	INIT_LIST_HEAD(&pi->groups);
+	INIT_LIST_HEAD(&pi->bufs);
+	list_add(&pi->list, &procs);
+done:
+	/* increment reference count */
+	if (pi && !kernel)
+		pi->refs++;
+	mutex_unlock(&ops->mtx);
+	return pi;
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -93,12 +136,17 @@ done:
  *
  *    caller MUST already have mtx
  */
+<<<<<<< HEAD
 void _m_free_security_info(struct security_info *si)
+=======
+void _m_free_process_info(struct process_info *pi)
+>>>>>>> android-omap-tuna-jb
 {
 	struct gid_info *gi, *gi_;
 #ifdef CONFIG_TILER_ENABLE_USERSPACE
 	struct __buf_info *_b = NULL, *_b_ = NULL;
 
+<<<<<<< HEAD
 	if (!list_empty(&si->bufs))
 		tiler_notify_event(TILER_DEVICE_CLOSE, NULL);
 
@@ -115,16 +163,43 @@ void _m_free_security_info(struct security_info *si)
 	BUG_ON(!list_empty(&si->groups));
 	list_del(&si->list);
 	kfree(si);
+=======
+	if (!list_empty(&pi->bufs))
+		tiler_notify_event(TILER_DEVICE_CLOSE, NULL);
+
+	/* unregister all buffers */
+	list_for_each_entry_safe(_b, _b_, &pi->bufs, by_pid)
+		_m_unregister_buf(_b);
+#endif
+	BUG_ON(!list_empty(&pi->bufs));
+
+	/* free all allocated blocks, and remove unreferenced ones */
+	list_for_each_entry_safe(gi, gi_, &pi->groups, by_pid)
+		ops->destroy_group(gi);
+
+	BUG_ON(!list_empty(&pi->groups));
+	list_del(&pi->list);
+	kfree(pi);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void destroy_processes(void)
 {
+<<<<<<< HEAD
 	struct security_info *si, *si_;
 
 	mutex_lock(&ops->mtx);
 
 	list_for_each_entry_safe(si, si_, &procs, list)
 		_m_free_security_info(si);
+=======
+	struct process_info *pi, *pi_;
+
+	mutex_lock(&ops->mtx);
+
+	list_for_each_entry_safe(pi, pi_, &procs, list)
+		_m_free_process_info(pi);
+>>>>>>> android-omap-tuna-jb
 	BUG_ON(!list_empty(&procs));
 
 	mutex_unlock(&ops->mtx);
@@ -172,10 +247,17 @@ EXPORT_SYMBOL(tiler_virt2phys);
 void tiler_reservex(u32 n, enum tiler_fmt fmt, u32 width, u32 height,
 		   u32 gid, pid_t pid)
 {
+<<<<<<< HEAD
 	struct security_info *si = __get_si(pid, true, SECURE_BY_PID);
 
 	if (si)
 		ops->reserve(n, fmt, width, height, PAGE_SIZE, 0, gid, si);
+=======
+	struct process_info *pi = __get_pi(pid, true);
+
+	if (pi)
+		ops->reserve(n, fmt, width, height, gid, pi);
+>>>>>>> android-omap-tuna-jb
 }
 EXPORT_SYMBOL(tiler_reservex);
 
@@ -189,10 +271,17 @@ EXPORT_SYMBOL(tiler_reserve);
 void tiler_reservex_nv12(u32 n, u32 width, u32 height,
 			u32 gid, pid_t pid)
 {
+<<<<<<< HEAD
 	struct security_info *si = __get_si(0, true, SECURE_BY_PID);
 
 	if (si)
 		ops->reserve_nv12(n, width, height, gid, si);
+=======
+	struct process_info *pi = __get_pi(pid, true);
+
+	if (pi)
+		ops->reserve_nv12(n, width, height, gid, pi);
+>>>>>>> android-omap-tuna-jb
 }
 EXPORT_SYMBOL(tiler_reservex_nv12);
 
@@ -207,16 +296,28 @@ s32 tiler_allocx(struct tiler_block_t *blk, enum tiler_fmt fmt,
 				u32 gid, pid_t pid)
 {
 	struct mem_info *mi;
+<<<<<<< HEAD
 	struct security_info *si;
+=======
+	struct process_info *pi;
+>>>>>>> android-omap-tuna-jb
 	s32 res;
 
 	BUG_ON(!blk || blk->phys);
 
+<<<<<<< HEAD
 	si = __get_si(pid, true, SECURE_BY_PID);
 	if (!si)
 		return -ENOMEM;
 
 	res = ops->alloc(fmt, blk->width, blk->height, blk->key, gid, si, &mi);
+=======
+	pi = __get_pi(pid, true);
+	if (!pi)
+		return -ENOMEM;
+
+	res = ops->alloc(fmt, blk->width, blk->height, blk->key, gid, pi, &mi);
+>>>>>>> android-omap-tuna-jb
 	if (mi) {
 		blk->phys = mi->blk.phys;
 		blk->id = mi->blk.id;
@@ -235,16 +336,28 @@ s32 tiler_mapx(struct tiler_block_t *blk, enum tiler_fmt fmt, u32 gid,
 				pid_t pid, u32 usr_addr)
 {
 	struct mem_info *mi;
+<<<<<<< HEAD
 	struct security_info *si;
+=======
+	struct process_info *pi;
+>>>>>>> android-omap-tuna-jb
 	s32 res;
 
 	BUG_ON(!blk || blk->phys);
 
+<<<<<<< HEAD
 	si = __get_si(pid, true, SECURE_BY_PID);
 	if (!si)
 		return -ENOMEM;
 
 	res = ops->pin(fmt, blk->width, blk->height, blk->key, gid, si, &mi,
+=======
+	pi = __get_pi(pid, true);
+	if (!pi)
+		return -ENOMEM;
+
+	res = ops->pin(fmt, blk->width, blk->height, blk->key, gid, pi, &mi,
+>>>>>>> android-omap-tuna-jb
 								usr_addr);
 	if (mi) {
 		blk->phys = mi->blk.phys;

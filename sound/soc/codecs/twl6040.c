@@ -51,9 +51,12 @@
 #define TWL6040_RAMP_NONE	0
 #define TWL6040_RAMP_UP		1
 #define TWL6040_RAMP_DOWN	2
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 #define TWL6040_RAMP_ZERO	3
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 #define TWL6040_HSL_VOL_MASK	0x0F
 #define TWL6040_HSL_VOL_SHIFT	0
@@ -219,6 +222,7 @@ static const u8 twl6040_reg_supply[TWL6040_CACHEREGNUM] = {
 	TWL6040_VIO_SUPPLY, /* TWL6040_STATUS (ro)	*/
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 struct twl6040_data * snd_data;
 struct snd_soc_codec * snd_codec;
@@ -229,6 +233,8 @@ static bool headset_plugged = false;
 
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 /*
  * read twl6040 register cache
  */
@@ -383,6 +389,7 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 
 	if (headset->ramp == TWL6040_RAMP_UP) {
 		/* ramp step up */
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 		int volume = headset->left_vol + volume_boost;
 		if (val < volume) {
@@ -393,6 +400,11 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 			if (val + left_step > headset->left_vol)
 				val = headset->left_vol;
 #endif
+=======
+		if (val < headset->left_vol) {
+			if (val + left_step > headset->left_vol)
+				val = headset->left_vol;
+>>>>>>> android-omap-tuna-jb
 			else
 				val += left_step;
 
@@ -402,6 +414,7 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 		} else {
 			left_complete = 1;
 		}
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	} else if (headset->ramp == TWL6040_RAMP_DOWN) {
 		/* ramp step down*/
@@ -434,6 +447,8 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 		}
 	}
 #else
+=======
+>>>>>>> android-omap-tuna-jb
 	} else if (headset->ramp == TWL6040_RAMP_DOWN) {
 		/* ramp step down */
 		if (val > 0x0) {
@@ -449,7 +464,10 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 			left_complete = 1;
 		}
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 	/* right channel */
 	right_step = (right_step > 0xF) ? 0xF : right_step;
@@ -458,6 +476,7 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 
 	if (headset->ramp == TWL6040_RAMP_UP) {
 		/* ramp step up */
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 		int volume = headset->right_vol + volume_boost;
 		if (val < volume) {
@@ -468,6 +487,11 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 			if (val + right_step > headset->right_vol)
 				val = headset->right_vol;
 #endif
+=======
+		if (val < headset->right_vol) {
+			if (val + right_step > headset->right_vol)
+				val = headset->right_vol;
+>>>>>>> android-omap-tuna-jb
 			else
 				val += right_step;
 
@@ -477,6 +501,7 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 		} else {
 			right_complete = 1;
 		}
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	} else if (headset->ramp == TWL6040_RAMP_DOWN) {
 		/* ramp step down*/
@@ -509,6 +534,8 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 		}
 	}
 #else
+=======
+>>>>>>> android-omap-tuna-jb
 	} else if (headset->ramp == TWL6040_RAMP_DOWN) {
 		/* ramp step down */
 		if (val > 0x0) {
@@ -524,7 +551,10 @@ static inline int twl6040_hs_ramp_step(struct snd_soc_codec *codec,
 			right_complete = 1;
 		}
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 	return left_complete & right_complete;
 }
@@ -702,11 +732,15 @@ static void twl6040_pga_hs_work(struct work_struct *work)
 			schedule_timeout_interruptible(msecs_to_jiffies(delay));
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	if (headset->ramp == TWL6040_RAMP_ZERO) {
 #else
 	if (headset->ramp == TWL6040_RAMP_DOWN) {
 #endif
+=======
+	if (headset->ramp == TWL6040_RAMP_DOWN) {
+>>>>>>> android-omap-tuna-jb
 		headset->active = 0;
 		complete(&headset->ramp_done);
 	} else {
@@ -844,6 +878,7 @@ static int pga_event(struct snd_soc_dapm_widget *w,
 			break;
 
 		/* don't use volume ramp for power-up */
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 		if (w->shift == 2 || w->shift == 3) {
 		    out->left_step = out->left_vol + volume_boost;
@@ -856,6 +891,10 @@ static int pga_event(struct snd_soc_dapm_widget *w,
 		out->left_step = out->left_vol;
 		out->right_step = out->right_vol;
 #endif
+=======
+		out->left_step = out->left_vol;
+		out->right_step = out->right_vol;
+>>>>>>> android-omap-tuna-jb
 
 		if (!delayed_work_pending(work)) {
 			out->ramp = TWL6040_RAMP_UP;
@@ -870,6 +909,7 @@ static int pga_event(struct snd_soc_dapm_widget *w,
 
 		if (!delayed_work_pending(work)) {
 			/* use volume ramp for power-down */
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 			if (w->shift == 2 || w->shift == 3)
 			    out->ramp = TWL6040_RAMP_ZERO;
@@ -878,6 +918,9 @@ static int pga_event(struct snd_soc_dapm_widget *w,
 #else
 			out->ramp = TWL6040_RAMP_DOWN;
 #endif
+=======
+			out->ramp = TWL6040_RAMP_DOWN;
+>>>>>>> android-omap-tuna-jb
 			INIT_COMPLETION(out->ramp_done);
 
 			queue_delayed_work(queue, work,
@@ -915,6 +958,7 @@ static int headset_power_mode(struct snd_soc_codec *codec, int high_perf)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 void soundcontrol_updatevolume(unsigned int volumeboost)
 {
@@ -971,6 +1015,8 @@ void soundcontrol_reportjack(int jack_type)
 EXPORT_SYMBOL(soundcontrol_reportjack);
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int twl6040_dac_event(struct snd_soc_dapm_widget *w,
 			struct snd_kcontrol *kcontrol, int event)
 {
@@ -990,6 +1036,7 @@ static int twl6040_ep_event(struct snd_soc_dapm_widget *w,
 		priv->power_mode_forced = 1;
 		ret = headset_power_mode(codec, 1);
 	} else {
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 			if (headset_plugged) {
 			    ret = headset_power_mode(codec, priv->headset_mode);
@@ -1000,6 +1047,10 @@ static int twl6040_ep_event(struct snd_soc_dapm_widget *w,
 			priv->power_mode_forced = 0;
 			ret = headset_power_mode(codec, priv->headset_mode);
 #endif
+=======
+		priv->power_mode_forced = 0;
+		ret = headset_power_mode(codec, priv->headset_mode);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	msleep(1);
@@ -1097,6 +1148,7 @@ static int twl6040_put_volsw(struct snd_kcontrol *kcontrol,
 			return 1;
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	if (&twl6040_priv->headset.active) {
 	    ucontrol->value.integer.value[0] += volume_boost;
@@ -1104,6 +1156,8 @@ static int twl6040_put_volsw(struct snd_kcontrol *kcontrol,
 	}
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	ret = snd_soc_put_volsw(kcontrol, ucontrol);
 	if (ret < 0)
 		return ret;
@@ -1848,11 +1902,15 @@ static int twl6040_probe(struct snd_soc_codec *codec)
 		priv->ep_step = 1;
 
 	/* default is low-power mode */
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	priv->headset_mode = 0;
 #else
 	priv->headset_mode = 1;
 #endif
+=======
+	priv->headset_mode = 1;
+>>>>>>> android-omap-tuna-jb
 	priv->sysclk_constraints = &lp_constraints;
 	priv->workqueue = create_singlethread_workqueue("twl6040-codec");
 
@@ -1909,6 +1967,7 @@ static int twl6040_probe(struct snd_soc_codec *codec)
 				ARRAY_SIZE(twl6040_snd_controls));
 	twl6040_add_widgets(codec);
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOUND_CONTROL
 	snd_data = priv;
 	snd_codec = codec;
@@ -1918,6 +1977,8 @@ static int twl6040_probe(struct snd_soc_codec *codec)
 	}
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return 0;
 
 bias_err:

@@ -1,4 +1,8 @@
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/mutex.h>
+>>>>>>> android-omap-tuna-jb
 
 #include "dibx000_common.h"
 
@@ -10,6 +14,16 @@ MODULE_PARM_DESC(debug, "turn on debugging (default: 0)");
 
 static int dibx000_write_word(struct dibx000_i2c_master *mst, u16 reg, u16 val)
 {
+<<<<<<< HEAD
+=======
+	int ret;
+
+	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	mst->i2c_write_buffer[0] = (reg >> 8) & 0xff;
 	mst->i2c_write_buffer[1] = reg & 0xff;
 	mst->i2c_write_buffer[2] = (val >> 8) & 0xff;
@@ -21,11 +35,28 @@ static int dibx000_write_word(struct dibx000_i2c_master *mst, u16 reg, u16 val)
 	mst->msg[0].buf = mst->i2c_write_buffer;
 	mst->msg[0].len = 4;
 
+<<<<<<< HEAD
 	return i2c_transfer(mst->i2c_adap, mst->msg, 1) != 1 ? -EREMOTEIO : 0;
+=======
+	ret = i2c_transfer(mst->i2c_adap, mst->msg, 1) != 1 ? -EREMOTEIO : 0;
+	mutex_unlock(&mst->i2c_buffer_lock);
+
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static u16 dibx000_read_word(struct dibx000_i2c_master *mst, u16 reg)
 {
+<<<<<<< HEAD
+=======
+	u16 ret;
+
+	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return 0;
+	}
+
+>>>>>>> android-omap-tuna-jb
 	mst->i2c_write_buffer[0] = reg >> 8;
 	mst->i2c_write_buffer[1] = reg & 0xff;
 
@@ -42,7 +73,14 @@ static u16 dibx000_read_word(struct dibx000_i2c_master *mst, u16 reg)
 	if (i2c_transfer(mst->i2c_adap, mst->msg, 2) != 2)
 		dprintk("i2c read error on %d", reg);
 
+<<<<<<< HEAD
 	return (mst->i2c_read_buffer[0] << 8) | mst->i2c_read_buffer[1];
+=======
+	ret = (mst->i2c_read_buffer[0] << 8) | mst->i2c_read_buffer[1];
+	mutex_unlock(&mst->i2c_buffer_lock);
+
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int dibx000_is_i2c_done(struct dibx000_i2c_master *mst)
@@ -257,6 +295,10 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 					struct i2c_msg msg[], int num)
 {
 	struct dibx000_i2c_master *mst = i2c_get_adapdata(i2c_adap);
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> android-omap-tuna-jb
 
 	if (num > 32) {
 		dprintk("%s: too much I2C message to be transmitted (%i).\
@@ -264,10 +306,22 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
 
 	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_GPIO_6_7);
 
+=======
+	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_GPIO_6_7);
+
+	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+
+	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
+
+>>>>>>> android-omap-tuna-jb
 	/* open the gate */
 	dibx000_i2c_gate_ctrl(mst, &mst->i2c_write_buffer[0], msg[0].addr, 1);
 	mst->msg[0].addr = mst->i2c_addr;
@@ -282,7 +336,15 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
 	mst->msg[num + 1].buf = &mst->i2c_write_buffer[4];
 	mst->msg[num + 1].len = 4;
 
+<<<<<<< HEAD
 	return i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ? num : -EIO;
+=======
+	ret = (i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ?
+			num : -EIO);
+
+	mutex_unlock(&mst->i2c_buffer_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
@@ -294,6 +356,10 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 					struct i2c_msg msg[], int num)
 {
 	struct dibx000_i2c_master *mst = i2c_get_adapdata(i2c_adap);
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> android-omap-tuna-jb
 
 	if (num > 32) {
 		dprintk("%s: too much I2C message to be transmitted (%i).\
@@ -301,10 +367,21 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
 
 	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_TUNER);
 
+=======
+	dibx000_i2c_select_interface(mst, DIBX000_I2C_INTERFACE_TUNER);
+
+	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+	memset(mst->msg, 0, sizeof(struct i2c_msg) * (2 + num));
+
+>>>>>>> android-omap-tuna-jb
 	/* open the gate */
 	dibx000_i2c_gate_ctrl(mst, &mst->i2c_write_buffer[0], msg[0].addr, 1);
 	mst->msg[0].addr = mst->i2c_addr;
@@ -319,7 +396,14 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
 	mst->msg[num + 1].buf = &mst->i2c_write_buffer[4];
 	mst->msg[num + 1].len = 4;
 
+<<<<<<< HEAD
 	return i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ? num : -EIO;
+=======
+	ret = (i2c_transfer(mst->i2c_adap, mst->msg, 2 + num) == 2 + num ?
+			num : -EIO);
+	mutex_unlock(&mst->i2c_buffer_lock);
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 static struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
@@ -390,8 +474,23 @@ static int i2c_adapter_init(struct i2c_adapter *i2c_adap,
 int dibx000_init_i2c_master(struct dibx000_i2c_master *mst, u16 device_rev,
 				struct i2c_adapter *i2c_adap, u8 i2c_addr)
 {
+<<<<<<< HEAD
 	u8 tx[4];
 	struct i2c_msg m = {.addr = i2c_addr >> 1,.buf = tx,.len = 4 };
+=======
+	int ret;
+
+	mutex_init(&mst->i2c_buffer_lock);
+	if (mutex_lock_interruptible(&mst->i2c_buffer_lock) < 0) {
+		dprintk("could not acquire lock");
+		return -EINVAL;
+	}
+	memset(mst->msg, 0, sizeof(struct i2c_msg));
+	mst->msg[0].addr = i2c_addr >> 1;
+	mst->msg[0].flags = 0;
+	mst->msg[0].buf = mst->i2c_write_buffer;
+	mst->msg[0].len = 4;
+>>>>>>> android-omap-tuna-jb
 
 	mst->device_rev = device_rev;
 	mst->i2c_adap = i2c_adap;
@@ -431,9 +530,18 @@ int dibx000_init_i2c_master(struct dibx000_i2c_master *mst, u16 device_rev,
 				"DiBX000: could not initialize the master i2c_adapter\n");
 
 	/* initialize the i2c-master by closing the gate */
+<<<<<<< HEAD
 	dibx000_i2c_gate_ctrl(mst, tx, 0, 0);
 
 	return i2c_transfer(i2c_adap, &m, 1) == 1;
+=======
+	dibx000_i2c_gate_ctrl(mst, mst->i2c_write_buffer, 0, 0);
+
+	ret = (i2c_transfer(i2c_adap, mst->msg, 1) == 1);
+	mutex_unlock(&mst->i2c_buffer_lock);
+
+	return ret;
+>>>>>>> android-omap-tuna-jb
 }
 
 EXPORT_SYMBOL(dibx000_init_i2c_master);

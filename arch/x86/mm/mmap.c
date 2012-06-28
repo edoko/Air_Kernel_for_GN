@@ -87,9 +87,15 @@ static unsigned long mmap_rnd(void)
 	*/
 	if (current->flags & PF_RANDOMIZE) {
 		if (mmap_is_ia32())
+<<<<<<< HEAD
 			rnd = (long)get_random_int() % (1<<8);
 		else
 			rnd = (long)(get_random_int() % (1<<28));
+=======
+			rnd = get_random_int() % (1<<8);
+		else
+			rnd = get_random_int() % (1<<28);
+>>>>>>> android-omap-tuna-jb
 	}
 	return rnd << PAGE_SHIFT;
 }

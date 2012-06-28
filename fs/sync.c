@@ -219,20 +219,28 @@ static int do_fsync(unsigned int fd, int datasync)
 
 SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_FSYNC
 	return do_fsync(fd, 0);
 #else
 	return 0;
 #endif
+=======
+	return do_fsync(fd, 0);
+>>>>>>> android-omap-tuna-jb
 }
 
 SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_FSYNC
 	return do_fsync(fd, 1);
 #else
 	return 0;
 #endif
+=======
+	return do_fsync(fd, 1);
+>>>>>>> android-omap-tuna-jb
 }
 
 /**
@@ -302,7 +310,10 @@ EXPORT_SYMBOL(generic_write_sync);
 SYSCALL_DEFINE(sync_file_range)(int fd, loff_t offset, loff_t nbytes,
 				unsigned int flags)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_FSYNC
+=======
+>>>>>>> android-omap-tuna-jb
 	int ret;
 	struct file *file;
 	struct address_space *mapping;
@@ -382,9 +393,12 @@ out_put:
 	fput_light(file, fput_needed);
 out:
 	return ret;
+<<<<<<< HEAD
 #else
 	return 0;
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 }
 #ifdef CONFIG_HAVE_SYSCALL_WRAPPERS
 asmlinkage long SyS_sync_file_range(long fd, loff_t offset, loff_t nbytes,

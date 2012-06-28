@@ -1716,7 +1716,11 @@ static int cciss_ioctl(struct block_device *bdev, fmode_t mode,
 	case CCISS_BIG_PASSTHRU:
 		return cciss_bigpassthru(h, argp);
 
+<<<<<<< HEAD
 	/* scsi_cmd_ioctl handles these, below, though some are not */
+=======
+	/* scsi_cmd_blk_ioctl handles these, below, though some are not */
+>>>>>>> android-omap-tuna-jb
 	/* very meaningful for cciss.  SG_IO is the main one people want. */
 
 	case SG_GET_VERSION_NUM:
@@ -1727,9 +1731,15 @@ static int cciss_ioctl(struct block_device *bdev, fmode_t mode,
 	case SG_EMULATED_HOST:
 	case SG_IO:
 	case SCSI_IOCTL_SEND_COMMAND:
+<<<<<<< HEAD
 		return scsi_cmd_ioctl(disk->queue, disk, mode, cmd, argp);
 
 	/* scsi_cmd_ioctl would normally handle these, below, but */
+=======
+		return scsi_cmd_blk_ioctl(bdev, mode, cmd, argp);
+
+	/* scsi_cmd_blk_ioctl would normally handle these, below, but */
+>>>>>>> android-omap-tuna-jb
 	/* they aren't a good fit for cciss, as CD-ROMs are */
 	/* not supported, and we don't have any bus/target/lun */
 	/* which we present to the kernel. */
@@ -4533,6 +4543,16 @@ static int cciss_controller_hard_reset(struct pci_dev *pdev,
 		pmcsr &= ~PCI_PM_CTRL_STATE_MASK;
 		pmcsr |= PCI_D0;
 		pci_write_config_word(pdev, pos + PCI_PM_CTRL, pmcsr);
+<<<<<<< HEAD
+=======
+
+		/*
+		 * The P600 requires a small delay when changing states.
+		 * Otherwise we may think the board did not reset and we bail.
+		 * This for kdump only and is particular to the P600.
+		 */
+		msleep(500);
+>>>>>>> android-omap-tuna-jb
 	}
 	return 0;
 }

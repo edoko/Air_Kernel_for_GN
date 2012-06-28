@@ -26,6 +26,10 @@
 #define NETLINK_ECRYPTFS	19
 #define NETLINK_RDMA		20
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> android-omap-tuna-jb
 #define MAX_LINKS 32		
 
 struct sockaddr_nl {

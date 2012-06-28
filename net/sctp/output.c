@@ -697,6 +697,7 @@ static void sctp_packet_append_data(struct sctp_packet *packet,
 	/* Keep track of how many bytes are in flight to the receiver. */
 	asoc->outqueue.outstanding_bytes += datasize;
 
+<<<<<<< HEAD
 	/* Update our view of the receiver's rwnd. Include sk_buff overhead
 	 * while updating peer.rwnd so that it reduces the chances of a
 	 * receiver running out of receive buffer space even when receive
@@ -704,6 +705,9 @@ static void sctp_packet_append_data(struct sctp_packet *packet,
 	 * sending small messages.
 	 */
 	datasize += sizeof(struct sk_buff);
+=======
+	/* Update our view of the receiver's rwnd. */
+>>>>>>> android-omap-tuna-jb
 	if (datasize < rwnd)
 		rwnd -= datasize;
 	else

@@ -1553,8 +1553,20 @@ static int wait_consider_task(struct wait_opts *wo, int ptrace,
 	}
 
 	/* dead body doesn't have much to contribute */
+<<<<<<< HEAD
 	if (p->exit_state == EXIT_DEAD)
 		return 0;
+=======
+	if (unlikely(p->exit_state == EXIT_DEAD)) {
+		/*
+		 * But do not ignore this task until the tracer does
+		 * wait_task_zombie()->do_notify_parent().
+		 */
+		if (likely(!ptrace) && unlikely(ptrace_reparented(p)))
+			wo->notask_error = 0;
+		return 0;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	/* slay zombie? */
 	if (p->exit_state == EXIT_ZOMBIE) {

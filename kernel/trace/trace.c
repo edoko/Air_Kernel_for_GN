@@ -3704,8 +3704,11 @@ tracing_buffers_read(struct file *filp, char __user *ubuf,
 	if (info->read < PAGE_SIZE)
 		goto read;
 
+<<<<<<< HEAD
 	info->read = 0;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	trace_access_lock(info->cpu);
 	ret = ring_buffer_read_page(info->tr->buffer,
 				    &info->spare,
@@ -3715,6 +3718,11 @@ tracing_buffers_read(struct file *filp, char __user *ubuf,
 	if (ret < 0)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	info->read = 0;
+
+>>>>>>> android-omap-tuna-jb
 read:
 	size = PAGE_SIZE - info->read;
 	if (size > count)

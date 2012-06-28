@@ -162,7 +162,11 @@ static bool oom_unkillable_task(struct task_struct *p,
 unsigned int oom_badness(struct task_struct *p, struct mem_cgroup *mem,
 		      const nodemask_t *nodemask, unsigned long totalpages)
 {
+<<<<<<< HEAD
 	int points;
+=======
+	long points;
+>>>>>>> android-omap-tuna-jb
 
 	if (oom_unkillable_task(p, mem, nodemask))
 		return 0;

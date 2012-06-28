@@ -161,9 +161,16 @@ static void del_nbp(struct net_bridge_port *p)
 	call_rcu(&p->rcu, destroy_nbp_rcu);
 }
 
+<<<<<<< HEAD
 /* called with RTNL */
 static void del_br(struct net_bridge *br, struct list_head *head)
 {
+=======
+/* Delete bridge device */
+void br_dev_delete(struct net_device *dev, struct list_head *head)
+{
+	struct net_bridge *br = netdev_priv(dev);
+>>>>>>> android-omap-tuna-jb
 	struct net_bridge_port *p, *n;
 
 	list_for_each_entry_safe(p, n, &br->port_list, list) {
@@ -268,7 +275,11 @@ int br_del_bridge(struct net *net, const char *name)
 	}
 
 	else
+<<<<<<< HEAD
 		del_br(netdev_priv(dev), NULL);
+=======
+		br_dev_delete(dev, NULL);
+>>>>>>> android-omap-tuna-jb
 
 	rtnl_unlock();
 	return ret;
@@ -445,7 +456,11 @@ void __net_exit br_net_exit(struct net *net)
 	rtnl_lock();
 	for_each_netdev(net, dev)
 		if (dev->priv_flags & IFF_EBRIDGE)
+<<<<<<< HEAD
 			del_br(netdev_priv(dev), &list);
+=======
+			br_dev_delete(dev, &list);
+>>>>>>> android-omap-tuna-jb
 
 	unregister_netdevice_many(&list);
 	rtnl_unlock();

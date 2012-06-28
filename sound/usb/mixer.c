@@ -765,10 +765,67 @@ static void usb_mixer_elem_free(struct snd_kcontrol *kctl)
  * interface to ALSA control for feature/mixer units
  */
 
+<<<<<<< HEAD
 /*
  * retrieve the minimum and maximum values for the specified control
  */
 static int get_min_max(struct usb_mixer_elem_info *cval, int default_min)
+=======
+/* volume control quirks */
+static void volume_control_quirks(struct usb_mixer_elem_info *cval,
+				  struct snd_kcontrol *kctl)
+{
+	switch (cval->mixer->chip->usb_id) {
+	case USB_ID(0x0471, 0x0101):
+	case USB_ID(0x0471, 0x0104):
+	case USB_ID(0x0471, 0x0105):
+	case USB_ID(0x0672, 0x1041):
+	/* quirk for UDA1321/N101.
+	 * note that detection between firmware 2.1.1.7 (N101)
+	 * and later 2.1.1.21 is not very clear from datasheets.
+	 * I hope that the min value is -15360 for newer firmware --jk
+	 */
+		if (!strcmp(kctl->id.name, "PCM Playback Volume") &&
+		    cval->min == -15616) {
+			snd_printk(KERN_INFO
+				 "set volume quirk for UDA1321/N101 chip\n");
+			cval->max = -256;
+		}
+		break;
+
+	case USB_ID(0x046d, 0x09a4):
+		if (!strcmp(kctl->id.name, "Mic Capture Volume")) {
+			snd_printk(KERN_INFO
+				"set volume quirk for QuickCam E3500\n");
+			cval->min = 6080;
+			cval->max = 8768;
+			cval->res = 192;
+		}
+		break;
+
+	case USB_ID(0x046d, 0x0808):
+	case USB_ID(0x046d, 0x0809):
+	case USB_ID(0x046d, 0x0991):
+	/* Most audio usb devices lie about volume resolution.
+	 * Most Logitech webcams have res = 384.
+	 * Proboly there is some logitech magic behind this number --fishor
+	 */
+		if (!strcmp(kctl->id.name, "Mic Capture Volume")) {
+			snd_printk(KERN_INFO
+				"set resolution quirk: cval->res = 384\n");
+			cval->res = 384;
+		}
+		break;
+
+	}
+}
+
+/*
+ * retrieve the minimum and maximum values for the specified control
+ */
+static int get_min_max_with_quirks(struct usb_mixer_elem_info *cval,
+				   int default_min, struct snd_kcontrol *kctl)
+>>>>>>> android-omap-tuna-jb
 {
 	/* for failsafe */
 	cval->min = default_min;
@@ -844,6 +901,12 @@ static int get_min_max(struct usb_mixer_elem_info *cval, int default_min)
 		cval->initialized = 1;
 	}
 
+<<<<<<< HEAD
+=======
+	if (kctl)
+		volume_control_quirks(cval, kctl);
+
+>>>>>>> android-omap-tuna-jb
 	/* USB descriptions contain the dB scale in 1/256 dB unit
 	 * while ALSA TLV contains in 1/100 dB unit
 	 */
@@ -864,6 +927,10 @@ static int get_min_max(struct usb_mixer_elem_info *cval, int default_min)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#define get_min_max(cval, def)	get_min_max_with_quirks(cval, def, NULL)
+>>>>>>> android-omap-tuna-jb
 
 /* get a feature/mixer unit info */
 static int mixer_ctl_feature_info(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_info *uinfo)
@@ -881,8 +948,22 @@ static int mixer_ctl_feature_info(struct snd_kcontrol *kcontrol, struct snd_ctl_
 		uinfo->value.integer.min = 0;
 		uinfo->value.integer.max = 1;
 	} else {
+<<<<<<< HEAD
 		if (! cval->initialized)
 			get_min_max(cval,  0);
+=======
+		if (!cval->initialized) {
+			get_min_max_with_quirks(cval, 0, kcontrol);
+			if (cval->initialized && cval->dBmin >= cval->dBmax) {
+				kcontrol->vd[0].access &=
+					~(SNDRV_CTL_ELEM_ACCESS_TLV_READ |
+					  SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK);
+				snd_ctl_notify(cval->mixer->chip->card,
+					       SNDRV_CTL_EVENT_MASK_INFO,
+					       &kcontrol->id);
+			}
+		}
+>>>>>>> android-omap-tuna-jb
 		uinfo->value.integer.min = 0;
 		uinfo->value.integer.max =
 			(cval->max - cval->min + cval->res - 1) / cval->res;
@@ -1036,9 +1117,12 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
 		cval->ch_readonly = readonly_mask;
 	}
 
+<<<<<<< HEAD
 	/* get min/max values */
 	get_min_max(cval, 0);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	/* if all channels in the mask are marked read-only, make the control
 	 * read-only. set_cur_mix_value() will check the mask again and won't
 	 * issue write commands to read-only channels. */
@@ -1060,6 +1144,12 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
 		len = snd_usb_copy_string_desc(state, nameid,
 				kctl->id.name, sizeof(kctl->id.name));
 
+<<<<<<< HEAD
+=======
+	/* get min/max values */
+	get_min_max_with_quirks(cval, 0, kctl);
+
+>>>>>>> android-omap-tuna-jb
 	switch (control) {
 	case UAC_FU_MUTE:
 	case UAC_FU_VOLUME:
@@ -1109,6 +1199,7 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
 		break;
 	}
 
+<<<<<<< HEAD
 	/* volume control quirks */
 	switch (state->chip->usb_id) {
 	case USB_ID(0x0471, 0x0101):
@@ -1154,6 +1245,8 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
 
 	}
 
+=======
+>>>>>>> android-omap-tuna-jb
 	range = (cval->max - cval->min) / cval->res;
 	/* Are there devices with volume range more than 255? I use a bit more
 	 * to be sure. 384 is a resolution magic number found on Logitech

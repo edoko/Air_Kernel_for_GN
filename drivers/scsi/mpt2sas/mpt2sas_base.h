@@ -626,8 +626,11 @@ struct mpt2sas_port_facts {
  * @wait_for_port_enable_to_complete:
  * @msix_enable: flag indicating msix is enabled
  * @msix_vector_count: number msix vectors
+<<<<<<< HEAD
  * @msix_table: virt address to the msix table
  * @msix_table_backup: backup msix table
+=======
+>>>>>>> android-omap-tuna-jb
  * @scsi_io_cb_idx: shost generated commands
  * @tm_cb_idx: task management commands
  * @scsih_cb_idx: scsih internal commands
@@ -768,8 +771,11 @@ struct MPT2SAS_ADAPTER {
 
 	u8		msix_enable;
 	u16		msix_vector_count;
+<<<<<<< HEAD
 	u32		*msix_table;
 	u32		*msix_table_backup;
+=======
+>>>>>>> android-omap-tuna-jb
 	u32		ioc_reset_count;
 
 	/* internal commands, callback index */

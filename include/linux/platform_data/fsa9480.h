@@ -32,6 +32,7 @@
 #define FSA9480_DETECT_UART			(1 << 4)
 #define FSA9480_DETECT_AV_365K			(1 << 5)
 #define FSA9480_DETECT_AV_365K_CHARGER		(1 << 6)
+<<<<<<< HEAD
 
 #define FSA9480_DETECT_ALL			(FSA9480_DETECT_USB | \
 						 FSA9480_DETECT_USB_HOST | \
@@ -40,6 +41,18 @@
 						 FSA9480_DETECT_UART | \
 						 FSA9480_DETECT_AV_365K | \
 						 FSA9480_DETECT_AV_365K_CHARGER)
+=======
+#define FSA9480_DETECT_AV_POWERED		(1 << 7)
+
+#define FSA9480_DETECT_ALL		(FSA9480_DETECT_USB | \
+					 FSA9480_DETECT_USB_HOST | \
+					 FSA9480_DETECT_CHARGER | \
+					 FSA9480_DETECT_JIG | \
+					 FSA9480_DETECT_UART | \
+					 FSA9480_DETECT_AV_365K | \
+					 FSA9480_DETECT_AV_365K_CHARGER | \
+					 FSA9480_DETECT_AV_POWERED)
+>>>>>>> android-omap-tuna-jb
 
 struct fsa9480_detect_set {
 	int	prio;

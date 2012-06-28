@@ -96,7 +96,10 @@ static void aio_free_ring(struct kioctx *ctx)
 		down_write(&ctx->mm->mmap_sem);
 		do_munmap(ctx->mm, info->mmap_base, info->mmap_size);
 		up_write(&ctx->mm->mmap_sem);
+<<<<<<< HEAD
 		BUG_ON(ctx->mm != current->mm);
+=======
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (info->ring_pages && info->ring_pages != info->internal_pages)
@@ -200,7 +203,20 @@ static int aio_setup_ring(struct kioctx *ctx)
 static void ctx_rcu_free(struct rcu_head *head)
 {
 	struct kioctx *ctx = container_of(head, struct kioctx, rcu_head);
+<<<<<<< HEAD
 	kmem_cache_free(kioctx_cachep, ctx);
+=======
+	unsigned nr_events = ctx->max_reqs;
+
+	kmem_cache_free(kioctx_cachep, ctx);
+
+	if (nr_events) {
+		spin_lock(&aio_nr_lock);
+		BUG_ON(aio_nr - nr_events > aio_nr);
+		aio_nr -= nr_events;
+		spin_unlock(&aio_nr_lock);
+	}
+>>>>>>> android-omap-tuna-jb
 }
 
 /* __put_ioctx
@@ -209,6 +225,7 @@ static void ctx_rcu_free(struct rcu_head *head)
  */
 static void __put_ioctx(struct kioctx *ctx)
 {
+<<<<<<< HEAD
 	unsigned nr_events = ctx->max_reqs;
 	BUG_ON(ctx->reqs_active);
 
@@ -222,6 +239,15 @@ static void __put_ioctx(struct kioctx *ctx)
 		aio_nr -= nr_events;
 		spin_unlock(&aio_nr_lock);
 	}
+=======
+	BUG_ON(ctx->reqs_active);
+
+	cancel_delayed_work(&ctx->wq);
+	cancel_work_sync(&ctx->wq.work);
+	aio_free_ring(ctx);
+	mmdrop(ctx->mm);
+	ctx->mm = NULL;
+>>>>>>> android-omap-tuna-jb
 	pr_debug("__put_ioctx: freeing %p\n", ctx);
 	call_rcu(&ctx->rcu_head, ctx_rcu_free);
 }
@@ -245,7 +271,11 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
 {
 	struct mm_struct *mm;
 	struct kioctx *ctx;
+<<<<<<< HEAD
 	int err = -ENOMEM;
+=======
+	int did_sync = 0;
+>>>>>>> android-omap-tuna-jb
 
 	/* Prevent overflows */
 	if ((nr_events > (0x10000000U / sizeof(struct io_event))) ||
@@ -254,7 +284,11 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
 		return ERR_PTR(-EINVAL);
 	}
 
+<<<<<<< HEAD
 	if (!nr_events || (unsigned long)nr_events > aio_max_nr)
+=======
+	if ((unsigned long)nr_events > aio_max_nr)
+>>>>>>> android-omap-tuna-jb
 		return ERR_PTR(-EAGAIN);
 
 	ctx = kmem_cache_zalloc(kioctx_cachep, GFP_KERNEL);
@@ -278,6 +312,7 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
 		goto out_freectx;
 
 	/* limit the number of system wide aios */
+<<<<<<< HEAD
 	spin_lock(&aio_nr_lock);
 	if (aio_nr + nr_events > aio_max_nr ||
 	    aio_nr + nr_events < aio_nr) {
@@ -286,6 +321,27 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
 	}
 	aio_nr += ctx->max_reqs;
 	spin_unlock(&aio_nr_lock);
+=======
+	do {
+		spin_lock_bh(&aio_nr_lock);
+		if (aio_nr + nr_events > aio_max_nr ||
+		    aio_nr + nr_events < aio_nr)
+			ctx->max_reqs = 0;
+		else
+			aio_nr += ctx->max_reqs;
+		spin_unlock_bh(&aio_nr_lock);
+		if (ctx->max_reqs || did_sync)
+			break;
+
+		/* wait for rcu callbacks to have completed before giving up */
+		synchronize_rcu();
+		did_sync = 1;
+		ctx->max_reqs = nr_events;
+	} while (1);
+
+	if (ctx->max_reqs == 0)
+		goto out_cleanup;
+>>>>>>> android-omap-tuna-jb
 
 	/* now link into global list. */
 	spin_lock(&mm->ioctx_lock);
@@ -297,6 +353,7 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
 	return ctx;
 
 out_cleanup:
+<<<<<<< HEAD
 	err = -EAGAIN;
 	aio_free_ring(ctx);
 out_freectx:
@@ -307,10 +364,26 @@ out_freectx:
 }
 
 /* kill_ctx
+=======
+	__put_ioctx(ctx);
+	return ERR_PTR(-EAGAIN);
+
+out_freectx:
+	mmdrop(mm);
+	kmem_cache_free(kioctx_cachep, ctx);
+	ctx = ERR_PTR(-ENOMEM);
+
+	dprintk("aio: error allocating ioctx %p\n", ctx);
+	return ctx;
+}
+
+/* aio_cancel_all
+>>>>>>> android-omap-tuna-jb
  *	Cancels all outstanding aio requests on an aio context.  Used 
  *	when the processes owning a context have all exited to encourage 
  *	the rapid destruction of the kioctx.
  */
+<<<<<<< HEAD
 static void kill_ctx(struct kioctx *ctx)
 {
 	int (*cancel)(struct kiocb *, struct io_event *);
@@ -318,6 +391,12 @@ static void kill_ctx(struct kioctx *ctx)
 	DECLARE_WAITQUEUE(wait, tsk);
 	struct io_event res;
 
+=======
+static void aio_cancel_all(struct kioctx *ctx)
+{
+	int (*cancel)(struct kiocb *, struct io_event *);
+	struct io_event res;
+>>>>>>> android-omap-tuna-jb
 	spin_lock_irq(&ctx->ctx_lock);
 	ctx->dead = 1;
 	while (!list_empty(&ctx->active_reqs)) {
@@ -333,7 +412,19 @@ static void kill_ctx(struct kioctx *ctx)
 			spin_lock_irq(&ctx->ctx_lock);
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	spin_unlock_irq(&ctx->ctx_lock);
+}
+
+static void wait_for_all_aios(struct kioctx *ctx)
+{
+	struct task_struct *tsk = current;
+	DECLARE_WAITQUEUE(wait, tsk);
+
+	spin_lock_irq(&ctx->ctx_lock);
+>>>>>>> android-omap-tuna-jb
 	if (!ctx->reqs_active)
 		goto out;
 
@@ -383,13 +474,24 @@ void exit_aio(struct mm_struct *mm)
 		ctx = hlist_entry(mm->ioctx_list.first, struct kioctx, list);
 		hlist_del_rcu(&ctx->list);
 
+<<<<<<< HEAD
 		kill_ctx(ctx);
+=======
+		aio_cancel_all(ctx);
+
+		wait_for_all_aios(ctx);
+		/*
+		 * Ensure we don't leave the ctx on the aio_wq
+		 */
+		cancel_work_sync(&ctx->wq.work);
+>>>>>>> android-omap-tuna-jb
 
 		if (1 != atomic_read(&ctx->users))
 			printk(KERN_DEBUG
 				"exit_aio:ioctx still alive: %d %d %d\n",
 				atomic_read(&ctx->users), ctx->dead,
 				ctx->reqs_active);
+<<<<<<< HEAD
 		/*
 		 * We don't need to bother with munmap() here -
 		 * exit_mmap(mm) is coming and it'll unmap everything.
@@ -401,6 +503,8 @@ void exit_aio(struct mm_struct *mm)
 		 * all other callers have ctx->mm == current->mm.
 		 */
 		ctx->ring_info.mmap_size = 0;
+=======
+>>>>>>> android-omap-tuna-jb
 		put_ioctx(ctx);
 	}
 }
@@ -418,6 +522,11 @@ void exit_aio(struct mm_struct *mm)
 static struct kiocb *__aio_get_req(struct kioctx *ctx)
 {
 	struct kiocb *req = NULL;
+<<<<<<< HEAD
+=======
+	struct aio_ring *ring;
+	int okay = 0;
+>>>>>>> android-omap-tuna-jb
 
 	req = kmem_cache_alloc(kiocb_cachep, GFP_KERNEL);
 	if (unlikely(!req))
@@ -435,6 +544,7 @@ static struct kiocb *__aio_get_req(struct kioctx *ctx)
 	INIT_LIST_HEAD(&req->ki_run_list);
 	req->ki_eventfd = NULL;
 
+<<<<<<< HEAD
 	return req;
 }
 
@@ -552,6 +662,41 @@ static inline struct kiocb *aio_get_req(struct kioctx *ctx,
 			return NULL;
 	req = list_first_entry(&batch->head, struct kiocb, ki_batch);
 	list_del(&req->ki_batch);
+=======
+	/* Check if the completion queue has enough free space to
+	 * accept an event from this io.
+	 */
+	spin_lock_irq(&ctx->ctx_lock);
+	ring = kmap_atomic(ctx->ring_info.ring_pages[0], KM_USER0);
+	if (ctx->reqs_active < aio_ring_avail(&ctx->ring_info, ring)) {
+		list_add(&req->ki_list, &ctx->active_reqs);
+		ctx->reqs_active++;
+		okay = 1;
+	}
+	kunmap_atomic(ring, KM_USER0);
+	spin_unlock_irq(&ctx->ctx_lock);
+
+	if (!okay) {
+		kmem_cache_free(kiocb_cachep, req);
+		req = NULL;
+	}
+
+	return req;
+}
+
+static inline struct kiocb *aio_get_req(struct kioctx *ctx)
+{
+	struct kiocb *req;
+	/* Handle a potential starvation case -- should be exceedingly rare as 
+	 * requests will be stuck on fput_head only if the aio_fput_routine is 
+	 * delayed and the requests were the last user of the struct file.
+	 */
+	req = __aio_get_req(ctx);
+	if (unlikely(NULL == req)) {
+		aio_fput_routine(NULL);
+		req = __aio_get_req(ctx);
+	}
+>>>>>>> android-omap-tuna-jb
 	return req;
 }
 
@@ -904,7 +1049,11 @@ static void aio_kick_handler(struct work_struct *work)
  	unuse_mm(mm);
 	set_fs(oldfs);
 	/*
+<<<<<<< HEAD
 	 * we're in a worker thread already; no point using non-zero delay
+=======
+	 * we're in a worker thread already, don't use queue_delayed_work,
+>>>>>>> android-omap-tuna-jb
 	 */
 	if (requeue)
 		queue_delayed_work(aio_wq, &ctx->wq, 0);
@@ -1274,7 +1423,12 @@ static void io_destroy(struct kioctx *ioctx)
 	if (likely(!was_dead))
 		put_ioctx(ioctx);	/* twice for the list */
 
+<<<<<<< HEAD
 	kill_ctx(ioctx);
+=======
+	aio_cancel_all(ioctx);
+	wait_for_all_aios(ioctx);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Wake up any waiters.  The setting of ctx->dead must be seen
@@ -1282,6 +1436,10 @@ static void io_destroy(struct kioctx *ioctx)
 	 * locking done by the above calls to ensure this consistency.
 	 */
 	wake_up_all(&ioctx->wait);
+<<<<<<< HEAD
+=======
+	put_ioctx(ioctx);	/* once for the lookup */
+>>>>>>> android-omap-tuna-jb
 }
 
 /* sys_io_setup:
@@ -1318,9 +1476,17 @@ SYSCALL_DEFINE2(io_setup, unsigned, nr_events, aio_context_t __user *, ctxp)
 	ret = PTR_ERR(ioctx);
 	if (!IS_ERR(ioctx)) {
 		ret = put_user(ioctx->user_id, ctxp);
+<<<<<<< HEAD
 		if (ret)
 			io_destroy(ioctx);
 		put_ioctx(ioctx);
+=======
+		if (!ret) {
+			put_ioctx(ioctx);
+			return 0;
+		}
+		io_destroy(ioctx);
+>>>>>>> android-omap-tuna-jb
 	}
 
 out:
@@ -1338,7 +1504,10 @@ SYSCALL_DEFINE1(io_destroy, aio_context_t, ctx)
 	struct kioctx *ioctx = lookup_ioctx(ctx);
 	if (likely(NULL != ioctx)) {
 		io_destroy(ioctx);
+<<<<<<< HEAD
 		put_ioctx(ioctx);
+=======
+>>>>>>> android-omap-tuna-jb
 		return 0;
 	}
 	pr_debug("EINVAL: io_destroy: invalid context id\n");
@@ -1576,8 +1745,12 @@ static ssize_t aio_setup_iocb(struct kiocb *kiocb, bool compat)
 }
 
 static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+<<<<<<< HEAD
 			 struct iocb *iocb, struct kiocb_batch *batch,
 			 bool compat)
+=======
+			 struct iocb *iocb, bool compat)
+>>>>>>> android-omap-tuna-jb
 {
 	struct kiocb *req;
 	struct file *file;
@@ -1603,7 +1776,11 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
 	if (unlikely(!file))
 		return -EBADF;
 
+<<<<<<< HEAD
 	req = aio_get_req(ctx, batch);  /* returns with 2 references to req */
+=======
+	req = aio_get_req(ctx);		/* returns with 2 references to req */
+>>>>>>> android-omap-tuna-jb
 	if (unlikely(!req)) {
 		fput(file);
 		return -EAGAIN;
@@ -1683,9 +1860,14 @@ long do_io_submit(aio_context_t ctx_id, long nr,
 {
 	struct kioctx *ctx;
 	long ret = 0;
+<<<<<<< HEAD
 	int i = 0;
 	struct blk_plug plug;
 	struct kiocb_batch batch;
+=======
+	int i;
+	struct blk_plug plug;
+>>>>>>> android-omap-tuna-jb
 
 	if (unlikely(nr < 0))
 		return -EINVAL;
@@ -1702,8 +1884,11 @@ long do_io_submit(aio_context_t ctx_id, long nr,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	kiocb_batch_init(&batch, nr);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	blk_start_plug(&plug);
 
 	/*
@@ -1724,13 +1909,20 @@ long do_io_submit(aio_context_t ctx_id, long nr,
 			break;
 		}
 
+<<<<<<< HEAD
 		ret = io_submit_one(ctx, user_iocb, &tmp, &batch, compat);
+=======
+		ret = io_submit_one(ctx, user_iocb, &tmp, compat);
+>>>>>>> android-omap-tuna-jb
 		if (ret)
 			break;
 	}
 	blk_finish_plug(&plug);
 
+<<<<<<< HEAD
 	kiocb_batch_free(ctx, &batch);
+=======
+>>>>>>> android-omap-tuna-jb
 	put_ioctx(ctx);
 	return i ? i : ret;
 }

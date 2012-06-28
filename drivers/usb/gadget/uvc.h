@@ -29,7 +29,11 @@
 
 struct uvc_request_data
 {
+<<<<<<< HEAD
 	unsigned int length;
+=======
+	__s32 length;
+>>>>>>> android-omap-tuna-jb
 	__u8 data[60];
 };
 

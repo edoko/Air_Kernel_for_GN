@@ -239,7 +239,11 @@ static int macvlan_queue_xmit(struct sk_buff *skb, struct net_device *dev)
 		dest = macvlan_hash_lookup(port, eth->h_dest);
 		if (dest && dest->mode == MACVLAN_MODE_BRIDGE) {
 			/* send to lowerdev first for its network taps */
+<<<<<<< HEAD
 			vlan->forward(vlan->lowerdev, skb);
+=======
+			dev_forward_skb(vlan->lowerdev, skb);
+>>>>>>> android-omap-tuna-jb
 
 			return NET_XMIT_SUCCESS;
 		}

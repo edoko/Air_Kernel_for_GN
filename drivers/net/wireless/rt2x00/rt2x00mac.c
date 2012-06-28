@@ -152,13 +152,31 @@ void rt2x00mac_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
 	if (unlikely(rt2x00queue_write_tx_frame(queue, skb, false)))
 		goto exit_fail;
 
+<<<<<<< HEAD
 	if (rt2x00queue_threshold(queue))
 		rt2x00queue_pause_queue(queue);
+=======
+	/*
+	 * Pausing queue has to be serialized with rt2x00lib_txdone(). Note
+	 * we should not use spin_lock_bh variant as bottom halve was already
+	 * disabled before ieee80211_xmit() call.
+	 */
+	spin_lock(&queue->tx_lock);
+	if (rt2x00queue_threshold(queue))
+		rt2x00queue_pause_queue(queue);
+	spin_unlock(&queue->tx_lock);
+>>>>>>> android-omap-tuna-jb
 
 	return;
 
  exit_fail:
+<<<<<<< HEAD
 	rt2x00queue_pause_queue(queue);
+=======
+	spin_lock(&queue->tx_lock);
+	rt2x00queue_pause_queue(queue);
+	spin_unlock(&queue->tx_lock);
+>>>>>>> android-omap-tuna-jb
  exit_free_skb:
 	dev_kfree_skb_any(skb);
 }

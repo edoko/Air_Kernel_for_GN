@@ -110,6 +110,10 @@ int oprofile_timer_init(struct oprofile_operations *ops)
 	ops->start = oprofile_hrtimer_start;
 	ops->stop = oprofile_hrtimer_stop;
 	ops->cpu_type = "timer";
+<<<<<<< HEAD
+=======
+	printk(KERN_INFO "oprofile: using timer interrupt.\n");
+>>>>>>> android-omap-tuna-jb
 	return 0;
 }
 

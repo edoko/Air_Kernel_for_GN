@@ -18,6 +18,11 @@
 #include <linux/init.h>
 #include <asm/cputable.h>
 #include <asm/code-patching.h>
+<<<<<<< HEAD
+=======
+#include <asm/page.h>
+#include <asm/sections.h>
+>>>>>>> android-omap-tuna-jb
 
 
 struct fixup_entry {
@@ -128,6 +133,30 @@ void do_lwsync_fixups(unsigned long value, void *fixup_start, void *fixup_end)
 	}
 }
 
+<<<<<<< HEAD
+=======
+void do_final_fixups(void)
+{
+#if defined(CONFIG_PPC64) && defined(CONFIG_RELOCATABLE)
+	int *src, *dest;
+	unsigned long length;
+
+	if (PHYSICAL_START == 0)
+		return;
+
+	src = (int *)(KERNELBASE + PHYSICAL_START);
+	dest = (int *)KERNELBASE;
+	length = (__end_interrupts - _stext) / sizeof(int);
+
+	while (length--) {
+		patch_instruction(dest, *src);
+		src++;
+		dest++;
+	}
+#endif
+}
+
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_FTR_FIXUP_SELFTEST
 
 #define check(x)	\

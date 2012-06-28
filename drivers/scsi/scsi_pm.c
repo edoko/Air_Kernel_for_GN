@@ -6,6 +6,10 @@
  */
 
 #include <linux/pm_runtime.h>
+<<<<<<< HEAD
+=======
+#include <linux/async.h>
+>>>>>>> android-omap-tuna-jb
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_device.h>
@@ -68,6 +72,22 @@ static int scsi_bus_resume_common(struct device *dev)
 	return err;
 }
 
+<<<<<<< HEAD
+=======
+static int scsi_bus_prepare(struct device *dev)
+{
+	if (scsi_is_sdev_device(dev)) {
+		/* sd probing uses async_schedule.  Wait until it finishes. */
+		async_synchronize_full();
+
+	} else if (scsi_is_host_device(dev)) {
+		/* Wait until async scanning is finished */
+		scsi_complete_async_scans();
+	}
+	return 0;
+}
+
+>>>>>>> android-omap-tuna-jb
 static int scsi_bus_suspend(struct device *dev)
 {
 	return scsi_bus_suspend_common(dev, PMSG_SUSPEND);
@@ -86,6 +106,10 @@ static int scsi_bus_poweroff(struct device *dev)
 #else /* CONFIG_PM_SLEEP */
 
 #define scsi_bus_resume_common		NULL
+<<<<<<< HEAD
+=======
+#define scsi_bus_prepare		NULL
+>>>>>>> android-omap-tuna-jb
 #define scsi_bus_suspend		NULL
 #define scsi_bus_freeze			NULL
 #define scsi_bus_poweroff		NULL
@@ -194,6 +218,10 @@ void scsi_autopm_put_host(struct Scsi_Host *shost)
 #endif /* CONFIG_PM_RUNTIME */
 
 const struct dev_pm_ops scsi_bus_pm_ops = {
+<<<<<<< HEAD
+=======
+	.prepare =		scsi_bus_prepare,
+>>>>>>> android-omap-tuna-jb
 	.suspend =		scsi_bus_suspend,
 	.resume =		scsi_bus_resume_common,
 	.freeze =		scsi_bus_freeze,

@@ -45,7 +45,10 @@
 #include <linux/freezer.h>
 
 #include "ext4.h"
+<<<<<<< HEAD
 #include "ext4_extents.h"
+=======
+>>>>>>> android-omap-tuna-jb
 #include "ext4_jbd2.h"
 #include "xattr.h"
 #include "acl.h"
@@ -1032,6 +1035,11 @@ static int ext4_show_options(struct seq_file *seq, struct vfsmount *vfs)
 		seq_puts(seq, ",nouid32");
 	if (test_opt(sb, DEBUG) && !(def_mount_opts & EXT4_DEFM_DEBUG))
 		seq_puts(seq, ",debug");
+<<<<<<< HEAD
+=======
+	if (test_opt(sb, OLDALLOC))
+		seq_puts(seq, ",oldalloc");
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_EXT4_FS_XATTR
 	if (test_opt(sb, XATTR_USER))
 		seq_puts(seq, ",user_xattr");
@@ -1113,9 +1121,15 @@ static int ext4_show_options(struct seq_file *seq, struct vfsmount *vfs)
 		seq_puts(seq, ",block_validity");
 
 	if (!test_opt(sb, INIT_INODE_TABLE))
+<<<<<<< HEAD
 		seq_puts(seq, ",noinit_inode_table");
 	else if (sbi->s_li_wait_mult != EXT4_DEF_LI_WAIT_MULT)
 		seq_printf(seq, ",init_inode_table=%u",
+=======
+		seq_puts(seq, ",noinit_itable");
+	else if (sbi->s_li_wait_mult != EXT4_DEF_LI_WAIT_MULT)
+		seq_printf(seq, ",init_itable=%u",
+>>>>>>> android-omap-tuna-jb
 			   (unsigned) sbi->s_li_wait_mult);
 
 	ext4_show_quota_options(seq, sb);
@@ -1291,8 +1305,12 @@ enum {
 	Opt_nomblk_io_submit, Opt_block_validity, Opt_noblock_validity,
 	Opt_inode_readahead_blks, Opt_journal_ioprio,
 	Opt_dioread_nolock, Opt_dioread_lock,
+<<<<<<< HEAD
 	Opt_discard, Opt_nodiscard,
 	Opt_init_inode_table, Opt_noinit_inode_table,
+=======
+	Opt_discard, Opt_nodiscard, Opt_init_itable, Opt_noinit_itable,
+>>>>>>> android-omap-tuna-jb
 };
 
 static const match_table_t tokens = {
@@ -1365,9 +1383,15 @@ static const match_table_t tokens = {
 	{Opt_dioread_lock, "dioread_lock"},
 	{Opt_discard, "discard"},
 	{Opt_nodiscard, "nodiscard"},
+<<<<<<< HEAD
 	{Opt_init_inode_table, "init_itable=%u"},
 	{Opt_init_inode_table, "init_itable"},
 	{Opt_noinit_inode_table, "noinit_itable"},
+=======
+	{Opt_init_itable, "init_itable=%u"},
+	{Opt_init_itable, "init_itable"},
+	{Opt_noinit_itable, "noinit_itable"},
+>>>>>>> android-omap-tuna-jb
 	{Opt_err, NULL},
 };
 
@@ -1540,12 +1564,19 @@ static int parse_options(char *options, struct super_block *sb,
 			set_opt(sb, DEBUG);
 			break;
 		case Opt_oldalloc:
+<<<<<<< HEAD
 			ext4_msg(sb, KERN_WARNING,
 				"Ignoring deprecated oldalloc option");
 			break;
 		case Opt_orlov:
 			ext4_msg(sb, KERN_WARNING,
 				"Ignoring deprecated orlov option");
+=======
+			set_opt(sb, OLDALLOC);
+			break;
+		case Opt_orlov:
+			clear_opt(sb, OLDALLOC);
+>>>>>>> android-omap-tuna-jb
 			break;
 #ifdef CONFIG_EXT4_FS_XATTR
 		case Opt_user_xattr:
@@ -1846,7 +1877,11 @@ set_qf_format:
 		case Opt_dioread_lock:
 			clear_opt(sb, DIOREAD_NOLOCK);
 			break;
+<<<<<<< HEAD
 		case Opt_init_inode_table:
+=======
+		case Opt_init_itable:
+>>>>>>> android-omap-tuna-jb
 			set_opt(sb, INIT_INODE_TABLE);
 			if (args[0].from) {
 				if (match_int(&args[0], &option))
@@ -1857,7 +1892,11 @@ set_qf_format:
 				return 0;
 			sbi->s_li_wait_mult = option;
 			break;
+<<<<<<< HEAD
 		case Opt_noinit_inode_table:
+=======
+		case Opt_noinit_itable:
+>>>>>>> android-omap-tuna-jb
 			clear_opt(sb, INIT_INODE_TABLE);
 			break;
 		default:
@@ -1960,17 +1999,29 @@ static int ext4_fill_flex_info(struct super_block *sb)
 	struct ext4_group_desc *gdp = NULL;
 	ext4_group_t flex_group_count;
 	ext4_group_t flex_group;
+<<<<<<< HEAD
 	int groups_per_flex = 0;
+=======
+	unsigned int groups_per_flex = 0;
+>>>>>>> android-omap-tuna-jb
 	size_t size;
 	int i;
 
 	sbi->s_log_groups_per_flex = sbi->s_es->s_log_groups_per_flex;
+<<<<<<< HEAD
 	groups_per_flex = 1 << sbi->s_log_groups_per_flex;
 
 	if (groups_per_flex < 2) {
 		sbi->s_log_groups_per_flex = 0;
 		return 1;
 	}
+=======
+	if (sbi->s_log_groups_per_flex < 1 || sbi->s_log_groups_per_flex > 31) {
+		sbi->s_log_groups_per_flex = 0;
+		return 1;
+	}
+	groups_per_flex = 1 << sbi->s_log_groups_per_flex;
+>>>>>>> android-omap-tuna-jb
 
 	/* We allocate both existing and potentially added groups */
 	flex_group_count = ((sbi->s_groups_count + groups_per_flex - 1) +

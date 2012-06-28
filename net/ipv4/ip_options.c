@@ -568,11 +568,19 @@ void ip_forward_options(struct sk_buff *skb)
 		     ) {
 			if (srrptr + 3 > srrspace)
 				break;
+<<<<<<< HEAD
 			if (memcmp(&ip_hdr(skb)->daddr, &optptr[srrptr-1], 4) == 0)
+=======
+			if (memcmp(&opt->nexthop, &optptr[srrptr-1], 4) == 0)
+>>>>>>> android-omap-tuna-jb
 				break;
 		}
 		if (srrptr + 3 <= srrspace) {
 			opt->is_changed = 1;
+<<<<<<< HEAD
+=======
+			ip_hdr(skb)->daddr = opt->nexthop;
+>>>>>>> android-omap-tuna-jb
 			ip_rt_get_source(&optptr[srrptr-1], skb, rt);
 			optptr[2] = srrptr+4;
 		} else if (net_ratelimit())
@@ -640,6 +648,10 @@ int ip_options_rcv_srr(struct sk_buff *skb)
 	}
 	if (srrptr <= srrspace) {
 		opt->srr_is_hit = 1;
+<<<<<<< HEAD
+=======
+		opt->nexthop = nexthop;
+>>>>>>> android-omap-tuna-jb
 		opt->is_changed = 1;
 	}
 	return 0;

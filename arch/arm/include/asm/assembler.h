@@ -137,6 +137,14 @@
 	disable_irq
 	.endm
 
+<<<<<<< HEAD
+=======
+	.macro	save_and_disable_irqs_notrace, oldcpsr
+	mrs	\oldcpsr, cpsr
+	disable_irq_notrace
+	.endm
+
+>>>>>>> android-omap-tuna-jb
 /*
  * Restore interrupt state previously stored in a register.  We don't
  * guarantee that this will preserve the flags.

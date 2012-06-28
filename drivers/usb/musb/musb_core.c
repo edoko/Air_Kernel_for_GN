@@ -2076,7 +2076,10 @@ musb_init_controller(struct device *dev, int nIrq, void __iomem *ctrl)
 						"musb_autosuspend_wake_lock");
 
 	pm_runtime_put(musb->controller);
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb
 	status = musb_init_debugfs(musb);
 	if (status < 0)
 		goto fail4;

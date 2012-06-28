@@ -1203,7 +1203,11 @@ static int alloc_new_range(struct dma_ops_domain *dma_dom,
 		if (!pte || !IOMMU_PTE_PRESENT(*pte))
 			continue;
 
+<<<<<<< HEAD
 		dma_ops_reserve_addresses(dma_dom, i << PAGE_SHIFT, 1);
+=======
+		dma_ops_reserve_addresses(dma_dom, i >> PAGE_SHIFT, 1);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	update_domain(&dma_dom->domain);

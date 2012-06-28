@@ -27,6 +27,10 @@
 #define TUNA_OTG_ID_POGO_PRIO		INT_MIN
 #define TUNA_OTG_ID_FSA9480_PRIO	(INT_MIN + 1)
 #define TUNA_OTG_ID_SII9234_PRIO	(INT_MIN + 2)
+<<<<<<< HEAD
+=======
+#define TUNA_OTG_ID_SII9234_FAILED_PRIO	(INT_MIN + 3)
+>>>>>>> android-omap-tuna-jb
 #define TUNA_OTG_ID_FSA9480_LAST_PRIO	INT_MAX
 
 int omap4_tuna_get_revision(void);

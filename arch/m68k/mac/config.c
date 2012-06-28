@@ -950,6 +950,12 @@ int __init mac_platform_init(void)
 {
 	u8 *swim_base;
 
+<<<<<<< HEAD
+=======
+	if (!MACH_IS_MAC)
+		return -ENODEV;
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * Serial devices
 	 */

@@ -738,7 +738,11 @@ static void iwl_rx_card_state_notif(struct iwl_priv *priv,
 		wiphy_rfkill_set_hw_state(priv->hw->wiphy,
 			test_bit(STATUS_RF_KILL_HW, &priv->status));
 	else
+<<<<<<< HEAD
 		wake_up_interruptible(&priv->wait_command_queue);
+=======
+		wake_up(&priv->wait_command_queue);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void iwl_rx_missed_beacon_notif(struct iwl_priv *priv,

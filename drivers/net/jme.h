@@ -734,7 +734,11 @@ enum jme_rxcs_values {
 	RXCS_RETRYCNT_60	= 0x00000F00,
 
 	RXCS_DEFAULT		= RXCS_FIFOTHTP_128T |
+<<<<<<< HEAD
 				  RXCS_FIFOTHNP_128QW |
+=======
+				  RXCS_FIFOTHNP_16QW |
+>>>>>>> android-omap-tuna-jb
 				  RXCS_DMAREQSZ_128B |
 				  RXCS_RETRYGAP_256ns |
 				  RXCS_RETRYCNT_32,

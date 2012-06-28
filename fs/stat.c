@@ -296,15 +296,27 @@ SYSCALL_DEFINE4(readlinkat, int, dfd, const char __user *, pathname,
 {
 	struct path path;
 	int error;
+<<<<<<< HEAD
+=======
+	int empty = 0;
+>>>>>>> android-omap-tuna-jb
 
 	if (bufsiz <= 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	error = user_path_at(dfd, pathname, LOOKUP_EMPTY, &path);
 	if (!error) {
 		struct inode *inode = path.dentry->d_inode;
 
 		error = -EINVAL;
+=======
+	error = user_path_at_empty(dfd, pathname, LOOKUP_EMPTY, &path, &empty);
+	if (!error) {
+		struct inode *inode = path.dentry->d_inode;
+
+		error = empty ? -ENOENT : -EINVAL;
+>>>>>>> android-omap-tuna-jb
 		if (inode->i_op->readlink) {
 			error = security_inode_readlink(path.dentry);
 			if (!error) {

@@ -731,6 +731,10 @@ static void mxcmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 				"failed to config DMA channel. Falling back to PIO\n");
 			dma_release_channel(host->dma);
 			host->do_dma = 0;
+<<<<<<< HEAD
+=======
+			host->dma = NULL;
+>>>>>>> android-omap-tuna-jb
 		}
 	}
 

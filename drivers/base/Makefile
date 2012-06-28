@@ -19,5 +19,11 @@ obj-$(CONFIG_MODULES)	+= module.o
 endif
 obj-$(CONFIG_SYS_HYPERVISOR) += hypervisor.o
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_SYNC)	+= sync.o
+obj-$(CONFIG_SW_SYNC)	+= sw_sync.o
+
+>>>>>>> android-omap-tuna-jb
 ccflags-$(CONFIG_DEBUG_DRIVER) := -DDEBUG
 

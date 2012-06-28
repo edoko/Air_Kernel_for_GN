@@ -93,8 +93,12 @@ struct sfb_skb_cb {
 
 static inline struct sfb_skb_cb *sfb_skb_cb(const struct sk_buff *skb)
 {
+<<<<<<< HEAD
 	BUILD_BUG_ON(sizeof(skb->cb) <
 		sizeof(struct qdisc_skb_cb) + sizeof(struct sfb_skb_cb));
+=======
+	qdisc_cb_private_validate(skb, sizeof(struct sfb_skb_cb));
+>>>>>>> android-omap-tuna-jb
 	return (struct sfb_skb_cb *)qdisc_skb_cb(skb)->data;
 }
 

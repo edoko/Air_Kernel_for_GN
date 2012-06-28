@@ -150,7 +150,11 @@ ftrace_define_fields_##name(struct ftrace_event_call *event_call)	\
 #define __dynamic_array(type, item)
 
 #undef F_printk
+<<<<<<< HEAD
 #define F_printk(fmt, args...) #fmt ", "  __stringify(args)
+=======
+#define F_printk(fmt, args...) __stringify(fmt) ", "  __stringify(args)
+>>>>>>> android-omap-tuna-jb
 
 #undef FTRACE_ENTRY
 #define FTRACE_ENTRY(call, struct_name, etype, tstruct, print)		\

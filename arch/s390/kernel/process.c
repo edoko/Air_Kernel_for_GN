@@ -28,7 +28,10 @@
 #include <asm/irq.h>
 #include <asm/timer.h>
 #include <asm/nmi.h>
+<<<<<<< HEAD
 #include <asm/compat.h>
+=======
+>>>>>>> android-omap-tuna-jb
 #include <asm/smp.h>
 #include "entry.h"
 

@@ -45,7 +45,10 @@
 
 #include "../clockdomain.h"
 #include "dss.h"
+<<<<<<< HEAD
 #include "gammatable.h"
+=======
+>>>>>>> android-omap-tuna-jb
 #include "dss_features.h"
 #include "dispc.h"
 
@@ -2795,6 +2798,7 @@ bool dispc_trans_key_enabled(enum omap_channel ch)
 	return enabled;
 }
 
+<<<<<<< HEAD
 /* valid inputs for gamma are from 1 to 10 that map
   from 0.2 to 2.2 gamma values and 0 for disabled */
 int dispc_enable_gamma(enum omap_channel ch, u8 gamma)
@@ -2842,6 +2846,8 @@ int dispc_enable_gamma(enum omap_channel ch, u8 gamma)
 	return 0;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 
 void dispc_set_tft_data_lines(enum omap_channel channel, u8 data_lines)
 {

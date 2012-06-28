@@ -10,6 +10,7 @@
 #include <linux/linkage.h>
 #include <linux/list.h>
 
+<<<<<<< HEAD
 /* cannot include rcupdate.h here, so open-code this */
 
 #if defined(CONFIG_JRCU)
@@ -34,21 +35,31 @@
 } while (0)
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 #if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_PREEMPT_TRACER)
   extern void add_preempt_count(int val);
   extern void sub_preempt_count(int val);
 #else
+<<<<<<< HEAD
 # define add_preempt_count(val) __add_preempt_count(val)
 # define sub_preempt_count(val) __sub_preempt_count(val)
+=======
+# define add_preempt_count(val)	do { preempt_count() += (val); } while (0)
+# define sub_preempt_count(val)	do { preempt_count() -= (val); } while (0)
+>>>>>>> android-omap-tuna-jb
 #endif
 
 #define inc_preempt_count() add_preempt_count(1)
 #define dec_preempt_count() sub_preempt_count(1)
 
 #define preempt_count()	(current_thread_info()->preempt_count)
+<<<<<<< HEAD
 #ifdef CONFIG_PREEMPT_COUNT_CPU
 extern int preempt_count_cpu(int cpu);
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 #ifdef CONFIG_PREEMPT
 

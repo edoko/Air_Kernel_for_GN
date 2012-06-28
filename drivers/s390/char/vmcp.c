@@ -13,6 +13,10 @@
 
 #include <linux/fs.h>
 #include <linux/init.h>
+<<<<<<< HEAD
+=======
+#include <linux/compat.h>
+>>>>>>> android-omap-tuna-jb
 #include <linux/kernel.h>
 #include <linux/miscdevice.h>
 #include <linux/slab.h>

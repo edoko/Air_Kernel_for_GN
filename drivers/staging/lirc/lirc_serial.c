@@ -836,13 +836,18 @@ static int hardware_init_port(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int init_port(void)
+=======
+static int __devinit lirc_serial_probe(struct platform_device *dev)
+>>>>>>> android-omap-tuna-jb
 {
 	int i, nlow, nhigh, result;
 
 	result = request_irq(irq, irq_handler,
 			     IRQF_DISABLED | (share_irq ? IRQF_SHARED : 0),
 			     LIRC_DRIVER_NAME, (void *)&hardware);
+<<<<<<< HEAD
 
 	switch (result) {
 	case -EBUSY:
@@ -855,6 +860,17 @@ static int init_port(void)
 	default:
 		break;
 	};
+=======
+	if (result < 0) {
+		if (result == -EBUSY)
+			printk(KERN_ERR LIRC_DRIVER_NAME ": IRQ %d busy\n",
+			       irq);
+		else if (result == -EINVAL)
+			printk(KERN_ERR LIRC_DRIVER_NAME
+			       ": Bad irq number or handler\n");
+		return result;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	/* Reserve io region. */
 	/*
@@ -875,11 +891,22 @@ static int init_port(void)
 		       ": or compile the serial port driver as module and\n");
 		printk(KERN_WARNING LIRC_DRIVER_NAME
 		       ": make sure this module is loaded first\n");
+<<<<<<< HEAD
 		return -EBUSY;
 	}
 
 	if (hardware_init_port() < 0)
 		return -EINVAL;
+=======
+		result = -EBUSY;
+		goto exit_free_irq;
+	}
+
+	if (hardware_init_port() < 0) {
+		result = -EINVAL;
+		goto exit_release_region;
+	}
+>>>>>>> android-omap-tuna-jb
 
 	/* Initialize pulse/space widths */
 	init_timing_params(duty_cycle, freq);
@@ -911,6 +938,31 @@ static int init_port(void)
 
 	dprintk("Interrupt %d, port %04x obtained\n", irq, io);
 	return 0;
+<<<<<<< HEAD
+=======
+
+exit_release_region:
+	if (iommap != 0)
+		release_mem_region(iommap, 8 << ioshift);
+	else
+		release_region(io, 8);
+exit_free_irq:
+	free_irq(irq, (void *)&hardware);
+
+	return result;
+}
+
+static int __devexit lirc_serial_remove(struct platform_device *dev)
+{
+	free_irq(irq, (void *)&hardware);
+
+	if (iommap != 0)
+		release_mem_region(iommap, 8 << ioshift);
+	else
+		release_region(io, 8);
+
+	return 0;
+>>>>>>> android-omap-tuna-jb
 }
 
 static int set_use_inc(void *data)
@@ -1076,6 +1128,7 @@ static struct lirc_driver driver = {
 
 static struct platform_device *lirc_serial_dev;
 
+<<<<<<< HEAD
 static int __devinit lirc_serial_probe(struct platform_device *dev)
 {
 	return 0;
@@ -1086,6 +1139,8 @@ static int __devexit lirc_serial_remove(struct platform_device *dev)
 	return 0;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int lirc_serial_suspend(struct platform_device *dev,
 			       pm_message_t state)
 {
@@ -1112,10 +1167,15 @@ static int lirc_serial_resume(struct platform_device *dev)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	if (hardware_init_port() < 0) {
 		lirc_serial_exit();
 		return -EINVAL;
 	}
+=======
+	if (hardware_init_port() < 0)
+		return -EINVAL;
+>>>>>>> android-omap-tuna-jb
 
 	spin_lock_irqsave(&hardware[type].lock, flags);
 	/* Enable Interrupt */
@@ -1188,10 +1248,13 @@ static int __init lirc_serial_init_module(void)
 {
 	int result;
 
+<<<<<<< HEAD
 	result = lirc_serial_init();
 	if (result)
 		return result;
 
+=======
+>>>>>>> android-omap-tuna-jb
 	switch (type) {
 	case LIRC_HOMEBREW:
 	case LIRC_IRDEO:
@@ -1211,8 +1274,12 @@ static int __init lirc_serial_init_module(void)
 		break;
 #endif
 	default:
+<<<<<<< HEAD
 		result = -EINVAL;
 		goto exit_serial_exit;
+=======
+		return -EINVAL;
+>>>>>>> android-omap-tuna-jb
 	}
 	if (!softcarrier) {
 		switch (type) {
@@ -1228,15 +1295,23 @@ static int __init lirc_serial_init_module(void)
 		}
 	}
 
+<<<<<<< HEAD
 	result = init_port();
 	if (result < 0)
 		goto exit_serial_exit;
+=======
+	result = lirc_serial_init();
+	if (result)
+		return result;
+
+>>>>>>> android-omap-tuna-jb
 	driver.features = hardware[type].features;
 	driver.dev = &lirc_serial_dev->dev;
 	driver.minor = lirc_register_driver(&driver);
 	if (driver.minor < 0) {
 		printk(KERN_ERR  LIRC_DRIVER_NAME
 		       ": register_chrdev failed!\n");
+<<<<<<< HEAD
 		result = -EIO;
 		goto exit_release;
 	}
@@ -1246,10 +1321,17 @@ exit_release:
 exit_serial_exit:
 	lirc_serial_exit();
 	return result;
+=======
+		lirc_serial_exit();
+		return -EIO;
+	}
+	return 0;
+>>>>>>> android-omap-tuna-jb
 }
 
 static void __exit lirc_serial_exit_module(void)
 {
+<<<<<<< HEAD
 	lirc_serial_exit();
 
 	free_irq(irq, (void *)&hardware);
@@ -1259,6 +1341,10 @@ static void __exit lirc_serial_exit_module(void)
 	else
 		release_region(io, 8);
 	lirc_unregister_driver(driver.minor);
+=======
+	lirc_unregister_driver(driver.minor);
+	lirc_serial_exit();
+>>>>>>> android-omap-tuna-jb
 	dprintk("cleaned up module\n");
 }
 

@@ -1651,6 +1651,10 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
 	if (ret)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	unlink_framebuffer(fb_info);
+>>>>>>> android-omap-tuna-jb
 	if (fb_info->pixmap.addr &&
 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
 		kfree(fb_info->pixmap.addr);
@@ -1658,7 +1662,10 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
 	registered_fb[i] = NULL;
 	num_registered_fb--;
 	fb_cleanup_device(fb_info);
+<<<<<<< HEAD
 	device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+=======
+>>>>>>> android-omap-tuna-jb
 	event.info = fb_info;
 	fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
 
@@ -1667,6 +1674,25 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int unlink_framebuffer(struct fb_info *fb_info)
+{
+	int i;
+
+	i = fb_info->node;
+	if (i < 0 || i >= FB_MAX || registered_fb[i] != fb_info)
+		return -EINVAL;
+
+	if (fb_info->dev) {
+		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+		fb_info->dev = NULL;
+	}
+	return 0;
+}
+EXPORT_SYMBOL(unlink_framebuffer);
+
+>>>>>>> android-omap-tuna-jb
 void remove_conflicting_framebuffers(struct apertures_struct *a,
 				     const char *name, bool primary)
 {
@@ -1738,8 +1764,11 @@ void fb_set_suspend(struct fb_info *info, int state)
 {
 	struct fb_event event;
 
+<<<<<<< HEAD
 	if (!lock_fb_info(info))
 		return;
+=======
+>>>>>>> android-omap-tuna-jb
 	event.info = info;
 	if (state) {
 		fb_notifier_call_chain(FB_EVENT_SUSPEND, &event);
@@ -1748,7 +1777,10 @@ void fb_set_suspend(struct fb_info *info, int state)
 		info->state = FBINFO_STATE_RUNNING;
 		fb_notifier_call_chain(FB_EVENT_RESUME, &event);
 	}
+<<<<<<< HEAD
 	unlock_fb_info(info);
+=======
+>>>>>>> android-omap-tuna-jb
 }
 
 /**

@@ -645,7 +645,12 @@ void hwarc_neep_cb(struct urb *urb)
 		dev_err(dev, "NEEP: URB error %d\n", urb->status);
 	}
 	result = usb_submit_urb(urb, GFP_ATOMIC);
+<<<<<<< HEAD
 	if (result < 0) {
+=======
+	if (result < 0 && result != -ENODEV && result != -EPERM) {
+		/* ignoring unrecoverable errors */
+>>>>>>> android-omap-tuna-jb
 		dev_err(dev, "NEEP: Can't resubmit URB (%d) resetting device\n",
 			result);
 		goto error;

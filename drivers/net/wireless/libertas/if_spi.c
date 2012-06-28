@@ -997,6 +997,10 @@ static int if_spi_host_to_card(struct lbs_private *priv,
 		spin_unlock_irqrestore(&card->buffer_lock, flags);
 		break;
 	default:
+<<<<<<< HEAD
+=======
+		kfree(packet);
+>>>>>>> android-omap-tuna-jb
 		netdev_err(priv->dev, "can't transfer buffer of type %d\n",
 			   type);
 		err = -EINVAL;

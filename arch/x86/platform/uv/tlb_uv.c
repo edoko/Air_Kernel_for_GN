@@ -115,9 +115,12 @@ early_param("nobau", setup_nobau);
 
 /* base pnode in this partition */
 static int uv_base_pnode __read_mostly;
+<<<<<<< HEAD
 /* position of pnode (which is nasid>>1): */
 static int uv_nshift __read_mostly;
 static unsigned long uv_mmask __read_mostly;
+=======
+>>>>>>> android-omap-tuna-jb
 
 static DEFINE_PER_CPU(struct ptc_stats, ptcstats);
 static DEFINE_PER_CPU(struct bau_control, bau_control);
@@ -1426,7 +1429,11 @@ static void activation_descriptor_init(int node, int pnode, int base_pnode)
 {
 	int i;
 	int cpu;
+<<<<<<< HEAD
 	unsigned long pa;
+=======
+	unsigned long gpa;
+>>>>>>> android-omap-tuna-jb
 	unsigned long m;
 	unsigned long n;
 	size_t dsize;
@@ -1442,9 +1449,15 @@ static void activation_descriptor_init(int node, int pnode, int base_pnode)
 	bau_desc = kmalloc_node(dsize, GFP_KERNEL, node);
 	BUG_ON(!bau_desc);
 
+<<<<<<< HEAD
 	pa = uv_gpa(bau_desc); /* need the real nasid*/
 	n = pa >> uv_nshift;
 	m = pa & uv_mmask;
+=======
+	gpa = uv_gpa(bau_desc);
+	n = uv_gpa_to_gnode(gpa);
+	m = uv_gpa_to_offset(gpa);
+>>>>>>> android-omap-tuna-jb
 
 	/* the 14-bit pnode */
 	write_mmr_descriptor_base(pnode, (n << UV_DESC_PSHIFT | m));
@@ -1516,9 +1529,15 @@ static void pq_init(int node, int pnode)
 		bcp->queue_last		= pqp + (DEST_Q_SIZE - 1);
 	}
 	/*
+<<<<<<< HEAD
 	 * need the pnode of where the memory was really allocated
 	 */
 	pn = uv_gpa(pqp) >> uv_nshift;
+=======
+	 * need the gnode of where the memory was really allocated
+	 */
+	pn = uv_gpa_to_gnode(uv_gpa(pqp));
+>>>>>>> android-omap-tuna-jb
 	first = uv_physnodeaddr(pqp);
 	pn_first = ((unsigned long)pn << UV_PAYLOADQ_PNODE_SHIFT) | first;
 	last = uv_physnodeaddr(pqp + (DEST_Q_SIZE - 1));
@@ -1578,6 +1597,7 @@ static int calculate_destination_timeout(void)
 		ts_ns = base * mult1 * mult2;
 		ret = ts_ns / 1000;
 	} else {
+<<<<<<< HEAD
 		/* 4 bits  0/1 for 10/80us, 3 bits of multiplier */
 		mmr_image = uv_read_local_mmr(UVH_AGING_PRESCALE_SEL);
 		mmr_image = (mmr_image & UV_SA_MASK) >> UV_SA_SHFT;
@@ -1586,6 +1606,16 @@ static int calculate_destination_timeout(void)
 		else
 			mult1 = 10;
 		base = mmr_image & UV2_ACK_MASK;
+=======
+		/* 4 bits  0/1 for 10/80us base, 3 bits of multiplier */
+		mmr_image = uv_read_local_mmr(UVH_LB_BAU_MISC_CONTROL);
+		mmr_image = (mmr_image & UV_SA_MASK) >> UV_SA_SHFT;
+		if (mmr_image & (1L << UV2_ACK_UNITS_SHFT))
+			base = 80;
+		else
+			base = 10;
+		mult1 = mmr_image & UV2_ACK_MASK;
+>>>>>>> android-omap-tuna-jb
 		ret = mult1 * base;
 	}
 	return ret;
@@ -1812,8 +1842,11 @@ static int __init uv_bau_init(void)
 		zalloc_cpumask_var_node(mask, GFP_KERNEL, cpu_to_node(cur_cpu));
 	}
 
+<<<<<<< HEAD
 	uv_nshift = uv_hub_info->m_val;
 	uv_mmask = (1UL << uv_hub_info->m_val) - 1;
+=======
+>>>>>>> android-omap-tuna-jb
 	nuvhubs = uv_num_possible_blades();
 	spin_lock_init(&disable_lock);
 	congested_cycles = usec_2_cycles(congested_respns_us);
@@ -1825,6 +1858,11 @@ static int __init uv_bau_init(void)
 			uv_base_pnode = uv_blade_to_pnode(uvhub);
 	}
 
+<<<<<<< HEAD
+=======
+	enable_timeouts();
+
+>>>>>>> android-omap-tuna-jb
 	if (init_per_cpu(nuvhubs, uv_base_pnode)) {
 		nobau = 1;
 		return 0;
@@ -1835,7 +1873,10 @@ static int __init uv_bau_init(void)
 		if (uv_blade_nr_possible_cpus(uvhub))
 			init_uvhub(uvhub, vector, uv_base_pnode);
 
+<<<<<<< HEAD
 	enable_timeouts();
+=======
+>>>>>>> android-omap-tuna-jb
 	alloc_intr_gate(vector, uv_bau_message_intr1);
 
 	for_each_possible_blade(uvhub) {

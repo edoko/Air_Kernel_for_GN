@@ -1818,6 +1818,14 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	if (unlikely(!node_match(c, node)))
 		goto another_slab;
 
+<<<<<<< HEAD
+=======
+	/* must check again c->freelist in case of cpu migration or IRQ */
+	object = c->freelist;
+	if (object)
+		goto update_freelist;
+
+>>>>>>> android-omap-tuna-jb
 	stat(s, ALLOC_REFILL);
 
 load_freelist:
@@ -1827,6 +1835,10 @@ load_freelist:
 	if (kmem_cache_debug(s))
 		goto debug;
 
+<<<<<<< HEAD
+=======
+update_freelist:
+>>>>>>> android-omap-tuna-jb
 	c->freelist = get_freepointer(s, object);
 	page->inuse = page->objects;
 	page->freelist = NULL;
@@ -2163,7 +2175,11 @@ EXPORT_SYMBOL(kmem_cache_free);
  * take the list_lock.
  */
 static int slub_min_order;
+<<<<<<< HEAD
 static int slub_max_order;
+=======
+static int slub_max_order = PAGE_ALLOC_COSTLY_ORDER;
+>>>>>>> android-omap-tuna-jb
 static int slub_min_objects;
 
 /*
@@ -3433,13 +3449,22 @@ struct kmem_cache *kmem_cache_create(const char *name, size_t size,
 		if (kmem_cache_open(s, n,
 				size, align, flags, ctor)) {
 			list_add(&s->list, &slab_caches);
+<<<<<<< HEAD
 			if (sysfs_slab_add(s)) {
+=======
+			up_write(&slub_lock);
+			if (sysfs_slab_add(s)) {
+				down_write(&slub_lock);
+>>>>>>> android-omap-tuna-jb
 				list_del(&s->list);
 				kfree(n);
 				kfree(s);
 				goto err;
 			}
+<<<<<<< HEAD
 			up_write(&slub_lock);
+=======
+>>>>>>> android-omap-tuna-jb
 			return s;
 		}
 		kfree(n);

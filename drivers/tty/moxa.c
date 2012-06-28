@@ -1330,7 +1330,11 @@ static void moxa_start(struct tty_struct *tty)
 	if (ch == NULL)
 		return;
 
+<<<<<<< HEAD
 	if (!(ch->statusflags & TXSTOPPED))
+=======
+	if (!test_bit(TXSTOPPED, &ch->statusflags))
+>>>>>>> android-omap-tuna-jb
 		return;
 
 	MoxaPortTxEnable(ch);

@@ -1075,6 +1075,10 @@ static int __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part);
 static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 {
 	struct gendisk *disk;
+<<<<<<< HEAD
+=======
+	struct module *owner;
+>>>>>>> android-omap-tuna-jb
 	int ret;
 	int partno;
 	int perm = 0;
@@ -1100,6 +1104,10 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 	disk = get_gendisk(bdev->bd_dev, &partno);
 	if (!disk)
 		goto out;
+<<<<<<< HEAD
+=======
+	owner = disk->fops->owner;
+>>>>>>> android-omap-tuna-jb
 
 	disk_block_events(disk);
 	mutex_lock_nested(&bdev->bd_mutex, for_part);
@@ -1127,8 +1135,13 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 					bdev->bd_disk = NULL;
 					mutex_unlock(&bdev->bd_mutex);
 					disk_unblock_events(disk);
+<<<<<<< HEAD
 					module_put(disk->fops->owner);
 					put_disk(disk);
+=======
+					put_disk(disk);
+					module_put(owner);
+>>>>>>> android-omap-tuna-jb
 					goto restart;
 				}
 			}
@@ -1147,8 +1160,17 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 			 * The latter is necessary to prevent ghost
 			 * partitions on a removed medium.
 			 */
+<<<<<<< HEAD
 			if (bdev->bd_invalidated && (!ret || ret == -ENOMEDIUM))
 				rescan_partitions(disk, bdev);
+=======
+			if (bdev->bd_invalidated) {
+				if (!ret)
+					rescan_partitions(disk, bdev);
+				else if (ret == -ENOMEDIUM)
+					invalidate_partitions(disk, bdev);
+			}
+>>>>>>> android-omap-tuna-jb
 			if (ret)
 				goto out_clear;
 		} else {
@@ -1178,14 +1200,28 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 			if (bdev->bd_disk->fops->open)
 				ret = bdev->bd_disk->fops->open(bdev, mode);
 			/* the same as first opener case, read comment there */
+<<<<<<< HEAD
 			if (bdev->bd_invalidated && (!ret || ret == -ENOMEDIUM))
 				rescan_partitions(bdev->bd_disk, bdev);
+=======
+			if (bdev->bd_invalidated) {
+				if (!ret)
+					rescan_partitions(bdev->bd_disk, bdev);
+				else if (ret == -ENOMEDIUM)
+					invalidate_partitions(bdev->bd_disk, bdev);
+			}
+>>>>>>> android-omap-tuna-jb
 			if (ret)
 				goto out_unlock_bdev;
 		}
 		/* only one opener holds refs to the module and disk */
+<<<<<<< HEAD
 		module_put(disk->fops->owner);
 		put_disk(disk);
+=======
+		put_disk(disk);
+		module_put(owner);
+>>>>>>> android-omap-tuna-jb
 	}
 	bdev->bd_openers++;
 	if (for_part)
@@ -1205,8 +1241,13 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
  out_unlock_bdev:
 	mutex_unlock(&bdev->bd_mutex);
 	disk_unblock_events(disk);
+<<<<<<< HEAD
 	module_put(disk->fops->owner);
 	put_disk(disk);
+=======
+	put_disk(disk);
+	module_put(owner);
+>>>>>>> android-omap-tuna-jb
  out:
 	bdput(bdev);
 
@@ -1432,14 +1473,23 @@ static int __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
 	if (!bdev->bd_openers) {
 		struct module *owner = disk->fops->owner;
 
+<<<<<<< HEAD
 		put_disk(disk);
 		module_put(owner);
+=======
+>>>>>>> android-omap-tuna-jb
 		disk_put_part(bdev->bd_part);
 		bdev->bd_part = NULL;
 		bdev->bd_disk = NULL;
 		if (bdev != bdev->bd_contains)
 			victim = bdev->bd_contains;
 		bdev->bd_contains = NULL;
+<<<<<<< HEAD
+=======
+
+		put_disk(disk);
+		module_put(owner);
+>>>>>>> android-omap-tuna-jb
 	}
 	mutex_unlock(&bdev->bd_mutex);
 	bdput(bdev);

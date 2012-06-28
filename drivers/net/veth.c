@@ -421,7 +421,13 @@ static void veth_dellink(struct net_device *dev, struct list_head *head)
 	unregister_netdevice_queue(peer, head);
 }
 
+<<<<<<< HEAD
 static const struct nla_policy veth_policy[VETH_INFO_MAX + 1];
+=======
+static const struct nla_policy veth_policy[VETH_INFO_MAX + 1] = {
+	[VETH_INFO_PEER]	= { .len = sizeof(struct ifinfomsg) },
+};
+>>>>>>> android-omap-tuna-jb
 
 static struct rtnl_link_ops veth_link_ops = {
 	.kind		= DRV_NAME,

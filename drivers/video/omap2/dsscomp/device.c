@@ -530,7 +530,10 @@ static int dsscomp_probe(struct platform_device *pdev)
 
 	ret = misc_register(&cdev->dev);
 	if (ret) {
+<<<<<<< HEAD
 		kfree(cdev);
+=======
+>>>>>>> android-omap-tuna-jb
 		pr_err("dsscomp: failed to register misc device.\n");
 		return ret;
 	}

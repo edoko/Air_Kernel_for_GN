@@ -39,9 +39,17 @@ xfs_acl_from_disk(struct xfs_acl *aclp)
 	struct posix_acl_entry *acl_e;
 	struct posix_acl *acl;
 	struct xfs_acl_entry *ace;
+<<<<<<< HEAD
 	int count, i;
 
 	count = be32_to_cpu(aclp->acl_cnt);
+=======
+	unsigned int count, i;
+
+	count = be32_to_cpu(aclp->acl_cnt);
+	if (count > XFS_ACL_MAX_ENTRIES)
+		return ERR_PTR(-EFSCORRUPTED);
+>>>>>>> android-omap-tuna-jb
 
 	acl = posix_acl_alloc(count, GFP_KERNEL);
 	if (!acl)

@@ -21,7 +21,10 @@ obj-$(CONFIG_SENSORS_BH1780)	+= bh1780gli.o
 obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
 obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
 obj-$(CONFIG_SAMSUNG_JACK)	+= sec_jack.o
+<<<<<<< HEAD
 obj-$(CONFIG_ANDROID_PMEM)	+= pmem.o
+=======
+>>>>>>> android-omap-tuna-jb
 obj-$(CONFIG_SGI_IOC4)		+= ioc4.o
 obj-$(CONFIG_ENCLOSURE_SERVICES) += enclosure.o
 obj-$(CONFIG_KGDB_TESTS)	+= kgdbts.o
@@ -58,9 +61,12 @@ obj-$(CONFIG_SEC_MODEM)		+= modem_if/
 obj-$(CONFIG_USB_SWITCH_FSA9480)	+= fsa9480.o
 obj-$(CONFIG_OMAP_DIE_TEMP_SENSOR)	+= omap_temp_sensor.o
 obj-$(CONFIG_LEDS_AN30259A)	+= leds-an30259a.o
+<<<<<<< HEAD
 obj-$(CONFIG_TOUCH_WAKE)	+= touch_wake.o
 obj-$(CONFIG_BLX)		+= blx.o
 obj-$(CONFIG_SOUND_CONTROL)	+= sound_control.o
 obj-$(CONFIG_VIBRATOR_CONTROL)	+= vibrator_control.o
 obj-$(CONFIG_COLOR_CONTROL)	+= color_control.o
 
+=======
+>>>>>>> android-omap-tuna-jb

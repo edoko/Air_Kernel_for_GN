@@ -78,6 +78,7 @@ static unsigned int omap_getspeed(unsigned int cpu)
 	return rate;
 }
 
+<<<<<<< HEAD
 static void omap_cpufreq_lpj_recalculate(unsigned int target_freq,
 					 unsigned int cur_freq)
 {
@@ -112,6 +113,11 @@ static void omap_cpufreq_lpj_recalculate(unsigned int target_freq,
 
 static int omap_cpufreq_scale(unsigned int target_freq, unsigned int cur_freq)
 {
+=======
+static int omap_cpufreq_scale(unsigned int target_freq, unsigned int cur_freq)
+{
+	unsigned int i;
+>>>>>>> android-omap-tuna-jb
 	int ret;
 	struct cpufreq_freqs freqs;
 
@@ -141,15 +147,46 @@ static int omap_cpufreq_scale(unsigned int target_freq, unsigned int cur_freq)
 	pr_info("cpufreq-omap: transition: %u --> %u\n", freqs.old, freqs.new);
 #endif
 
+<<<<<<< HEAD
 	if (target_freq > cur_freq)
 		omap_cpufreq_lpj_recalculate(freqs.new, freqs.old);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	ret = omap_device_scale(mpu_dev, mpu_dev, freqs.new * 1000);
 
 	freqs.new = omap_getspeed(0);
 
+<<<<<<< HEAD
 	if (target_freq < cur_freq)
 		omap_cpufreq_lpj_recalculate(freqs.new, freqs.old);
+=======
+#ifdef CONFIG_SMP
+	/*
+	 * Note that loops_per_jiffy is not updated on SMP systems in
+	 * cpufreq driver. So, update the per-CPU loops_per_jiffy value
+	 * on frequency transition. We need to update all dependent CPUs.
+	 */
+	for_each_possible_cpu(i) {
+		struct lpj_info *lpj = &per_cpu(lpj_ref, i);
+		if (!lpj->freq) {
+			lpj->ref = per_cpu(cpu_data, i).loops_per_jiffy;
+			lpj->freq = freqs.old;
+		}
+
+		per_cpu(cpu_data, i).loops_per_jiffy =
+			cpufreq_scale(lpj->ref, lpj->freq, freqs.new);
+	}
+
+	/* And don't forget to adjust the global one */
+	if (!global_lpj_ref.freq) {
+		global_lpj_ref.ref = loops_per_jiffy;
+		global_lpj_ref.freq = freqs.old;
+	}
+	loops_per_jiffy = cpufreq_scale(global_lpj_ref.ref, global_lpj_ref.freq,
+					freqs.new);
+#endif
+>>>>>>> android-omap-tuna-jb
 
 	/* notifiers */
 	for_each_online_cpu(freqs.cpu)
@@ -350,9 +387,14 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
+<<<<<<< HEAD
 //	policy->min = policy->cpuinfo.min_freq;
 	policy->min = 326000;
 	policy->max = 1228800;
+=======
+	policy->min = policy->cpuinfo.min_freq;
+	policy->max = policy->cpuinfo.max_freq;
+>>>>>>> android-omap-tuna-jb
 	policy->cur = omap_getspeed(policy->cpu);
 
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
@@ -372,7 +414,11 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	}
 
 	/* FIXME: what's the actual transition time? */
+<<<<<<< HEAD
 	policy->cpuinfo.transition_latency = 30 * 1000;
+=======
+	policy->cpuinfo.transition_latency = 300 * 1000;
+>>>>>>> android-omap-tuna-jb
 
 	return 0;
 
@@ -433,6 +479,7 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 	.store = store_screen_off_freq,
 };
 
+<<<<<<< HEAD
 /*
  * OMAP4 MPU voltage control via cpufreq by Michael Huang (coolbho3k)
  *
@@ -541,6 +588,11 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&omap_uv_mv_table,
+=======
+static struct freq_attr *omap_cpufreq_attr[] = {
+	&cpufreq_freq_attr_scaling_available_freqs,
+	&omap_cpufreq_attr_screen_off_freq,
+>>>>>>> android-omap-tuna-jb
 	NULL,
 };
 

@@ -256,6 +256,11 @@ enum pch_uart_num_t {
 	pch_ml7213_uart2,
 	pch_ml7223_uart0,
 	pch_ml7223_uart1,
+<<<<<<< HEAD
+=======
+	pch_ml7831_uart0,
+	pch_ml7831_uart1,
+>>>>>>> android-omap-tuna-jb
 };
 
 static struct pch_uart_driver_data drv_dat[] = {
@@ -268,6 +273,11 @@ static struct pch_uart_driver_data drv_dat[] = {
 	[pch_ml7213_uart2] = {PCH_UART_2LINE, 2},
 	[pch_ml7223_uart0] = {PCH_UART_8LINE, 0},
 	[pch_ml7223_uart1] = {PCH_UART_2LINE, 1},
+<<<<<<< HEAD
+=======
+	[pch_ml7831_uart0] = {PCH_UART_8LINE, 0},
+	[pch_ml7831_uart1] = {PCH_UART_2LINE, 1},
+>>>>>>> android-omap-tuna-jb
 };
 
 static unsigned int default_baud = 9600;
@@ -598,7 +608,12 @@ static void pch_request_dma(struct uart_port *port)
 	dma_cap_zero(mask);
 	dma_cap_set(DMA_SLAVE, mask);
 
+<<<<<<< HEAD
 	dma_dev = pci_get_bus_and_slot(2, PCI_DEVFN(0xa, 0)); /* Get DMA's dev
+=======
+	dma_dev = pci_get_bus_and_slot(priv->pdev->bus->number,
+				       PCI_DEVFN(0xa, 0)); /* Get DMA's dev
+>>>>>>> android-omap-tuna-jb
 								information */
 	/* Set Tx DMA */
 	param = &priv->param_tx;
@@ -625,6 +640,10 @@ static void pch_request_dma(struct uart_port *port)
 		dev_err(priv->port.dev, "%s:dma_request_channel FAILS(Rx)\n",
 			__func__);
 		dma_release_channel(priv->chan_tx);
+<<<<<<< HEAD
+=======
+		priv->chan_tx = NULL;
+>>>>>>> android-omap-tuna-jb
 		return;
 	}
 
@@ -1212,8 +1231,12 @@ static void pch_uart_shutdown(struct uart_port *port)
 		dev_err(priv->port.dev,
 			"pch_uart_hal_set_fifo Failed(ret=%d)\n", ret);
 
+<<<<<<< HEAD
 	if (priv->use_dma_flag)
 		pch_free_dma(port);
+=======
+	pch_free_dma(port);
+>>>>>>> android-omap-tuna-jb
 
 	free_irq(priv->port.irq, priv);
 }
@@ -1277,6 +1300,10 @@ static void pch_uart_set_termios(struct uart_port *port,
 	if (rtn)
 		goto out;
 
+<<<<<<< HEAD
+=======
+	pch_uart_set_mctrl(&priv->port, priv->port.mctrl);
+>>>>>>> android-omap-tuna-jb
 	/* Don't rewrite B0 */
 	if (tty_termios_baud_rate(termios))
 		tty_termios_encode_baud_rate(termios, baud, baud);
@@ -1348,9 +1375,17 @@ static int pch_uart_verify_port(struct uart_port *port,
 			__func__);
 		return -EOPNOTSUPP;
 #endif
+<<<<<<< HEAD
 		priv->use_dma = 1;
 		priv->use_dma_flag = 1;
 		dev_info(priv->port.dev, "PCH UART : Use DMA Mode\n");
+=======
+		priv->use_dma_flag = 1;
+		dev_info(priv->port.dev, "PCH UART : Use DMA Mode\n");
+		if (!priv->use_dma)
+			pch_request_dma(port);
+		priv->use_dma = 1;
+>>>>>>> android-omap-tuna-jb
 	}
 
 	return 0;
@@ -1545,6 +1580,13 @@ static DEFINE_PCI_DEVICE_TABLE(pch_uart_pci_id) = {
 	 .driver_data = pch_ml7223_uart0},
 	{PCI_DEVICE(PCI_VENDOR_ID_ROHM, 0x800D),
 	 .driver_data = pch_ml7223_uart1},
+<<<<<<< HEAD
+=======
+	{PCI_DEVICE(PCI_VENDOR_ID_ROHM, 0x8811),
+	 .driver_data = pch_ml7831_uart0},
+	{PCI_DEVICE(PCI_VENDOR_ID_ROHM, 0x8812),
+	 .driver_data = pch_ml7831_uart1},
+>>>>>>> android-omap-tuna-jb
 	{0,},
 };
 

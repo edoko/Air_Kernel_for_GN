@@ -903,6 +903,10 @@ static void __exit spear_pcie_gadget_exit(void)
 }
 module_exit(spear_pcie_gadget_exit);
 
+<<<<<<< HEAD
 MODULE_ALIAS("pcie-gadget-spear");
+=======
+MODULE_ALIAS("platform:pcie-gadget-spear");
+>>>>>>> android-omap-tuna-jb
 MODULE_AUTHOR("Pratyush Anand");
 MODULE_LICENSE("GPL");

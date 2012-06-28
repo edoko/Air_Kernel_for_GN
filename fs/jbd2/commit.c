@@ -683,7 +683,11 @@ start_journal_io:
 	if (commit_transaction->t_need_data_flush &&
 	    (journal->j_fs_dev != journal->j_dev) &&
 	    (journal->j_flags & JBD2_BARRIER))
+<<<<<<< HEAD
 		blkdev_issue_flush(journal->j_fs_dev, GFP_KERNEL, NULL);
+=======
+		blkdev_issue_flush(journal->j_fs_dev, GFP_NOFS, NULL);
+>>>>>>> android-omap-tuna-jb
 
 	/* Done it all: now write the commit record asynchronously. */
 	if (JBD2_HAS_INCOMPAT_FEATURE(journal,
@@ -819,7 +823,11 @@ wait_for_iobuf:
 	if (JBD2_HAS_INCOMPAT_FEATURE(journal,
 				      JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT) &&
 	    journal->j_flags & JBD2_BARRIER) {
+<<<<<<< HEAD
 		blkdev_issue_flush(journal->j_dev, GFP_KERNEL, NULL);
+=======
+		blkdev_issue_flush(journal->j_dev, GFP_NOFS, NULL);
+>>>>>>> android-omap-tuna-jb
 	}
 
 	if (err)

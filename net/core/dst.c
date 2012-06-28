@@ -171,7 +171,11 @@ void *dst_alloc(struct dst_ops *ops, struct net_device *dev,
 	dst_init_metrics(dst, dst_default_metrics, true);
 	dst->expires = 0UL;
 	dst->path = dst;
+<<<<<<< HEAD
 	dst->neighbour = NULL;
+=======
+	RCU_INIT_POINTER(dst->_neighbour, NULL);
+>>>>>>> android-omap-tuna-jb
 	dst->hh = NULL;
 #ifdef CONFIG_XFRM
 	dst->xfrm = NULL;
@@ -231,7 +235,11 @@ struct dst_entry *dst_destroy(struct dst_entry * dst)
 	smp_rmb();
 
 again:
+<<<<<<< HEAD
 	neigh = dst->neighbour;
+=======
+	neigh = rcu_dereference_protected(dst->_neighbour, 1);
+>>>>>>> android-omap-tuna-jb
 	hh = dst->hh;
 	child = dst->child;
 
@@ -240,7 +248,11 @@ again:
 		hh_cache_put(hh);
 
 	if (neigh) {
+<<<<<<< HEAD
 		dst->neighbour = NULL;
+=======
+		RCU_INIT_POINTER(dst->_neighbour, NULL);
+>>>>>>> android-omap-tuna-jb
 		neigh_release(neigh);
 	}
 
@@ -367,6 +379,7 @@ static void dst_ifdown(struct dst_entry *dst, struct net_device *dev,
 	if (!unregister) {
 		dst->input = dst->output = dst_discard;
 	} else {
+<<<<<<< HEAD
 		dst->dev = dev_net(dst->dev)->loopback_dev;
 		dev_hold(dst->dev);
 		dev_put(dev);
@@ -375,6 +388,21 @@ static void dst_ifdown(struct dst_entry *dst, struct net_device *dev,
 			dev_hold(dst->dev);
 			dev_put(dev);
 		}
+=======
+		struct neighbour *neigh;
+
+		dst->dev = dev_net(dst->dev)->loopback_dev;
+		dev_hold(dst->dev);
+		dev_put(dev);
+		rcu_read_lock();
+		neigh = dst_get_neighbour(dst);
+		if (neigh && neigh->dev == dev) {
+			neigh->dev = dst->dev;
+			dev_hold(dst->dev);
+			dev_put(dev);
+		}
+		rcu_read_unlock();
+>>>>>>> android-omap-tuna-jb
 	}
 }
 

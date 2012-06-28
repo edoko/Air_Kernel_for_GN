@@ -125,7 +125,10 @@ static ssize_t udf_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
 			err = udf_expand_file_adinicb(inode);
 			if (err) {
 				udf_debug("udf_expand_adinicb: err=%d\n", err);
+<<<<<<< HEAD
 				up_write(&iinfo->i_data_sem);
+=======
+>>>>>>> android-omap-tuna-jb
 				return err;
 			}
 		} else {
@@ -133,9 +136,16 @@ static ssize_t udf_file_aio_write(struct kiocb *iocb, const struct iovec *iov,
 				iinfo->i_lenAlloc = pos + count;
 			else
 				iinfo->i_lenAlloc = inode->i_size;
+<<<<<<< HEAD
 		}
 	}
 	up_write(&iinfo->i_data_sem);
+=======
+			up_write(&iinfo->i_data_sem);
+		}
+	} else
+		up_write(&iinfo->i_data_sem);
+>>>>>>> android-omap-tuna-jb
 
 	retval = generic_file_aio_write(iocb, iov, nr_segs, ppos);
 	if (retval > 0)
@@ -201,12 +211,18 @@ out:
 static int udf_release_file(struct inode *inode, struct file *filp)
 {
 	if (filp->f_mode & FMODE_WRITE) {
+<<<<<<< HEAD
 		mutex_lock(&inode->i_mutex);
+=======
+>>>>>>> android-omap-tuna-jb
 		down_write(&UDF_I(inode)->i_data_sem);
 		udf_discard_prealloc(inode);
 		udf_truncate_tail_extent(inode);
 		up_write(&UDF_I(inode)->i_data_sem);
+<<<<<<< HEAD
 		mutex_unlock(&inode->i_mutex);
+=======
+>>>>>>> android-omap-tuna-jb
 	}
 	return 0;
 }

@@ -84,7 +84,11 @@ int ip_forward(struct sk_buff *skb)
 
 	rt = skb_rtable(skb);
 
+<<<<<<< HEAD
 	if (opt->is_strictroute && ip_hdr(skb)->daddr != rt->rt_gateway)
+=======
+	if (opt->is_strictroute && opt->nexthop != rt->rt_gateway)
+>>>>>>> android-omap-tuna-jb
 		goto sr_failed;
 
 	if (unlikely(skb->len > dst_mtu(&rt->dst) && !skb_is_gso(skb) &&

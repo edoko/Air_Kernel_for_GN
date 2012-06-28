@@ -241,7 +241,10 @@ static void br_multicast_group_expired(unsigned long data)
 	hlist_del_rcu(&mp->hlist[mdb->ver]);
 	mdb->size--;
 
+<<<<<<< HEAD
 	del_timer(&mp->query_timer);
+=======
+>>>>>>> android-omap-tuna-jb
 	call_rcu_bh(&mp->rcu, br_multicast_free_group);
 
 out:
@@ -271,7 +274,10 @@ static void br_multicast_del_pg(struct net_bridge *br,
 		rcu_assign_pointer(*pp, p->next);
 		hlist_del_init(&p->mglist);
 		del_timer(&p->timer);
+<<<<<<< HEAD
 		del_timer(&p->query_timer);
+=======
+>>>>>>> android-omap-tuna-jb
 		call_rcu_bh(&p->rcu, br_multicast_free_pg);
 
 		if (!mp->ports && !mp->mglist &&
@@ -446,8 +452,16 @@ static struct sk_buff *br_ip6_multicast_alloc_query(struct net_bridge *br,
 	ip6h->nexthdr = IPPROTO_HOPOPTS;
 	ip6h->hop_limit = 1;
 	ipv6_addr_set(&ip6h->daddr, htonl(0xff020000), 0, 0, htonl(1));
+<<<<<<< HEAD
 	ipv6_dev_get_saddr(dev_net(br->dev), br->dev, &ip6h->daddr, 0,
 			   &ip6h->saddr);
+=======
+	if (ipv6_dev_get_saddr(dev_net(br->dev), br->dev, &ip6h->daddr, 0,
+			       &ip6h->saddr)) {
+		kfree_skb(skb);
+		return NULL;
+	}
+>>>>>>> android-omap-tuna-jb
 	ipv6_eth_mc_map(&ip6h->daddr, eth->h_dest);
 
 	hopopt = (u8 *)(ip6h + 1);
@@ -504,6 +518,7 @@ static struct sk_buff *br_multicast_alloc_query(struct net_bridge *br,
 	return NULL;
 }
 
+<<<<<<< HEAD
 static void br_multicast_send_group_query(struct net_bridge_mdb_entry *mp)
 {
 	struct net_bridge *br = mp->br;
@@ -572,6 +587,8 @@ out:
 	spin_unlock(&br->multicast_lock);
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 static struct net_bridge_mdb_entry *br_multicast_get_group(
 	struct net_bridge *br, struct net_bridge_port *port,
 	struct br_ip *group, int hash)
@@ -687,8 +704,11 @@ rehash:
 	mp->addr = *group;
 	setup_timer(&mp->timer, br_multicast_group_expired,
 		    (unsigned long)mp);
+<<<<<<< HEAD
 	setup_timer(&mp->query_timer, br_multicast_group_query_expired,
 		    (unsigned long)mp);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	hlist_add_head_rcu(&mp->hlist[mdb->ver], &mdb->mhash[hash]);
 	mdb->size++;
@@ -743,8 +763,11 @@ static int br_multicast_add_group(struct net_bridge *br,
 	hlist_add_head(&p->mglist, &port->mglist);
 	setup_timer(&p->timer, br_multicast_port_group_expired,
 		    (unsigned long)p);
+<<<<<<< HEAD
 	setup_timer(&p->query_timer, br_multicast_port_group_query_expired,
 		    (unsigned long)p);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	rcu_assign_pointer(*pp, p);
 
@@ -1288,9 +1311,12 @@ static void br_multicast_leave_group(struct net_bridge *br,
 		     time_after(mp->timer.expires, time) :
 		     try_to_del_timer_sync(&mp->timer) >= 0)) {
 			mod_timer(&mp->timer, time);
+<<<<<<< HEAD
 
 			mp->queries_sent = 0;
 			mod_timer(&mp->query_timer, now);
+=======
+>>>>>>> android-omap-tuna-jb
 		}
 
 		goto out;
@@ -1307,9 +1333,12 @@ static void br_multicast_leave_group(struct net_bridge *br,
 		     time_after(p->timer.expires, time) :
 		     try_to_del_timer_sync(&p->timer) >= 0)) {
 			mod_timer(&p->timer, time);
+<<<<<<< HEAD
 
 			p->queries_sent = 0;
 			mod_timer(&p->query_timer, now);
+=======
+>>>>>>> android-omap-tuna-jb
 		}
 
 		break;
@@ -1675,7 +1704,10 @@ void br_multicast_stop(struct net_bridge *br)
 		hlist_for_each_entry_safe(mp, p, n, &mdb->mhash[i],
 					  hlist[ver]) {
 			del_timer(&mp->timer);
+<<<<<<< HEAD
 			del_timer(&mp->query_timer);
+=======
+>>>>>>> android-omap-tuna-jb
 			call_rcu_bh(&mp->rcu, br_multicast_free_group);
 		}
 	}

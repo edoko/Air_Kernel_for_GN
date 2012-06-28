@@ -144,6 +144,7 @@ static int iwlagn_load_section(struct iwl_priv *priv, const char *name,
 		FH_TCSR_TX_CONFIG_REG_VAL_CIRQ_HOST_ENDTFD);
 
 	IWL_DEBUG_INFO(priv, "%s uCode section being loaded...\n", name);
+<<<<<<< HEAD
 	ret = wait_event_interruptible_timeout(priv->wait_command_queue,
 					priv->ucode_write_complete, 5 * HZ);
 	if (ret == -ERESTARTSYS) {
@@ -151,6 +152,10 @@ static int iwlagn_load_section(struct iwl_priv *priv, const char *name,
 			"to interrupt\n", name);
 		return ret;
 	}
+=======
+	ret = wait_event_timeout(priv->wait_command_queue,
+				 priv->ucode_write_complete, 5 * HZ);
+>>>>>>> android-omap-tuna-jb
 	if (!ret) {
 		IWL_ERR(priv, "Could not load the %s uCode section\n",
 			name);

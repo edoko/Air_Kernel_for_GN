@@ -28,6 +28,10 @@
 #include <plat/cache-feroceon-l2.h>
 #include <plat/mvsdio.h>
 #include <plat/orion_nand.h>
+<<<<<<< HEAD
+=======
+#include <plat/ehci-orion.h>
+>>>>>>> android-omap-tuna-jb
 #include <plat/common.h>
 #include <plat/time.h>
 #include "common.h"
@@ -74,7 +78,11 @@ void __init kirkwood_ehci_init(void)
 {
 	kirkwood_clk_ctrl |= CGC_USB0;
 	orion_ehci_init(&kirkwood_mbus_dram_info,
+<<<<<<< HEAD
 			USB_PHYS_BASE, IRQ_KIRKWOOD_USB);
+=======
+			USB_PHYS_BASE, IRQ_KIRKWOOD_USB, EHCI_PHY_NA);
+>>>>>>> android-omap-tuna-jb
 }
 
 

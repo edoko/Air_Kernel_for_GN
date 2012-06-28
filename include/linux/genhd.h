@@ -594,6 +594,10 @@ extern char *disk_name (struct gendisk *hd, int partno, char *buf);
 
 extern int disk_expand_part_tbl(struct gendisk *disk, int target);
 extern int rescan_partitions(struct gendisk *disk, struct block_device *bdev);
+<<<<<<< HEAD
+=======
+extern int invalidate_partitions(struct gendisk *disk, struct block_device *bdev);
+>>>>>>> android-omap-tuna-jb
 extern struct hd_struct * __must_check add_partition(struct gendisk *disk,
 						     int partno, sector_t start,
 						     sector_t len, int flags,

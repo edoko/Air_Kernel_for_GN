@@ -3169,7 +3169,11 @@ static int cfq_cic_link(struct cfq_data *cfqd, struct io_context *ioc,
 		}
 	}
 
+<<<<<<< HEAD
 	if (ret)
+=======
+	if (ret && ret != -EEXIST)
+>>>>>>> android-omap-tuna-jb
 		printk(KERN_ERR "cfq: cic link failed!\n");
 
 	return ret;
@@ -3185,6 +3189,10 @@ cfq_get_io_context(struct cfq_data *cfqd, gfp_t gfp_mask)
 {
 	struct io_context *ioc = NULL;
 	struct cfq_io_context *cic;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> android-omap-tuna-jb
 
 	might_sleep_if(gfp_mask & __GFP_WAIT);
 
@@ -3192,6 +3200,10 @@ cfq_get_io_context(struct cfq_data *cfqd, gfp_t gfp_mask)
 	if (!ioc)
 		return NULL;
 
+<<<<<<< HEAD
+=======
+retry:
+>>>>>>> android-omap-tuna-jb
 	cic = cfq_cic_lookup(cfqd, ioc);
 	if (cic)
 		goto out;
@@ -3200,7 +3212,16 @@ cfq_get_io_context(struct cfq_data *cfqd, gfp_t gfp_mask)
 	if (cic == NULL)
 		goto err;
 
+<<<<<<< HEAD
 	if (cfq_cic_link(cfqd, ioc, cic, gfp_mask))
+=======
+	ret = cfq_cic_link(cfqd, ioc, cic, gfp_mask);
+	if (ret == -EEXIST) {
+		/* someone has linked cic to ioc already */
+		cfq_cic_free(cic);
+		goto retry;
+	} else if (ret)
+>>>>>>> android-omap-tuna-jb
 		goto err_free;
 
 out:
@@ -4015,6 +4036,14 @@ static void *cfq_init_queue(struct request_queue *q)
 
 	if (blkio_alloc_blkg_stats(&cfqg->blkg)) {
 		kfree(cfqg);
+<<<<<<< HEAD
+=======
+
+		spin_lock(&cic_index_lock);
+		ida_remove(&cic_index_ida, cfqd->cic_index);
+		spin_unlock(&cic_index_lock);
+
+>>>>>>> android-omap-tuna-jb
 		kfree(cfqd);
 		return NULL;
 	}

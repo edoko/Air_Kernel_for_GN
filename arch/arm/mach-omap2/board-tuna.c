@@ -247,7 +247,12 @@ static void __init tuna_bt_init(void)
 	/* BT_WAKE - GPIO 27 */
 	omap_mux_init_signal("dpm_emu16.gpio_27", OMAP_PIN_OUTPUT);
 	/* BT_HOST_WAKE  - GPIO 177 */
+<<<<<<< HEAD
 	omap_mux_init_signal("kpd_row5.gpio_177", OMAP_WAKEUP_EN | OMAP_PIN_INPUT);
+=======
+	omap_mux_init_signal("kpd_row5.gpio_177", OMAP_WAKEUP_EN |
+						OMAP_PIN_INPUT_PULLDOWN);
+>>>>>>> android-omap-tuna-jb
 
 	platform_device_register(&bcm4330_bluetooth_device);
 }
@@ -529,8 +534,13 @@ static struct regulator_consumer_supply tuna_vaux3_supplies[] = {
 
 static struct regulator_init_data tuna_vaux3 = {
 	.constraints = {
+<<<<<<< HEAD
 		.min_uV			= 2900000,
 		.max_uV			= 2900000,
+=======
+		.min_uV			= 3100000,
+		.max_uV			= 3100000,
+>>>>>>> android-omap-tuna-jb
 		.apply_uV		= true,
 		.valid_modes_mask	= REGULATOR_MODE_NORMAL
 					| REGULATOR_MODE_STANDBY,
@@ -582,9 +592,14 @@ static struct regulator_consumer_supply tuna_vusim_supplies[] = {
 
 static struct regulator_init_data tuna_vusim = {
 	.constraints = {
+<<<<<<< HEAD
 		.min_uV			= 2000000,
 		.max_uV 		= 2000000,
 		.apply_uV		= true,
+=======
+		.min_uV			= 2200000,
+		.max_uV 		= 2200000,
+>>>>>>> android-omap-tuna-jb
 		.valid_modes_mask	= REGULATOR_MODE_NORMAL
 					| REGULATOR_MODE_STANDBY,
 		.valid_ops_mask	 	= REGULATOR_CHANGE_MODE
@@ -737,10 +752,57 @@ static struct twl4030_codec_audio_data twl6040_audio = {
 	.ep_step	= 0x0f,
 };
 
+<<<<<<< HEAD
+=======
+static struct regulator *twl6040_clk32kreg;
+
+static int tuna_twl6040_get_ext_clk32k(void)
+{
+	int ret = 0;
+
+	twl6040_clk32kreg = regulator_get(NULL, "twl6040_clk32k");
+	if (IS_ERR(twl6040_clk32kreg)) {
+		ret = PTR_ERR(twl6040_clk32kreg);
+		pr_err("failed to get CLK32K %d\n", ret);
+	}
+
+	return ret;
+}
+
+static void tuna_twl6040_put_ext_clk32k(void)
+{
+	regulator_put(twl6040_clk32kreg);
+}
+
+static int tuna_twl6040_set_ext_clk32k(bool on)
+{
+	int ret;
+
+	if (IS_ERR_OR_NULL(twl6040_clk32kreg))
+		return -EINVAL;
+
+	if (on)
+		ret = regulator_enable(twl6040_clk32kreg);
+	else
+		ret = regulator_disable(twl6040_clk32kreg);
+
+	if (ret)
+		pr_err("failed to enable TWL6040 CLK32K %d\n", ret);
+
+	return ret;
+}
+
+>>>>>>> android-omap-tuna-jb
 static struct twl4030_codec_data twl6040_codec = {
 	.audio		= &twl6040_audio,
 	.naudint_irq	= OMAP44XX_IRQ_SYS_2N,
 	.irq_base	= TWL6040_CODEC_IRQ_BASE,
+<<<<<<< HEAD
+=======
+	.get_ext_clk32k	= tuna_twl6040_get_ext_clk32k,
+	.put_ext_clk32k	= tuna_twl6040_put_ext_clk32k,
+	.set_ext_clk32k	= tuna_twl6040_set_ext_clk32k,
+>>>>>>> android-omap-tuna-jb
 };
 
 static struct twl4030_platform_data tuna_twldata = {
@@ -1384,6 +1446,29 @@ static void __init tuna_reserve(void)
 	omap_reserve();
 }
 
+<<<<<<< HEAD
+=======
+#define PHOENIX_LAST_TURNOFF_STS	0x22
+
+static int __init tuna_print_last_turnon_sts(void)
+{
+	u8 turnon_sts;
+	int err;
+
+	err = twl_i2c_read_u8(TWL6030_MODULE_ID0, &turnon_sts,
+			PHOENIX_LAST_TURNOFF_STS);
+
+	if (!err) {
+		pr_info("PHOENIX_LAST_TURNOFF_STS: 0x%02x\n", turnon_sts);
+		twl_i2c_write_u8(TWL6030_MODULE_ID0, turnon_sts,
+				 PHOENIX_LAST_TURNOFF_STS);
+	}
+
+	return 0;
+}
+device_initcall(tuna_print_last_turnon_sts);
+
+>>>>>>> android-omap-tuna-jb
 MACHINE_START(TUNA, "Tuna")
 	/* Maintainer: Google, Inc */
 	.boot_params	= 0x80000100,

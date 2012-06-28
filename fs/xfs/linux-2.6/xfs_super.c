@@ -871,6 +871,7 @@ xfs_fs_dirty_inode(
 }
 
 STATIC int
+<<<<<<< HEAD
 xfs_log_inode(
 	struct xfs_inode	*ip)
 {
@@ -908,6 +909,8 @@ xfs_log_inode(
 }
 
 STATIC int
+=======
+>>>>>>> android-omap-tuna-jb
 xfs_fs_write_inode(
 	struct inode		*inode,
 	struct writeback_control *wbc)
@@ -919,9 +922,15 @@ xfs_fs_write_inode(
 	trace_xfs_write_inode(ip);
 
 	if (XFS_FORCED_SHUTDOWN(mp))
+<<<<<<< HEAD
 		return XFS_ERROR(EIO);
 
 	if (wbc->sync_mode == WB_SYNC_ALL) {
+=======
+		return -XFS_ERROR(EIO);
+
+	if (wbc->sync_mode == WB_SYNC_ALL || wbc->for_kupdate) {
+>>>>>>> android-omap-tuna-jb
 		/*
 		 * Make sure the inode has made it it into the log.  Instead
 		 * of forcing it all the way to stable storage using a
@@ -930,6 +939,7 @@ xfs_fs_write_inode(
 		 * of synchronous log foces dramatically.
 		 */
 		xfs_ioend_wait(ip);
+<<<<<<< HEAD
 		xfs_ilock(ip, XFS_ILOCK_SHARED);
 		if (ip->i_update_core) {
 			error = xfs_log_inode(ip);
@@ -937,6 +947,16 @@ xfs_fs_write_inode(
 				goto out_unlock;
 		}
 	} else {
+=======
+		error = xfs_log_dirty_inode(ip, NULL, 0);
+		if (error)
+			goto out;
+		return 0;
+	} else {
+		if (!ip->i_update_core)
+			return 0;
+
+>>>>>>> android-omap-tuna-jb
 		/*
 		 * We make this non-blocking if the inode is contended, return
 		 * EAGAIN to indicate to the caller that they did not succeed.

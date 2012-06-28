@@ -529,6 +529,12 @@ PVRSRV_ERROR SysFinalise(IMG_VOID)
 		return eError;
 	}
 	SYS_SPECIFIC_DATA_SET(&gsSysSpecificData, SYS_SPECIFIC_DATA_ENABLE_LISR);
+<<<<<<< HEAD
+=======
+#if !defined(SUPPORT_ACTIVE_POWER_MANAGEMENT)
+	SysEnableSGXInterrupts(gpsSysData);
+#endif
+>>>>>>> android-omap-tuna-jb
 #endif 
 #if defined(__linux__)
 	

@@ -330,7 +330,10 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
 		usb_free_urb (urb);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
 	skb_reserve (skb, NET_IP_ALIGN);
+=======
+>>>>>>> android-omap-tuna-jb
 
 	entry = (struct skb_data *) skb->cb;
 	entry->urb = urb;
@@ -386,6 +389,15 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
 
 static inline void rx_process (struct usbnet *dev, struct sk_buff *skb)
 {
+<<<<<<< HEAD
+=======
+	if ((((unsigned long) skb->data) & 0x3) != NET_IP_ALIGN) {
+		/* we allocated this skb, therefore we have enough tailroom */
+		memmove(skb->data+NET_IP_ALIGN, skb->data, skb->len);
+		skb_reserve(skb, NET_IP_ALIGN);
+	}
+
+>>>>>>> android-omap-tuna-jb
 	if (dev->driver_info->rx_fixup &&
 	    !dev->driver_info->rx_fixup (dev, skb)) {
 		/* With RX_ASSEMBLE, rx_fixup() must update counters */
@@ -585,6 +597,18 @@ static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
 		entry = (struct skb_data *) skb->cb;
 		urb = entry->urb;
 
+<<<<<<< HEAD
+=======
+		/*
+		 * Get reference count of the URB to avoid it to be
+		 * freed during usb_unlink_urb, which may trigger
+		 * use-after-free problem inside usb_unlink_urb since
+		 * usb_unlink_urb is always racing with .complete
+		 * handler(include defer_bh).
+		 */
+		usb_get_urb(urb);
+		spin_unlock_irqrestore(&q->lock, flags);
+>>>>>>> android-omap-tuna-jb
 		// during some PM-driven resume scenarios,
 		// these (async) unlinks complete immediately
 		retval = usb_unlink_urb (urb);
@@ -592,6 +616,11 @@ static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
 			netdev_dbg(dev->net, "unlink urb err, %d\n", retval);
 		else
 			count++;
+<<<<<<< HEAD
+=======
+		usb_put_urb(urb);
+		spin_lock_irqsave(&q->lock, flags);
+>>>>>>> android-omap-tuna-jb
 	}
 	spin_unlock_irqrestore (&q->lock, flags);
 	return count;
@@ -1022,7 +1051,10 @@ static void tx_complete (struct urb *urb)
 	}
 
 	usb_autopm_put_interface_async(dev->intf);
+<<<<<<< HEAD
 	urb->dev = NULL;
+=======
+>>>>>>> android-omap-tuna-jb
 	entry->state = tx_done;
 	defer_bh(dev, skb, &dev->txq);
 }
@@ -1067,6 +1099,31 @@ netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
 			}
 		}
 	}
+<<<<<<< HEAD
+=======
+
+	/* data must be 4-byte aligned */
+	length = ((unsigned long)skb->data) & 0x3;
+	if (length) {
+		if (skb_cloned(skb) ||
+		    ((skb_headroom(skb) < length) &&
+		     (skb_tailroom(skb) < (4-length)))) {
+			struct sk_buff *skb2;
+			/* copy skb with proper alignment */
+			skb2 = skb_copy_expand(skb, 0, 4, GFP_ATOMIC);
+			dev_kfree_skb_any(skb);
+			skb = skb2;
+			if (!skb)
+				goto drop;
+		} else {
+			/* move data inside buffer */
+			length = ((skb_headroom(skb) >= length) ? 0 : 4)-length;
+			memmove(skb->data+length, skb->data, skb->len);
+			skb_reserve(skb, length);
+		}
+	}
+
+>>>>>>> android-omap-tuna-jb
 	length = skb->len;
 
 	if (!(urb = usb_alloc_urb (0, GFP_ATOMIC))) {

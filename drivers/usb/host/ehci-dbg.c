@@ -877,7 +877,11 @@ static ssize_t fill_registers_buffer(struct debug_buffer *buf)
 	next += temp;
 
 	temp = scnprintf (next, size, "uframe %04x\n",
+<<<<<<< HEAD
 			ehci_readl(ehci, &ehci->regs->frame_index));
+=======
+			ehci_read_frame_index(ehci));
+>>>>>>> android-omap-tuna-jb
 	size -= temp;
 	next += temp;
 

@@ -170,6 +170,7 @@ notrace void arch_local_irq_restore(unsigned long en)
 	 */
 	local_paca->hard_enabled = en;
 
+<<<<<<< HEAD
 #ifndef CONFIG_BOOKE
 	/* On server, re-trigger the decrementer if it went negative since
 	 * some processors only trigger on edge transitions of the sign bit.
@@ -180,6 +181,15 @@ notrace void arch_local_irq_restore(unsigned long en)
 	if ((int)mfspr(SPRN_DEC) < 0)
 		mtspr(SPRN_DEC, 1);
 #endif /* CONFIG_BOOKE */
+=======
+	/*
+	 * Trigger the decrementer if we have a pending event. Some processors
+	 * only trigger on edge transitions of the sign bit. We might also
+	 * have disabled interrupts long enough that the decrementer wrapped
+	 * to positive.
+	 */
+	decrementer_check_overflow();
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Force the delivery of pending soft-disabled interrupts on PS3.

@@ -1257,6 +1257,10 @@ struct sock *sk_clone(const struct sock *sk, const gfp_t priority)
 			/* It is still raw copy of parent, so invalidate
 			 * destructor and make plain sk_free() */
 			newsk->sk_destruct = NULL;
+<<<<<<< HEAD
+=======
+			bh_unlock_sock(newsk);
+>>>>>>> android-omap-tuna-jb
 			sk_free(newsk);
 			newsk = NULL;
 			goto out;

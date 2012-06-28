@@ -1134,11 +1134,17 @@ int tcp_trim_head(struct sock *sk, struct sk_buff *skb, u32 len)
 	sk_mem_uncharge(sk, len);
 	sock_set_flag(sk, SOCK_QUEUE_SHRUNK);
 
+<<<<<<< HEAD
 	/* Any change of skb->len requires recalculation of tso
 	 * factor and mss.
 	 */
 	if (tcp_skb_pcount(skb) > 1)
 		tcp_set_skb_tso_segs(sk, skb, tcp_current_mss(sk));
+=======
+	/* Any change of skb->len requires recalculation of tso factor. */
+	if (tcp_skb_pcount(skb) > 1)
+		tcp_set_skb_tso_segs(sk, skb, tcp_skb_mss(skb));
+>>>>>>> android-omap-tuna-jb
 
 	return 0;
 }
@@ -1796,13 +1802,20 @@ static int tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
 		tcp_event_new_data_sent(sk, skb);
 
 		tcp_minshall_update(tp, mss_now, skb);
+<<<<<<< HEAD
 		sent_pkts += tcp_skb_pcount(skb);
+=======
+		sent_pkts++;
+>>>>>>> android-omap-tuna-jb
 
 		if (push_one)
 			break;
 	}
+<<<<<<< HEAD
 	if (inet_csk(sk)->icsk_ca_state == TCP_CA_Recovery)
 		tp->prr_out += sent_pkts;
+=======
+>>>>>>> android-omap-tuna-jb
 
 	if (likely(sent_pkts)) {
 		tcp_cwnd_validate(sk);
@@ -2296,9 +2309,12 @@ begin_fwd:
 			return;
 		NET_INC_STATS_BH(sock_net(sk), mib_idx);
 
+<<<<<<< HEAD
 		if (inet_csk(sk)->icsk_ca_state == TCP_CA_Recovery)
 			tp->prr_out += tcp_skb_pcount(skb);
 
+=======
+>>>>>>> android-omap-tuna-jb
 		if (skb == tcp_write_queue_head(sk))
 			inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
 						  inet_csk(sk)->icsk_rto,

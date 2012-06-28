@@ -2704,9 +2704,17 @@ static int qib_7220_set_loopback(struct qib_pportdata *ppd, const char *what)
 static void qib_update_7220_usrhead(struct qib_ctxtdata *rcd, u64 hd,
 				    u32 updegr, u32 egrhd, u32 npkts)
 {
+<<<<<<< HEAD
 	qib_write_ureg(rcd->dd, ur_rcvhdrhead, hd, rcd->ctxt);
 	if (updegr)
 		qib_write_ureg(rcd->dd, ur_rcvegrindexhead, egrhd, rcd->ctxt);
+=======
+	if (updegr)
+		qib_write_ureg(rcd->dd, ur_rcvegrindexhead, egrhd, rcd->ctxt);
+	mmiowb();
+	qib_write_ureg(rcd->dd, ur_rcvhdrhead, hd, rcd->ctxt);
+	mmiowb();
+>>>>>>> android-omap-tuna-jb
 }
 
 static u32 qib_7220_hdrqempty(struct qib_ctxtdata *rcd)

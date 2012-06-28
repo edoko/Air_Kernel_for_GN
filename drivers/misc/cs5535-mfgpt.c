@@ -262,7 +262,11 @@ static void __init reset_all_timers(void)
  * In other cases (such as with VSAless OpenFirmware), the system firmware
  * leaves timers available for us to use.
  */
+<<<<<<< HEAD
 static int __init scan_timers(struct cs5535_mfgpt_chip *mfgpt)
+=======
+static int __devinit scan_timers(struct cs5535_mfgpt_chip *mfgpt)
+>>>>>>> android-omap-tuna-jb
 {
 	struct cs5535_mfgpt_timer timer = { .chip = mfgpt };
 	unsigned long flags;

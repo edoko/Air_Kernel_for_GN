@@ -172,6 +172,7 @@ static void flow_new_hash_rnd(struct flow_cache *fc,
 
 static u32 flow_hash_code(struct flow_cache *fc,
 			  struct flow_cache_percpu *fcp,
+<<<<<<< HEAD
 			  const struct flowi *key)
 {
 	const u32 *k = (const u32 *) key;
@@ -195,6 +196,28 @@ static int flow_key_compare(const struct flowi *key1, const struct flowi *key2)
 
 	k1 = (const flow_compare_t *) key1;
 	k1_lim = k1 + n_elem;
+=======
+			  const struct flowi *key,
+			  size_t keysize)
+{
+	const u32 *k = (const u32 *) key;
+	const u32 length = keysize * sizeof(flow_compare_t) / sizeof(u32);
+
+	return jhash2(k, length, fcp->hash_rnd)
+		& (flow_cache_hash_size(fc) - 1);
+}
+
+/* I hear what you're saying, use memcmp.  But memcmp cannot make
+ * important assumptions that we can here, such as alignment.
+ */
+static int flow_key_compare(const struct flowi *key1, const struct flowi *key2,
+			    size_t keysize)
+{
+	const flow_compare_t *k1, *k1_lim, *k2;
+
+	k1 = (const flow_compare_t *) key1;
+	k1_lim = k1 + keysize;
+>>>>>>> android-omap-tuna-jb
 
 	k2 = (const flow_compare_t *) key2;
 
@@ -215,6 +238,10 @@ flow_cache_lookup(struct net *net, const struct flowi *key, u16 family, u8 dir,
 	struct flow_cache_entry *fle, *tfle;
 	struct hlist_node *entry;
 	struct flow_cache_object *flo;
+<<<<<<< HEAD
+=======
+	size_t keysize;
+>>>>>>> android-omap-tuna-jb
 	unsigned int hash;
 
 	local_bh_disable();
@@ -222,6 +249,14 @@ flow_cache_lookup(struct net *net, const struct flowi *key, u16 family, u8 dir,
 
 	fle = NULL;
 	flo = NULL;
+<<<<<<< HEAD
+=======
+
+	keysize = flow_key_size(family);
+	if (!keysize)
+		goto nocache;
+
+>>>>>>> android-omap-tuna-jb
 	/* Packet really early in init?  Making flow_cache_init a
 	 * pre-smp initcall would solve this.  --RR */
 	if (!fcp->hash_table)
@@ -230,11 +265,19 @@ flow_cache_lookup(struct net *net, const struct flowi *key, u16 family, u8 dir,
 	if (fcp->hash_rnd_recalc)
 		flow_new_hash_rnd(fc, fcp);
 
+<<<<<<< HEAD
 	hash = flow_hash_code(fc, fcp, key);
 	hlist_for_each_entry(tfle, entry, &fcp->hash_table[hash], u.hlist) {
 		if (tfle->family == family &&
 		    tfle->dir == dir &&
 		    flow_key_compare(key, &tfle->key) == 0) {
+=======
+	hash = flow_hash_code(fc, fcp, key, keysize);
+	hlist_for_each_entry(tfle, entry, &fcp->hash_table[hash], u.hlist) {
+		if (tfle->family == family &&
+		    tfle->dir == dir &&
+		    flow_key_compare(key, &tfle->key, keysize) == 0) {
+>>>>>>> android-omap-tuna-jb
 			fle = tfle;
 			break;
 		}
@@ -248,7 +291,11 @@ flow_cache_lookup(struct net *net, const struct flowi *key, u16 family, u8 dir,
 		if (fle) {
 			fle->family = family;
 			fle->dir = dir;
+<<<<<<< HEAD
 			memcpy(&fle->key, key, sizeof(*key));
+=======
+			memcpy(&fle->key, key, keysize * sizeof(flow_compare_t));
+>>>>>>> android-omap-tuna-jb
 			fle->object = NULL;
 			hlist_add_head(&fle->u.hlist, &fcp->hash_table[hash]);
 			fcp->hash_count++;

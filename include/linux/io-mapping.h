@@ -117,6 +117,11 @@ io_mapping_unmap(void __iomem *vaddr)
 
 #else
 
+<<<<<<< HEAD
+=======
+#include <linux/uaccess.h>
+
+>>>>>>> android-omap-tuna-jb
 /* this struct isn't actually defined anywhere */
 struct io_mapping;
 
@@ -138,12 +143,20 @@ static inline void __iomem *
 io_mapping_map_atomic_wc(struct io_mapping *mapping,
 			 unsigned long offset)
 {
+<<<<<<< HEAD
+=======
+	pagefault_disable();
+>>>>>>> android-omap-tuna-jb
 	return ((char __force __iomem *) mapping) + offset;
 }
 
 static inline void
 io_mapping_unmap_atomic(void __iomem *vaddr)
 {
+<<<<<<< HEAD
+=======
+	pagefault_enable();
+>>>>>>> android-omap-tuna-jb
 }
 
 /* Non-atomic map/unmap */

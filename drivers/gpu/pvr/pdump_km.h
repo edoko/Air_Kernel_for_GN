@@ -337,6 +337,10 @@ extern IMG_UINT32 g_ui32EveryLineCounter;
 	#define PDUMPMALLOCPAGETABLE	PDumpMallocPageTable
 	#define PDUMPSETMMUCONTEXT		PDumpSetMMUContext
 	#define PDUMPCLEARMMUCONTEXT	PDumpClearMMUContext
+<<<<<<< HEAD
+=======
+    #define PDUMPPDDEVPADDR         PDumpPDDevPAddrKM
+>>>>>>> android-omap-tuna-jb
 	#define PDUMPFREEPAGES			PDumpFreePages
 	#define PDUMPFREEPAGETABLE		PDumpFreePageTable
 	#define PDUMPPDREG				PDumpPDReg
@@ -373,6 +377,10 @@ extern IMG_UINT32 g_ui32EveryLineCounter;
 			#define PDUMPMALLOCPAGETABLE(args...)
 			#define PDUMPSETMMUCONTEXT(args...)
 			#define PDUMPCLEARMMUCONTEXT(args...)
+<<<<<<< HEAD
+=======
+            #define PDUMPPDDEVPADDR(args...)
+>>>>>>> android-omap-tuna-jb
 			#define PDUMPFREEPAGES(args...)
 			#define PDUMPFREEPAGETABLE(args...)
 			#define PDUMPPDREG(args...)

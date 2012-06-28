@@ -28,6 +28,10 @@
 #include <linux/prctl.h>
 #include <linux/securebits.h>
 #include <linux/user_namespace.h>
+<<<<<<< HEAD
+=======
+#include <linux/personality.h>
+>>>>>>> android-omap-tuna-jb
 
 #ifdef CONFIG_ANDROID_PARANOID_NETWORK
 #include <linux/android_aid.h>
@@ -519,6 +523,14 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
 	}
 skip:
 
+<<<<<<< HEAD
+=======
+	/* if we have fs caps, clear dangerous personality flags */
+	if (!cap_issubset(new->cap_permitted, old->cap_permitted))
+		bprm->per_clear |= PER_CLEAR_ON_SETID;
+
+
+>>>>>>> android-omap-tuna-jb
 	/* Don't let someone trace a set[ug]id/setpcap binary with the revised
 	 * credentials unless they have the appropriate permit
 	 */

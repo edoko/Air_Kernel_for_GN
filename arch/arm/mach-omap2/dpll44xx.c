@@ -79,6 +79,38 @@ int omap4_core_dpll_m2_set_rate(struct clk *clk, unsigned long rate)
 	clkdm_wakeup(l3_emif_clkdm);
 
 	/*
+<<<<<<< HEAD
+=======
+	 * Errata ID: i728
+	 *
+	 * DESCRIPTION:
+	 *
+	 * If during a small window the following three events occur:
+	 *
+	 * 1) The EMIF_PWR_MGMT_CTRL[7:4] REG_SR_TIM SR_TIMING counter expires
+	 * 2) Frequency change update is requested CM_SHADOW_FREQ_CONFIG1
+	 *    FREQ_UPDATE set to 1
+	 * 3) OCP access is requested
+	 *
+	 * There will be clock instability on the DDR interface.
+	 *
+	 * WORKAROUND:
+	 *
+	 * Prevent event 1) while event 2) is happening.
+	 *
+	 * Disable the self-refresh when requesting a frequency change.
+	 * Before requesting a frequency change, program
+	 * EMIF_PWR_MGMT_CTRL[10:8] REG_LP_MODE to 0x0
+	 * (omap_emif_frequency_pre_notify)
+	 *
+	 * When the frequency change is completed, reprogram
+	 * EMIF_PWR_MGMT_CTRL[10:8] REG_LP_MODE to 0x2.
+	 * (omap_emif_frequency_post_notify)
+	 */
+	omap_emif_frequency_pre_notify();
+
+	/*
+>>>>>>> android-omap-tuna-jb
 	 * Program EMIF timing parameters in EMIF shadow registers
 	 * for targetted DRR clock.
 	 * DDR Clock = core_dpll_m2 / 2
@@ -107,6 +139,12 @@ int omap4_core_dpll_m2_set_rate(struct clk *clk, unsigned long rate)
 				& OMAP4430_FREQ_UPDATE_MASK) == 0),
 				MAX_FREQ_UPDATE_TIMEOUT, i);
 
+<<<<<<< HEAD
+=======
+	/* Re-enable DDR self refresh */
+	omap_emif_frequency_post_notify();
+
+>>>>>>> android-omap-tuna-jb
 	/* Configures MEMIF domain back to HW_WKUP */
 	clkdm_allow_idle(l3_emif_clkdm);
 
@@ -150,6 +188,12 @@ int omap4_prcm_freq_update(void)
 	/* Configures MEMIF domain in SW_WKUP */
 	clkdm_wakeup(l3_emif_clkdm);
 
+<<<<<<< HEAD
+=======
+	/* Disable DDR self refresh (Errata ID: i728) */
+	omap_emif_frequency_pre_notify();
+
+>>>>>>> android-omap-tuna-jb
 	/*
 	 * FREQ_UPDATE sequence:
 	 * - DLL_OVERRIDE=0 (DLL lock & code must not be overridden
@@ -167,6 +211,12 @@ int omap4_prcm_freq_update(void)
 				& OMAP4430_FREQ_UPDATE_MASK) == 0),
 				MAX_FREQ_UPDATE_TIMEOUT, i);
 
+<<<<<<< HEAD
+=======
+	/* Re-enable DDR self refresh */
+	omap_emif_frequency_post_notify();
+
+>>>>>>> android-omap-tuna-jb
 	/* Configures MEMIF domain back to HW_WKUP */
 	clkdm_allow_idle(l3_emif_clkdm);
 
@@ -190,9 +240,15 @@ int omap4_prcm_freq_update(void)
 /* Use a very high retry count - we should not hit this condition */
 #define MAX_DPLL_WAIT_TRIES	1000000
 
+<<<<<<< HEAD
 #define OMAP_1_5GHz	1520000000
 #define OMAP_1_2GHz	1228800000
 #define OMAP_1GHz	1064400000
+=======
+#define OMAP_1_5GHz	1500000000
+#define OMAP_1_2GHz	1200000000
+#define OMAP_1GHz	1000000000
+>>>>>>> android-omap-tuna-jb
 #define OMAP_920MHz	920000000
 #define OMAP_748MHz	748000000
 

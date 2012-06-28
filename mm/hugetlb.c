@@ -575,6 +575,10 @@ static void prep_compound_gigantic_page(struct page *page, unsigned long order)
 	__SetPageHead(page);
 	for (i = 1; i < nr_pages; i++, p = mem_map_next(p, page, i)) {
 		__SetPageTail(p);
+<<<<<<< HEAD
+=======
+		set_page_count(p, 0);
+>>>>>>> android-omap-tuna-jb
 		p->first_page = page;
 	}
 }
@@ -900,7 +904,10 @@ retry:
 	h->resv_huge_pages += delta;
 	ret = 0;
 
+<<<<<<< HEAD
 	spin_unlock(&hugetlb_lock);
+=======
+>>>>>>> android-omap-tuna-jb
 	/* Free the needed pages to the hugetlb pool */
 	list_for_each_entry_safe(page, tmp, &surplus_list, lru) {
 		if ((--needed) < 0)
@@ -914,6 +921,10 @@ retry:
 		VM_BUG_ON(page_count(page));
 		enqueue_huge_page(h, page);
 	}
+<<<<<<< HEAD
+=======
+	spin_unlock(&hugetlb_lock);
+>>>>>>> android-omap-tuna-jb
 
 	/* Free unnecessary surplus pages to the buddy allocator */
 free:
@@ -2415,6 +2426,11 @@ retry_avoidcopy:
 	 * anon_vma prepared.
 	 */
 	if (unlikely(anon_vma_prepare(vma))) {
+<<<<<<< HEAD
+=======
+		page_cache_release(new_page);
+		page_cache_release(old_page);
+>>>>>>> android-omap-tuna-jb
 		/* Caller expects lock to be held */
 		spin_lock(&mm->page_table_lock);
 		return VM_FAULT_OOM;
@@ -2676,6 +2692,10 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
 	 * so no worry about deadlock.
 	 */
 	page = pte_page(entry);
+<<<<<<< HEAD
+=======
+	get_page(page);
+>>>>>>> android-omap-tuna-jb
 	if (page != pagecache_page)
 		lock_page(page);
 
@@ -2707,6 +2727,10 @@ out_page_table_lock:
 	}
 	if (page != pagecache_page)
 		unlock_page(page);
+<<<<<<< HEAD
+=======
+	put_page(page);
+>>>>>>> android-omap-tuna-jb
 
 out_mutex:
 	mutex_unlock(&hugetlb_instantiation_mutex);

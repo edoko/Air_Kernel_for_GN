@@ -314,8 +314,13 @@ static void __devexit wl1251_sdio_remove(struct sdio_func *func)
 
 	if (wl->irq)
 		free_irq(wl->irq, wl);
+<<<<<<< HEAD
 	kfree(wl_sdio);
 	wl1251_free_hw(wl);
+=======
+	wl1251_free_hw(wl);
+	kfree(wl_sdio);
+>>>>>>> android-omap-tuna-jb
 
 	sdio_claim_host(func);
 	sdio_release_irq(func);

@@ -244,16 +244,27 @@ static void ascii_ssetup_strings(char **pbcc_area, struct cifs_ses *ses,
 	/* copy user */
 	/* BB what about null user mounts - check that we do this BB */
 	/* copy user */
+<<<<<<< HEAD
 	if (ses->user_name != NULL)
 		strncpy(bcc_ptr, ses->user_name, MAX_USERNAME_SIZE);
 	/* else null user mount */
 
 	bcc_ptr += strnlen(ses->user_name, MAX_USERNAME_SIZE);
+=======
+	if (ses->user_name != NULL) {
+		strncpy(bcc_ptr, ses->user_name, MAX_USERNAME_SIZE);
+		bcc_ptr += strnlen(ses->user_name, MAX_USERNAME_SIZE);
+	}
+	/* else null user mount */
+>>>>>>> android-omap-tuna-jb
 	*bcc_ptr = 0;
 	bcc_ptr++; /* account for null termination */
 
 	/* copy domain */
+<<<<<<< HEAD
 
+=======
+>>>>>>> android-omap-tuna-jb
 	if (ses->domainName != NULL) {
 		strncpy(bcc_ptr, ses->domainName, 256);
 		bcc_ptr += strnlen(ses->domainName, 256);

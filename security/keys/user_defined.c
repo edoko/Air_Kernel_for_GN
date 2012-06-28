@@ -102,7 +102,12 @@ int user_update(struct key *key, const void *data, size_t datalen)
 		key->expiry = 0;
 	}
 
+<<<<<<< HEAD
 	kfree_rcu(zap, rcu);
+=======
+	if (zap)
+		kfree_rcu(zap, rcu);
+>>>>>>> android-omap-tuna-jb
 
 error:
 	return ret;

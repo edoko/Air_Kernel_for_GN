@@ -57,6 +57,7 @@ static int prepend(char **buffer, int buflen, const char *str, int namelen)
 static int d_namespace_path(struct path *path, char *buf, int buflen,
 			    char **name, int flags)
 {
+<<<<<<< HEAD
 	struct path root, tmp;
 	char *res;
 	int connected, error = 0;
@@ -74,6 +75,46 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 
 	tmp = root;
 	res = __d_path(path, &tmp, buf, buflen);
+=======
+	char *res;
+	int error = 0;
+	int connected = 1;
+
+	if (path->mnt->mnt_flags & MNT_INTERNAL) {
+		/* it's not mounted anywhere */
+		res = dentry_path(path->dentry, buf, buflen);
+		*name = res;
+		if (IS_ERR(res)) {
+			*name = buf;
+			return PTR_ERR(res);
+		}
+		if (path->dentry->d_sb->s_magic == PROC_SUPER_MAGIC &&
+		    strncmp(*name, "/sys/", 5) == 0) {
+			/* TODO: convert over to using a per namespace
+			 * control instead of hard coded /proc
+			 */
+			return prepend(name, *name - buf, "/proc", 5);
+		}
+		return 0;
+	}
+
+	/* resolve paths relative to chroot?*/
+	if (flags & PATH_CHROOT_REL) {
+		struct path root;
+		get_fs_root(current->fs, &root);
+		res = __d_path(path, &root, buf, buflen);
+		if (res && !IS_ERR(res)) {
+			/* everything's fine */
+			*name = res;
+			path_put(&root);
+			goto ok;
+		}
+		path_put(&root);
+		connected = 0;
+	}
+
+	res = d_absolute_path(path, buf, buflen);
+>>>>>>> android-omap-tuna-jb
 
 	*name = res;
 	/* handle error conditions - and still allow a partial path to
@@ -84,7 +125,14 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 		*name = buf;
 		goto out;
 	}
+<<<<<<< HEAD
 
+=======
+	if (!our_mnt(path->mnt))
+		connected = 0;
+
+ok:
+>>>>>>> android-omap-tuna-jb
 	/* Handle two cases:
 	 * 1. A deleted dentry && profile is not allowing mediation of deleted
 	 * 2. On some filesystems, newly allocated dentries appear to the
@@ -97,10 +145,14 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 			goto out;
 	}
 
+<<<<<<< HEAD
 	/* Determine if the path is connected to the expected root */
 	connected = tmp.dentry == root.dentry && tmp.mnt == root.mnt;
 
 	/* If the path is not connected,
+=======
+	/* If the path is not connected to the expected root,
+>>>>>>> android-omap-tuna-jb
 	 * check if it is a sysctl and handle specially else remove any
 	 * leading / that __d_path may have returned.
 	 * Unless
@@ -112,6 +164,7 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 	 *     namespace root.
 	 */
 	if (!connected) {
+<<<<<<< HEAD
 		/* is the disconnect path a sysctl? */
 		if (tmp.dentry->d_sb->s_magic == PROC_SUPER_MAGIC &&
 		    strncmp(*name, "/sys/", 5) == 0) {
@@ -123,6 +176,11 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 			   !(((flags & CHROOT_NSCONNECT) == CHROOT_NSCONNECT) &&
 			     (tmp.mnt == current->nsproxy->mnt_ns->root &&
 			      tmp.dentry == tmp.mnt->mnt_root))) {
+=======
+		if (!(flags & PATH_CONNECT_PATH) &&
+			   !(((flags & CHROOT_NSCONNECT) == CHROOT_NSCONNECT) &&
+			     our_mnt(path->mnt))) {
+>>>>>>> android-omap-tuna-jb
 			/* disconnected path, don't return pathname starting
 			 * with '/'
 			 */
@@ -133,8 +191,11 @@ static int d_namespace_path(struct path *path, char *buf, int buflen,
 	}
 
 out:
+<<<<<<< HEAD
 	path_put(&root);
 
+=======
+>>>>>>> android-omap-tuna-jb
 	return error;
 }
 

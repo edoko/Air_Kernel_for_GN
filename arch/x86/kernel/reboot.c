@@ -124,7 +124,11 @@ __setup("reboot=", reboot_setup);
  */
 
 /*
+<<<<<<< HEAD
  * Some machines require the "reboot=b"  commandline option,
+=======
+ * Some machines require the "reboot=b" or "reboot=k"  commandline options,
+>>>>>>> android-omap-tuna-jb
  * this quirk makes that automatic.
  */
 static int __init set_bios_reboot(const struct dmi_system_id *d)
@@ -136,6 +140,18 @@ static int __init set_bios_reboot(const struct dmi_system_id *d)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int __init set_kbd_reboot(const struct dmi_system_id *d)
+{
+	if (reboot_type != BOOT_KBD) {
+		reboot_type = BOOT_KBD;
+		printk(KERN_INFO "%s series board detected. Selecting KBD-method for reboot.\n", d->ident);
+	}
+	return 0;
+}
+
+>>>>>>> android-omap-tuna-jb
 static struct dmi_system_id __initdata reboot_dmi_table[] = {
 	{	/* Handle problems with rebooting on Dell E520's */
 		.callback = set_bios_reboot,
@@ -295,7 +311,11 @@ static struct dmi_system_id __initdata reboot_dmi_table[] = {
 		},
 	},
 	{ /* Handle reboot issue on Acer Aspire one */
+<<<<<<< HEAD
 		.callback = set_bios_reboot,
+=======
+		.callback = set_kbd_reboot,
+>>>>>>> android-omap-tuna-jb
 		.ident = "Acer Aspire One A110",
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),

@@ -151,7 +151,12 @@ static void viafb_update_fix(struct fb_info *info)
 
 	info->fix.visual =
 		bpp == 8 ? FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_TRUECOLOR;
+<<<<<<< HEAD
 	info->fix.line_length = (info->var.xres_virtual * bpp / 8 + 7) & ~7;
+=======
+	info->fix.line_length = ALIGN(info->var.xres_virtual * bpp / 8,
+		VIA_PITCH_SIZE);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void viafb_setup_fixinfo(struct fb_fix_screeninfo *fix,
@@ -238,8 +243,17 @@ static int viafb_check_var(struct fb_var_screeninfo *var,
 		depth = 24;
 
 	viafb_fill_var_color_info(var, depth);
+<<<<<<< HEAD
 	line = (var->xres_virtual * var->bits_per_pixel / 8 + 7) & ~7;
 	if (line * var->yres_virtual > ppar->memsize)
+=======
+	if (var->xres_virtual < var->xres)
+		var->xres_virtual = var->xres;
+
+	line = ALIGN(var->xres_virtual * var->bits_per_pixel / 8,
+		VIA_PITCH_SIZE);
+	if (line > VIA_PITCH_MAX || line * var->yres_virtual > ppar->memsize)
+>>>>>>> android-omap-tuna-jb
 		return -EINVAL;
 
 	/* Based on var passed in to calculate the refresh,
@@ -348,8 +362,14 @@ static int viafb_pan_display(struct fb_var_screeninfo *var,
 	struct fb_info *info)
 {
 	struct viafb_par *viapar = info->par;
+<<<<<<< HEAD
 	u32 vram_addr = (var->yoffset * var->xres_virtual + var->xoffset)
 		* (var->bits_per_pixel / 8) + viapar->vram_addr;
+=======
+	u32 vram_addr = viapar->vram_addr
+		+ var->yoffset * info->fix.line_length
+		+ var->xoffset * info->var.bits_per_pixel / 8;
+>>>>>>> android-omap-tuna-jb
 
 	DEBUG_MSG(KERN_DEBUG "viafb_pan_display, address = %d\n", vram_addr);
 	if (!viafb_dual_fb) {

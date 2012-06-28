@@ -179,7 +179,11 @@ static struct pci_device_id cs5535_mfd_pci_tbl[] = {
 };
 MODULE_DEVICE_TABLE(pci, cs5535_mfd_pci_tbl);
 
+<<<<<<< HEAD
 static struct pci_driver cs5535_mfd_drv = {
+=======
+static struct pci_driver cs5535_mfd_driver = {
+>>>>>>> android-omap-tuna-jb
 	.name = DRV_NAME,
 	.id_table = cs5535_mfd_pci_tbl,
 	.probe = cs5535_mfd_probe,
@@ -188,12 +192,20 @@ static struct pci_driver cs5535_mfd_drv = {
 
 static int __init cs5535_mfd_init(void)
 {
+<<<<<<< HEAD
 	return pci_register_driver(&cs5535_mfd_drv);
+=======
+	return pci_register_driver(&cs5535_mfd_driver);
+>>>>>>> android-omap-tuna-jb
 }
 
 static void __exit cs5535_mfd_exit(void)
 {
+<<<<<<< HEAD
 	pci_unregister_driver(&cs5535_mfd_drv);
+=======
+	pci_unregister_driver(&cs5535_mfd_driver);
+>>>>>>> android-omap-tuna-jb
 }
 
 module_init(cs5535_mfd_init);

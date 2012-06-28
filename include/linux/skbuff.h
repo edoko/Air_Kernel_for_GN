@@ -1370,6 +1370,19 @@ static inline void skb_set_mac_header(struct sk_buff *skb, const int offset)
 }
 #endif /* NET_SKBUFF_DATA_USES_OFFSET */
 
+<<<<<<< HEAD
+=======
+static inline void skb_mac_header_rebuild(struct sk_buff *skb)
+{
+	if (skb_mac_header_was_set(skb)) {
+		const unsigned char *old_mac = skb_mac_header(skb);
+
+		skb_set_mac_header(skb, -skb->mac_len);
+		memmove(skb_mac_header(skb), old_mac, skb->mac_len);
+	}
+}
+
+>>>>>>> android-omap-tuna-jb
 static inline int skb_checksum_start_offset(const struct sk_buff *skb)
 {
 	return skb->csum_start - skb_headroom(skb);
@@ -1996,8 +2009,18 @@ static inline bool skb_defer_rx_timestamp(struct sk_buff *skb)
 /**
  * skb_complete_tx_timestamp() - deliver cloned skb with tx timestamps
  *
+<<<<<<< HEAD
  * @skb: clone of the the original outgoing packet
  * @hwtstamps: hardware time stamps
+=======
+ * PHY drivers may accept clones of transmitted packets for
+ * timestamping via their phy_driver.txtstamp method. These drivers
+ * must call this function to return the skb back to the stack, with
+ * or without a timestamp.
+ *
+ * @skb: clone of the the original outgoing packet
+ * @hwtstamps: hardware time stamps, may be NULL if not available
+>>>>>>> android-omap-tuna-jb
  *
  */
 void skb_complete_tx_timestamp(struct sk_buff *skb,

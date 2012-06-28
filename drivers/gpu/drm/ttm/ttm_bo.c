@@ -394,7 +394,12 @@ static int ttm_bo_handle_move_mem(struct ttm_buffer_object *bo,
 
 	if (!(new_man->flags & TTM_MEMTYPE_FLAG_FIXED)) {
 		if (bo->ttm == NULL) {
+<<<<<<< HEAD
 			ret = ttm_bo_add_ttm(bo, false);
+=======
+			bool zero = !(old_man->flags & TTM_MEMTYPE_FLAG_FIXED);
+			ret = ttm_bo_add_ttm(bo, zero);
+>>>>>>> android-omap-tuna-jb
 			if (ret)
 				goto out_err;
 		}

@@ -29,6 +29,10 @@
 #include <mach/hardware.h>
 #include <mach/orion5x.h>
 #include <plat/orion_nand.h>
+<<<<<<< HEAD
+=======
+#include <plat/ehci-orion.h>
+>>>>>>> android-omap-tuna-jb
 #include <plat/time.h>
 #include <plat/common.h>
 #include "common.h"
@@ -72,7 +76,12 @@ void __init orion5x_map_io(void)
 void __init orion5x_ehci0_init(void)
 {
 	orion_ehci_init(&orion5x_mbus_dram_info,
+<<<<<<< HEAD
 			ORION5X_USB0_PHYS_BASE, IRQ_ORION5X_USB0_CTRL);
+=======
+			ORION5X_USB0_PHYS_BASE, IRQ_ORION5X_USB0_CTRL,
+			EHCI_PHY_ORION);
+>>>>>>> android-omap-tuna-jb
 }
 
 

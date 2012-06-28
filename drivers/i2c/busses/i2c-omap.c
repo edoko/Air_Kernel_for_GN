@@ -1206,10 +1206,14 @@ omap_i2c_remove(struct platform_device *pdev)
 
 	free_irq(dev->irq, dev);
 	i2c_del_adapter(&dev->adapter);
+<<<<<<< HEAD
 	pm_runtime_get_sync(&pdev->dev);
 	omap_i2c_write_reg(dev, OMAP_I2C_CON_REG, 0);
 	pm_runtime_put(&pdev->dev);
 	pm_runtime_disable(&pdev->dev);
+=======
+	omap_i2c_write_reg(dev, OMAP_I2C_CON_REG, 0);
+>>>>>>> android-omap-tuna-jb
 	iounmap(dev->base);
 	if (dev->pm_qos) {
 		pm_qos_remove_request(dev->pm_qos);

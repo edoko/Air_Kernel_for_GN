@@ -70,6 +70,18 @@
  * simultaneous inserts (A into B and B into A) from racing and
  * constructing a cycle without either insert observing that it is
  * going to.
+<<<<<<< HEAD
+=======
+ * It is necessary to acquire multiple "ep->mtx"es at once in the
+ * case when one epoll fd is added to another. In this case, we
+ * always acquire the locks in the order of nesting (i.e. after
+ * epoll_ctl(e1, EPOLL_CTL_ADD, e2), e1->mtx will always be acquired
+ * before e2->mtx). Since we disallow cycles of epoll file
+ * descriptors, this ensures that the mutexes are well-ordered. In
+ * order to communicate this nesting to lockdep, when walking a tree
+ * of epoll file descriptors, we use the current recursion depth as
+ * the lockdep subkey.
+>>>>>>> android-omap-tuna-jb
  * It is possible to drop the "ep->mtx" and to use the global
  * mutex "epmutex" (together with "ep->lock") to have it working,
  * but having "ep->mtx" will make the interface more scalable.
@@ -188,6 +200,15 @@ struct eventpoll {
 
 	/* The user that created the eventpoll descriptor */
 	struct user_struct *user;
+<<<<<<< HEAD
+=======
+
+	struct file *file;
+
+	/* used to optimize loop detection check */
+	int visited;
+	struct list_head visited_list_link;
+>>>>>>> android-omap-tuna-jb
 };
 
 /* Wait structure used by the poll hooks */
@@ -246,6 +267,18 @@ static struct kmem_cache *epi_cache __read_mostly;
 /* Slab cache used to allocate "struct eppoll_entry" */
 static struct kmem_cache *pwq_cache __read_mostly;
 
+<<<<<<< HEAD
+=======
+/* Visited nodes during ep_loop_check(), so we can unset them when we finish */
+static LIST_HEAD(visited_list);
+
+/*
+ * List of files with newly added links, where we may need to limit the number
+ * of emanating paths. Protected by the epmutex.
+ */
+static LIST_HEAD(tfile_check_list);
+
+>>>>>>> android-omap-tuna-jb
 #ifdef CONFIG_SYSCTL
 
 #include <linux/sysctl.h>
@@ -267,6 +300,15 @@ ctl_table epoll_table[] = {
 };
 #endif /* CONFIG_SYSCTL */
 
+<<<<<<< HEAD
+=======
+static const struct file_operations eventpoll_fops;
+
+static inline int is_file_epoll(struct file *f)
+{
+	return f->f_op == &eventpoll_fops;
+}
+>>>>>>> android-omap-tuna-jb
 
 /* Setup the structure that is used as key for the RB tree */
 static inline void ep_set_ffd(struct epoll_filefd *ffd,
@@ -290,6 +332,14 @@ static inline int ep_is_linked(struct list_head *p)
 	return !list_empty(p);
 }
 
+<<<<<<< HEAD
+=======
+static inline struct eppoll_entry *ep_pwq_from_wait(wait_queue_t *p)
+{
+	return container_of(p, struct eppoll_entry, wait);
+}
+
+>>>>>>> android-omap-tuna-jb
 /* Get the "struct epitem" from a wait queue pointer */
 static inline struct epitem *ep_item_from_wait(wait_queue_t *p)
 {
@@ -437,6 +487,21 @@ static void ep_poll_safewake(wait_queue_head_t *wq)
 	put_cpu();
 }
 
+<<<<<<< HEAD
+=======
+static void ep_remove_wait_queue(struct eppoll_entry *pwq)
+{
+	wait_queue_head_t *whead;
+
+	rcu_read_lock();
+	/* If it is cleared by POLLFREE, it should be rcu-safe */
+	whead = rcu_dereference(pwq->whead);
+	if (whead)
+		remove_wait_queue(whead, &pwq->wait);
+	rcu_read_unlock();
+}
+
+>>>>>>> android-omap-tuna-jb
 /*
  * This function unregisters poll callbacks from the associated file
  * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
@@ -451,7 +516,11 @@ static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
 		pwq = list_first_entry(lsthead, struct eppoll_entry, llink);
 
 		list_del(&pwq->llink);
+<<<<<<< HEAD
 		remove_wait_queue(pwq->whead, &pwq->wait);
+=======
+		ep_remove_wait_queue(pwq);
+>>>>>>> android-omap-tuna-jb
 		kmem_cache_free(pwq_cache, pwq);
 	}
 }
@@ -464,13 +533,22 @@ static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
  * @ep: Pointer to the epoll private data structure.
  * @sproc: Pointer to the scan callback.
  * @priv: Private opaque data passed to the @sproc callback.
+<<<<<<< HEAD
+=======
+ * @depth: The current depth of recursive f_op->poll calls.
+>>>>>>> android-omap-tuna-jb
  *
  * Returns: The same integer error code returned by the @sproc callback.
  */
 static int ep_scan_ready_list(struct eventpoll *ep,
 			      int (*sproc)(struct eventpoll *,
 					   struct list_head *, void *),
+<<<<<<< HEAD
 			      void *priv)
+=======
+			      void *priv,
+			      int depth)
+>>>>>>> android-omap-tuna-jb
 {
 	int error, pwake = 0;
 	unsigned long flags;
@@ -481,7 +559,11 @@ static int ep_scan_ready_list(struct eventpoll *ep,
 	 * We need to lock this because we could be hit by
 	 * eventpoll_release_file() and epoll_ctl().
 	 */
+<<<<<<< HEAD
 	mutex_lock(&ep->mtx);
+=======
+	mutex_lock_nested(&ep->mtx, depth);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Steal the ready list, and re-init the original one to the
@@ -670,7 +752,11 @@ static int ep_read_events_proc(struct eventpoll *ep, struct list_head *head,
 
 static int ep_poll_readyevents_proc(void *priv, void *cookie, int call_nests)
 {
+<<<<<<< HEAD
 	return ep_scan_ready_list(priv, ep_read_events_proc, NULL);
+=======
+	return ep_scan_ready_list(priv, ep_read_events_proc, NULL, call_nests + 1);
+>>>>>>> android-omap-tuna-jb
 }
 
 static unsigned int ep_eventpoll_poll(struct file *file, poll_table *wait)
@@ -700,12 +786,15 @@ static const struct file_operations eventpoll_fops = {
 	.llseek		= noop_llseek,
 };
 
+<<<<<<< HEAD
 /* Fast test to see if the file is an evenpoll file */
 static inline int is_file_epoll(struct file *f)
 {
 	return f->f_op == &eventpoll_fops;
 }
 
+=======
+>>>>>>> android-omap-tuna-jb
 /*
  * This is called from eventpoll_release() to unlink files from the eventpoll
  * interface. We need to have this facility to cleanup correctly files that are
@@ -737,7 +826,11 @@ void eventpoll_release_file(struct file *file)
 
 		ep = epi->ep;
 		list_del_init(&epi->fllink);
+<<<<<<< HEAD
 		mutex_lock(&ep->mtx);
+=======
+		mutex_lock_nested(&ep->mtx, 0);
+>>>>>>> android-omap-tuna-jb
 		ep_remove(ep, epi);
 		mutex_unlock(&ep->mtx);
 	}
@@ -816,6 +909,20 @@ static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *k
 	struct epitem *epi = ep_item_from_wait(wait);
 	struct eventpoll *ep = epi->ep;
 
+<<<<<<< HEAD
+=======
+	if ((unsigned long)key & POLLFREE) {
+		ep_pwq_from_wait(wait)->whead = NULL;
+		/*
+		 * whead = NULL above can race with ep_remove_wait_queue()
+		 * which can do another remove_wait_queue() after us, so we
+		 * can't use __remove_wait_queue(). whead->lock is held by
+		 * the caller.
+		 */
+		list_del_init(&wait->task_list);
+	}
+
+>>>>>>> android-omap-tuna-jb
 	spin_lock_irqsave(&ep->lock, flags);
 
 	/*
@@ -915,6 +1022,106 @@ static void ep_rbtree_insert(struct eventpoll *ep, struct epitem *epi)
 	rb_insert_color(&epi->rbn, &ep->rbr);
 }
 
+<<<<<<< HEAD
+=======
+
+
+#define PATH_ARR_SIZE 5
+/*
+ * These are the number paths of length 1 to 5, that we are allowing to emanate
+ * from a single file of interest. For example, we allow 1000 paths of length
+ * 1, to emanate from each file of interest. This essentially represents the
+ * potential wakeup paths, which need to be limited in order to avoid massive
+ * uncontrolled wakeup storms. The common use case should be a single ep which
+ * is connected to n file sources. In this case each file source has 1 path
+ * of length 1. Thus, the numbers below should be more than sufficient. These
+ * path limits are enforced during an EPOLL_CTL_ADD operation, since a modify
+ * and delete can't add additional paths. Protected by the epmutex.
+ */
+static const int path_limits[PATH_ARR_SIZE] = { 1000, 500, 100, 50, 10 };
+static int path_count[PATH_ARR_SIZE];
+
+static int path_count_inc(int nests)
+{
+	/* Allow an arbitrary number of depth 1 paths */
+	if (nests == 0)
+		return 0;
+
+	if (++path_count[nests] > path_limits[nests])
+		return -1;
+	return 0;
+}
+
+static void path_count_init(void)
+{
+	int i;
+
+	for (i = 0; i < PATH_ARR_SIZE; i++)
+		path_count[i] = 0;
+}
+
+static int reverse_path_check_proc(void *priv, void *cookie, int call_nests)
+{
+	int error = 0;
+	struct file *file = priv;
+	struct file *child_file;
+	struct epitem *epi;
+
+	list_for_each_entry(epi, &file->f_ep_links, fllink) {
+		child_file = epi->ep->file;
+		if (is_file_epoll(child_file)) {
+			if (list_empty(&child_file->f_ep_links)) {
+				if (path_count_inc(call_nests)) {
+					error = -1;
+					break;
+				}
+			} else {
+				error = ep_call_nested(&poll_loop_ncalls,
+							EP_MAX_NESTS,
+							reverse_path_check_proc,
+							child_file, child_file,
+							current);
+			}
+			if (error != 0)
+				break;
+		} else {
+			printk(KERN_ERR "reverse_path_check_proc: "
+				"file is not an ep!\n");
+		}
+	}
+	return error;
+}
+
+/**
+ * reverse_path_check - The tfile_check_list is list of file *, which have
+ *                      links that are proposed to be newly added. We need to
+ *                      make sure that those added links don't add too many
+ *                      paths such that we will spend all our time waking up
+ *                      eventpoll objects.
+ *
+ * Returns: Returns zero if the proposed links don't create too many paths,
+ *	    -1 otherwise.
+ */
+static int reverse_path_check(void)
+{
+	int length = 0;
+	int error = 0;
+	struct file *current_file;
+
+	/* let's call this for all tfiles */
+	list_for_each_entry(current_file, &tfile_check_list, f_tfile_llink) {
+		length++;
+		path_count_init();
+		error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
+					reverse_path_check_proc, current_file,
+					current_file, current);
+		if (error)
+			break;
+	}
+	return error;
+}
+
+>>>>>>> android-omap-tuna-jb
 /*
  * Must be called with "mtx" held.
  */
@@ -976,6 +1183,14 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
 	 */
 	ep_rbtree_insert(ep, epi);
 
+<<<<<<< HEAD
+=======
+	/* now check if we've created too many backpaths */
+	error = -EINVAL;
+	if (reverse_path_check())
+		goto error_remove_epi;
+
+>>>>>>> android-omap-tuna-jb
 	/* We have to drop the new item inside our item list to keep track of it */
 	spin_lock_irqsave(&ep->lock, flags);
 
@@ -1000,6 +1215,17 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
 
 	return 0;
 
+<<<<<<< HEAD
+=======
+error_remove_epi:
+	spin_lock(&tfile->f_lock);
+	if (ep_is_linked(&epi->fllink))
+		list_del_init(&epi->fllink);
+	spin_unlock(&tfile->f_lock);
+
+	rb_erase(&epi->rbn, &ep->rbr);
+
+>>>>>>> android-omap-tuna-jb
 error_unregister:
 	ep_unregister_pollwait(ep, epi);
 
@@ -1134,7 +1360,11 @@ static int ep_send_events(struct eventpoll *ep,
 	esed.maxevents = maxevents;
 	esed.events = events;
 
+<<<<<<< HEAD
 	return ep_scan_ready_list(ep, ep_send_events_proc, &esed);
+=======
+	return ep_scan_ready_list(ep, ep_send_events_proc, &esed, 0);
+>>>>>>> android-omap-tuna-jb
 }
 
 static inline struct timespec ep_set_mstimeout(long ms)
@@ -1264,6 +1494,7 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
 	int error = 0;
 	struct file *file = priv;
 	struct eventpoll *ep = file->private_data;
+<<<<<<< HEAD
 	struct rb_node *rbp;
 	struct epitem *epi;
 
@@ -1276,6 +1507,38 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
 					       epi->ffd.file->private_data, current);
 			if (error != 0)
 				break;
+=======
+	struct eventpoll *ep_tovisit;
+	struct rb_node *rbp;
+	struct epitem *epi;
+
+	mutex_lock_nested(&ep->mtx, call_nests + 1);
+	ep->visited = 1;
+	list_add(&ep->visited_list_link, &visited_list);
+	for (rbp = rb_first(&ep->rbr); rbp; rbp = rb_next(rbp)) {
+		epi = rb_entry(rbp, struct epitem, rbn);
+		if (unlikely(is_file_epoll(epi->ffd.file))) {
+			ep_tovisit = epi->ffd.file->private_data;
+			if (ep_tovisit->visited)
+				continue;
+			error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
+					ep_loop_check_proc, epi->ffd.file,
+					ep_tovisit, current);
+			if (error != 0)
+				break;
+		} else {
+			/*
+			 * If we've reached a file that is not associated with
+			 * an ep, then we need to check if the newly added
+			 * links are going to add too many wakeup paths. We do
+			 * this by adding it to the tfile_check_list, if it's
+			 * not already there, and calling reverse_path_check()
+			 * during ep_insert().
+			 */
+			if (list_empty(&epi->ffd.file->f_tfile_llink))
+				list_add(&epi->ffd.file->f_tfile_llink,
+					 &tfile_check_list);
+>>>>>>> android-omap-tuna-jb
 		}
 	}
 	mutex_unlock(&ep->mtx);
@@ -1296,8 +1559,36 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
  */
 static int ep_loop_check(struct eventpoll *ep, struct file *file)
 {
+<<<<<<< HEAD
 	return ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
 			      ep_loop_check_proc, file, ep, current);
+=======
+	int ret;
+	struct eventpoll *ep_cur, *ep_next;
+
+	ret = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
+			      ep_loop_check_proc, file, ep, current);
+	/* clear visited list */
+	list_for_each_entry_safe(ep_cur, ep_next, &visited_list,
+							visited_list_link) {
+		ep_cur->visited = 0;
+		list_del(&ep_cur->visited_list_link);
+	}
+	return ret;
+}
+
+static void clear_tfile_check_list(void)
+{
+	struct file *file;
+
+	/* first clear the tfile_check_list */
+	while (!list_empty(&tfile_check_list)) {
+		file = list_first_entry(&tfile_check_list, struct file,
+					f_tfile_llink);
+		list_del_init(&file->f_tfile_llink);
+	}
+	INIT_LIST_HEAD(&tfile_check_list);
+>>>>>>> android-omap-tuna-jb
 }
 
 /*
@@ -1305,8 +1596,14 @@ static int ep_loop_check(struct eventpoll *ep, struct file *file)
  */
 SYSCALL_DEFINE1(epoll_create1, int, flags)
 {
+<<<<<<< HEAD
 	int error;
 	struct eventpoll *ep = NULL;
+=======
+	int error, fd;
+	struct eventpoll *ep = NULL;
+	struct file *file;
+>>>>>>> android-omap-tuna-jb
 
 	/* Check the EPOLL_* constant for consistency.  */
 	BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
@@ -1323,11 +1620,33 @@ SYSCALL_DEFINE1(epoll_create1, int, flags)
 	 * Creates all the items needed to setup an eventpoll file. That is,
 	 * a file structure and a free file descriptor.
 	 */
+<<<<<<< HEAD
 	error = anon_inode_getfd("[eventpoll]", &eventpoll_fops, ep,
 				 O_RDWR | (flags & O_CLOEXEC));
 	if (error < 0)
 		ep_free(ep);
 
+=======
+	fd = get_unused_fd_flags(O_RDWR | (flags & O_CLOEXEC));
+	if (fd < 0) {
+		error = fd;
+		goto out_free_ep;
+	}
+	file = anon_inode_getfile("[eventpoll]", &eventpoll_fops, ep,
+				 O_RDWR | (flags & O_CLOEXEC));
+	if (IS_ERR(file)) {
+		error = PTR_ERR(file);
+		goto out_free_fd;
+	}
+	fd_install(fd, file);
+	ep->file = file;
+	return fd;
+
+out_free_fd:
+	put_unused_fd(fd);
+out_free_ep:
+	ep_free(ep);
+>>>>>>> android-omap-tuna-jb
 	return error;
 }
 
@@ -1393,6 +1712,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 	/*
 	 * When we insert an epoll file descriptor, inside another epoll file
 	 * descriptor, there is the change of creating closed loops, which are
+<<<<<<< HEAD
 	 * better be handled here, than in more critical paths.
 	 *
 	 * We hold epmutex across the loop check and the insert in this case, in
@@ -1410,6 +1730,31 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 
 
 	mutex_lock(&ep->mtx);
+=======
+	 * better be handled here, than in more critical paths. While we are
+	 * checking for loops we also determine the list of files reachable
+	 * and hang them on the tfile_check_list, so we can check that we
+	 * haven't created too many possible wakeup paths.
+	 *
+	 * We need to hold the epmutex across both ep_insert and ep_remove
+	 * b/c we want to make sure we are looking at a coherent view of
+	 * epoll network.
+	 */
+	if (op == EPOLL_CTL_ADD || op == EPOLL_CTL_DEL) {
+		mutex_lock(&epmutex);
+		did_lock_epmutex = 1;
+	}
+	if (op == EPOLL_CTL_ADD) {
+		if (is_file_epoll(tfile)) {
+			error = -ELOOP;
+			if (ep_loop_check(ep, tfile) != 0)
+				goto error_tgt_fput;
+		} else
+			list_add(&tfile->f_tfile_llink, &tfile_check_list);
+	}
+
+	mutex_lock_nested(&ep->mtx, 0);
+>>>>>>> android-omap-tuna-jb
 
 	/*
 	 * Try to lookup the file inside our RB tree, Since we grabbed "mtx"
@@ -1426,6 +1771,10 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 			error = ep_insert(ep, &epds, tfile, fd);
 		} else
 			error = -EEXIST;
+<<<<<<< HEAD
+=======
+		clear_tfile_check_list();
+>>>>>>> android-omap-tuna-jb
 		break;
 	case EPOLL_CTL_DEL:
 		if (epi)
@@ -1444,7 +1793,11 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 	mutex_unlock(&ep->mtx);
 
 error_tgt_fput:
+<<<<<<< HEAD
 	if (unlikely(did_lock_epmutex))
+=======
+	if (did_lock_epmutex)
+>>>>>>> android-omap-tuna-jb
 		mutex_unlock(&epmutex);
 
 	fput(tfile);

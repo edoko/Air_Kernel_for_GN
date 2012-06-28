@@ -904,10 +904,30 @@ static struct nfs_parsed_mount_data *nfs_alloc_parsed_mount_data(unsigned int ve
 		data->auth_flavor_len	= 1;
 		data->version		= version;
 		data->minorversion	= 0;
+<<<<<<< HEAD
+=======
+		security_init_mnt_opts(&data->lsm_opts);
+>>>>>>> android-omap-tuna-jb
 	}
 	return data;
 }
 
+<<<<<<< HEAD
+=======
+static void nfs_free_parsed_mount_data(struct nfs_parsed_mount_data *data)
+{
+	if (data) {
+		kfree(data->client_address);
+		kfree(data->mount_server.hostname);
+		kfree(data->nfs_server.export_path);
+		kfree(data->nfs_server.hostname);
+		kfree(data->fscache_uniq);
+		security_free_mnt_opts(&data->lsm_opts);
+		kfree(data);
+	}
+}
+
+>>>>>>> android-omap-tuna-jb
 /*
  * Sanity-check a server address provided by the mount command.
  *
@@ -2218,9 +2238,13 @@ static struct dentry *nfs_fs_mount(struct file_system_type *fs_type,
 	data = nfs_alloc_parsed_mount_data(NFS_DEFAULT_VERSION);
 	mntfh = nfs_alloc_fhandle();
 	if (data == NULL || mntfh == NULL)
+<<<<<<< HEAD
 		goto out_free_fh;
 
 	security_init_mnt_opts(&data->lsm_opts);
+=======
+		goto out;
+>>>>>>> android-omap-tuna-jb
 
 	/* Validate the mount data */
 	error = nfs_validate_mount_data(raw_data, data, mntfh, dev_name);
@@ -2232,8 +2256,11 @@ static struct dentry *nfs_fs_mount(struct file_system_type *fs_type,
 #ifdef CONFIG_NFS_V4
 	if (data->version == 4) {
 		mntroot = nfs4_try_mount(flags, dev_name, data);
+<<<<<<< HEAD
 		kfree(data->client_address);
 		kfree(data->nfs_server.export_path);
+=======
+>>>>>>> android-omap-tuna-jb
 		goto out;
 	}
 #endif	/* CONFIG_NFS_V4 */
@@ -2284,6 +2311,7 @@ static struct dentry *nfs_fs_mount(struct file_system_type *fs_type,
 	s->s_flags |= MS_ACTIVE;
 
 out:
+<<<<<<< HEAD
 	kfree(data->nfs_server.hostname);
 	kfree(data->mount_server.hostname);
 	kfree(data->fscache_uniq);
@@ -2291,6 +2319,10 @@ out:
 out_free_fh:
 	nfs_free_fhandle(mntfh);
 	kfree(data);
+=======
+	nfs_free_parsed_mount_data(data);
+	nfs_free_fhandle(mntfh);
+>>>>>>> android-omap-tuna-jb
 	return mntroot;
 
 out_err_nosb:
@@ -2613,9 +2645,13 @@ nfs4_remote_mount(struct file_system_type *fs_type, int flags,
 
 	mntfh = nfs_alloc_fhandle();
 	if (data == NULL || mntfh == NULL)
+<<<<<<< HEAD
 		goto out_free_fh;
 
 	security_init_mnt_opts(&data->lsm_opts);
+=======
+		goto out;
+>>>>>>> android-omap-tuna-jb
 
 	/* Get a volume representation */
 	server = nfs4_create_server(data, mntfh);
@@ -2663,13 +2699,19 @@ nfs4_remote_mount(struct file_system_type *fs_type, int flags,
 
 	s->s_flags |= MS_ACTIVE;
 
+<<<<<<< HEAD
 	security_free_mnt_opts(&data->lsm_opts);
+=======
+>>>>>>> android-omap-tuna-jb
 	nfs_free_fhandle(mntfh);
 	return mntroot;
 
 out:
+<<<<<<< HEAD
 	security_free_mnt_opts(&data->lsm_opts);
 out_free_fh:
+=======
+>>>>>>> android-omap-tuna-jb
 	nfs_free_fhandle(mntfh);
 	return ERR_PTR(error);
 
@@ -2694,11 +2736,23 @@ static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type,
 	char *root_devname;
 	size_t len;
 
+<<<<<<< HEAD
 	len = strlen(hostname) + 3;
 	root_devname = kmalloc(len, GFP_KERNEL);
 	if (root_devname == NULL)
 		return ERR_PTR(-ENOMEM);
 	snprintf(root_devname, len, "%s:/", hostname);
+=======
+	len = strlen(hostname) + 5;
+	root_devname = kmalloc(len, GFP_KERNEL);
+	if (root_devname == NULL)
+		return ERR_PTR(-ENOMEM);
+	/* Does hostname needs to be enclosed in brackets? */
+	if (strchr(hostname, ':'))
+		snprintf(root_devname, len, "[%s]:/", hostname);
+	else
+		snprintf(root_devname, len, "%s:/", hostname);
+>>>>>>> android-omap-tuna-jb
 	root_mnt = vfs_kern_mount(fs_type, flags, root_devname, data);
 	kfree(root_devname);
 	return root_mnt;
@@ -2793,7 +2847,11 @@ static struct dentry *nfs_follow_remote_path(struct vfsmount *root_mnt,
 		goto out_put_mnt_ns;
 
 	ret = vfs_path_lookup(root_mnt->mnt_root, root_mnt,
+<<<<<<< HEAD
 			export_path, LOOKUP_FOLLOW, nd);
+=======
+			export_path, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, nd);
+>>>>>>> android-omap-tuna-jb
 
 	nfs_referral_loop_unprotect();
 	put_mnt_ns(ns_private);
@@ -2855,7 +2913,11 @@ static struct dentry *nfs4_mount(struct file_system_type *fs_type,
 
 	data = nfs_alloc_parsed_mount_data(4);
 	if (data == NULL)
+<<<<<<< HEAD
 		goto out_free_data;
+=======
+		goto out;
+>>>>>>> android-omap-tuna-jb
 
 	/* Validate the mount data */
 	error = nfs4_validate_mount_data(raw_data, data, dev_name);
@@ -2869,12 +2931,16 @@ static struct dentry *nfs4_mount(struct file_system_type *fs_type,
 		error = PTR_ERR(res);
 
 out:
+<<<<<<< HEAD
 	kfree(data->client_address);
 	kfree(data->nfs_server.export_path);
 	kfree(data->nfs_server.hostname);
 	kfree(data->fscache_uniq);
 out_free_data:
 	kfree(data);
+=======
+	nfs_free_parsed_mount_data(data);
+>>>>>>> android-omap-tuna-jb
 	dprintk("<-- nfs4_mount() = %d%s\n", error,
 			error != 0 ? " [error]" : "");
 	return res;

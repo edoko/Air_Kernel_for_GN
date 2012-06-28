@@ -37,9 +37,12 @@
 #include <linux/i2c.h>
 #include <linux/uaccess.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_COLOR_CONTROL
 #include <linux/color_control.h>
 #endif
+=======
+>>>>>>> android-omap-tuna-jb
 
 #include <video/omapdss.h>
 
@@ -75,7 +78,11 @@ static int s6e8aa0_update(struct omap_dss_device *dssdev,
 static struct omap_video_timings s6e8aa0_timings = {
 	.x_res = 720,
 	.y_res = 1280,
+<<<<<<< HEAD
 	.pixel_clock = 80842,
+=======
+	.pixel_clock = 79494,
+>>>>>>> android-omap-tuna-jb
 	.hfp = 158,
 	.hsw = 2,
 	.hbp = 160,
@@ -189,6 +196,7 @@ const u8 s6e8aa0_mtp_lock[] = {
 	0xA5,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_COLOR_CONTROL
 struct omap_dss_device * lcd_dev;
 
@@ -197,6 +205,8 @@ struct s6e8aa0_data * s6_data;
 int v1_offset[3] = {-4, 0, 4};
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 static int s6e8aa0_write_reg(struct omap_dss_device *dssdev, u8 reg, u8 val)
 {
 	u8 buf[2];
@@ -770,11 +780,15 @@ static void s6e8aa0_setup_gamma_regs(struct s6e8aa0_data *s6, u8 gamma_regs[],
 				__func__, adj, v0, v[V1], c);
 			adj = clamp_t(int, adj, adj_min, adj_max);
 		}
+<<<<<<< HEAD
 #ifdef CONFIG_COLOR_CONTROL
 		gamma_regs[gamma_reg_index(c, V1)] = min(max(adj +  v1_offset[c], 0), 255);
 #else
 		gamma_regs[gamma_reg_index(c, V1)] = adj;
 #endif
+=======
+		gamma_regs[gamma_reg_index(c, V1)] = adj;
+>>>>>>> android-omap-tuna-jb
 		v[V1] = v1adj_to_v1(adj + offset, v0);
 
 		v[V255] = s6e8aa0_gamma_lookup(s6, brightness, BV_255, c);
@@ -1132,6 +1146,7 @@ static void s6e8aa0_adjust_brightness_from_mtp(struct s6e8aa0_data *s6)
 	     sizeof(*s6->brightness_table), s6e8aa0_cmp_gamma_entry, NULL);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COLOR_CONTROL
 void colorcontrol_update(bool multiplier_updated)
 {
@@ -1149,6 +1164,8 @@ void colorcontrol_update(bool multiplier_updated)
 EXPORT_SYMBOL(colorcontrol_update);
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 static s16 s9_to_s16(s16 v)
 {
 	return (s16)(v << 7) >> 7;
@@ -1658,6 +1675,7 @@ static int s6e8aa0_probe(struct omap_dss_device *dssdev)
 	if (cpu_is_omap44xx())
 		s6->force_update = true;
 
+<<<<<<< HEAD
 #ifdef CONFIG_COLOR_CONTROL
 	lcd_dev = dssdev;
 	s6_data = s6;
@@ -1666,6 +1684,8 @@ static int s6e8aa0_probe(struct omap_dss_device *dssdev)
 	colorcontrol_register_multiplier(s6->pdata->factory_info->color_adj.mult);
 #endif
 
+=======
+>>>>>>> android-omap-tuna-jb
 	dev_dbg(&dssdev->dev, "s6e8aa0_probe\n");
 	return ret;
 

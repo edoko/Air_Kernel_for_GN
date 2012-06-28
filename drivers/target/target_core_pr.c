@@ -471,6 +471,10 @@ static int core_scsi3_pr_seq_non_holder(
 	case READ_MEDIA_SERIAL_NUMBER:
 	case REPORT_LUNS:
 	case REQUEST_SENSE:
+<<<<<<< HEAD
+=======
+	case PERSISTENT_RESERVE_IN:
+>>>>>>> android-omap-tuna-jb
 		ret = 0; /*/ Allowed CDBs */
 		break;
 	default:
@@ -3079,7 +3083,11 @@ static int core_scsi3_pro_preempt(
 			if (!(calling_it_nexus))
 				core_scsi3_ua_allocate(pr_reg_nacl,
 					pr_res_mapped_lun, 0x2A,
+<<<<<<< HEAD
 					ASCQ_2AH_RESERVATIONS_PREEMPTED);
+=======
+					ASCQ_2AH_REGISTRATIONS_PREEMPTED);
+>>>>>>> android-omap-tuna-jb
 		}
 		spin_unlock(&pr_tmpl->registration_lock);
 		/*
@@ -3191,7 +3199,11 @@ static int core_scsi3_pro_preempt(
 		 *    additional sense code set to REGISTRATIONS PREEMPTED;
 		 */
 		core_scsi3_ua_allocate(pr_reg_nacl, pr_res_mapped_lun, 0x2A,
+<<<<<<< HEAD
 				ASCQ_2AH_RESERVATIONS_PREEMPTED);
+=======
+				ASCQ_2AH_REGISTRATIONS_PREEMPTED);
+>>>>>>> android-omap-tuna-jb
 	}
 	spin_unlock(&pr_tmpl->registration_lock);
 	/*

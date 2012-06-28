@@ -129,6 +129,12 @@ unx_match(struct auth_cred *acred, struct rpc_cred *rcred, int flags)
 	for (i = 0; i < groups ; i++)
 		if (cred->uc_gids[i] != GROUP_AT(acred->group_info, i))
 			return 0;
+<<<<<<< HEAD
+=======
+	if (groups < NFS_NGROUPS &&
+	    cred->uc_gids[groups] != NOGROUP)
+		return 0;
+>>>>>>> android-omap-tuna-jb
 	return 1;
 }
 

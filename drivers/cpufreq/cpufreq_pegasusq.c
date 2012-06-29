@@ -835,12 +835,6 @@ static void cpu_up_work(struct work_struct *work)
 	if (hotplug_lock)
 		nr_up = hotplug_lock - online;
 
-	if (online == 1) {
-		printk(KERN_ERR "CPU_UP 3\n");
-		cpu_up(num_possible_cpus() - 1);
-		nr_up -= 1;
-	}
-
 	for_each_cpu_not(cpu, cpu_online_mask) {
 		if (nr_up-- == 0)
 			break;
@@ -1255,17 +1249,20 @@ static struct notifier_block reboot_notifier = {
 static struct early_suspend early_suspend;
 unsigned int prev_freq_step;
 unsigned int prev_sampling_rate;
+static unsigned int registration = 0;
 static void cpufreq_pegasusq_early_suspend(struct early_suspend *h)
 {
-	dbs_tuners_ins.early_suspend =
-		atomic_read(&g_hotplug_lock);
-	prev_freq_step = dbs_tuners_ins.freq_step;
-	prev_sampling_rate = dbs_tuners_ins.sampling_rate;
-	dbs_tuners_ins.freq_step = 20;
-	dbs_tuners_ins.sampling_rate *= 4;
-	atomic_set(&g_hotplug_lock, 1);
-	apply_hotplug_lock();
-	stop_rq_work();
+	if (!registration) {
+		dbs_tuners_ins.early_suspend =
+			atomic_read(&g_hotplug_lock);
+		prev_freq_step = dbs_tuners_ins.freq_step;
+		prev_sampling_rate = dbs_tuners_ins.sampling_rate;
+		dbs_tuners_ins.freq_step = 20;
+		dbs_tuners_ins.sampling_rate *= 4;
+		atomic_set(&g_hotplug_lock, 1);
+		apply_hotplug_lock();
+		stop_rq_work();
+	}
 }
 static void cpufreq_pegasusq_late_resume(struct early_suspend *h)
 {
@@ -1339,7 +1336,10 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		dbs_timer_init(this_dbs_info);
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-		register_early_suspend(&early_suspend);
+		registration = 1;
+			register_early_suspend(&early_suspend);
+		registration = 0;	
+			pr_info("[HOTPLUG] pegasusq start\n");
 #endif
 		break;
 

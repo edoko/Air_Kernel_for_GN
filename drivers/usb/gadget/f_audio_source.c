@@ -21,8 +21,8 @@
 #include <sound/initval.h>
 #include <sound/pcm.h>
 
-#define SAMPLE_RATE 44100
-/* Each frame is two 16 bit integers (one per channel) */
+#define SAMPLE_RATE 96000
+/* Each frame is two 32 bit integers (one per channel) */
 #define BYTES_PER_FRAME 4
 #define FRAMES_PER_MSEC (SAMPLE_RATE / 1000)
 /* Add one to FRAMES_PER_MSEC to adjust for round-off above */
